@@ -1,126 +1,100 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<title></title>
+    <meta charset="UTF-8">
+    <title>Christian Wagner Barbalho</title>
 
-<style>
-/* RESET BÁSICO */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-/* BASE RESPONSIVA */
-html, body {
-    width: 100%;
-    height: 100%;
-    background:  #1f0a10;
-    font-family: Arial, Helvetica, sans-serif;
-}
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-/* CONTAINER CENTRAL */
-.container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-}
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
 
-/* CONTEÚDO */
-.conteudo {
-    width: 100%;
-    max-width: 1100px;
-}
+        .perfil {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background-image: url("sua-imagem.jpg");
+            background-size: cover;
+            background-position: center;
+        }
 
-/* MOBILE FIRST */
-@media (max-width: 768px) {
-    .conteudo {
-        max-width: 100%;
-    }
-}
+        .botoes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 260px;
+        }
 
-/* ESTILO DAS IMAGENS */
-.imagem-link {
-    display: block;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 20px auto; /* espaçamento entre imagens */
-}
+        .botao {
+            background-color: #00ff4c;
+            color: #000;
+            text-decoration: none;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            animation: balanco 2.5s ease-in-out infinite;
+        }
 
-.imagem-dourada {
-    width: 100%;
-    height: auto;
-    border: 4px solid #d4af37; /* dourado */
-    border-radius: 10px;
-    display: block;
-}
-</style>
+        .seta {
+            font-size: 18px;
+        }
+
+        @keyframes balanco {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(6px); }
+            50% { transform: translateX(0); }
+            75% { transform: translateX(-6px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
-    <div class="conteudo">
- <p style="
-  color: #ffffff;
-  font-size: 20px;
-  text-align: center;
-  text-shadow: 0 0 8px rgba(255,255,255,0.6);
-">
-  Clique na Imagem
-</p>
 
-<p style="
-  color: #ffffff;
-  font-size: 16px;
-  text-align: center;
-  text-shadow: 0 0 6px rgba(255,255,255,0.5);
-">
-  Bem-vindos... Cada clique abre um caminho.<br>
-  Cada imagem guarda uma promessa.
-</p>
-        <br></br>
-        
-     <a href="https://www.alemtech.com.br/" class="imagem-link" target="_blank" rel="noopener">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheKDIqyGBnHqaZWk1pAGeAVMP4ph-5xpfV9sLiEYuRf6w_EkBeg_0qvFgEKY67Djz8R7cNrRHtu8_MTo13arFEt-HgWwgB69Y67bv0-nApEjI9dslvjSC2Pkmi6jvvtrpNBgf1sBrAOfRpnSDnHLPHt40k5UNWOnwc_scPbYAAggZqqtrBcwytT-KI-vk/s1079/1000066491.jpg"
-         alt="Imagem clicável"
-         class="imagem-dourada">
-</a>
-<p style="
-  color: #ffffff;
-  font-size: 16px;
-  text-align: center;
-  text-shadow: 0 0 6px rgba(255,255,255,0.5);
-">
- Descubra o autor por trás das palavras, onde cada história nasce do desejo, da tensão e da verdade que poucos têm coragem de revelar.
-</p>
-         <br></br>
-<a href="https://www.alemtech.com.br/2025/11/escritores-brasileiros-chistian-wagner.html" class="imagem-link" target="_blank" rel="noopener">
-    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEg5S6xkkIwyRkSGuNYa6q9b1tivae1ADotBHByBbxX-bkWE-walv-q7cZF09zP1QOA6KdQTNZuqnj0g_gTjjteD56vxWhtA6bWWA78vxF1ori6z72Rn2p75ZdW-VJFXADJ2nz0ggsbEYS2ffevmu1mF7URhAE3SynD8RfeQ5gH08KIp7b5FZBHtu-Rwt4A"
-         alt="Imagem clicável"
-         class="imagem-dourada">
-</a>
-</a>
-<p style="
-  color: #ffffff;
-  font-size: 16px;
-  text-align: center;
-  text-shadow: 0 0 6px rgba(255,255,255,0.5);
-">
-Veja os e-books onde sedução, erotismo e romance se entrelaçam em cenários urbanos intensos e humanos, abrindo caminho também para leituras afiadas sobre as atualidades que atravessam a internet e o nosso tempo.
-</p>
-         <br></br>
-<a href="https://www.alemtech.com.br/p/christian-wagner-barbalho-livros.html" class="imagem-link" target="_blank" rel="noopener">
-    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEianSD1pH8KDFDwUy8veF9EhHNOP_UOlM3uIHnVqk-BuX8G3pEy0IiQdmbI5nfRekrjFlBTmtd9oZxbXpzXLKdF4_qbprDQ2z8T5_0YTDD3ptIy8CHSMXeGHccmO_qt45f7SqI9os08RpS0v3zSvmoiCno9Ey12h5qfD-MhB0NeAOmKIFPXdVMSThg4Nho"
-         alt="Imagem clicável"
-         class="imagem-dourada">
-</a>
+    <div class="container">
+
+        <!-- IMAGEM PRINCIPAL -->
+        <div class="perfil"></div>
+
+        <!-- BOTÕES -->
+        <div class="botoes">
+            <a href="#" class="botao">
+                <span>Criação de Blogger</span>
+                <span class="seta">→</span>
+            </a>
+
+            <a href="#" class="botao">
+                <span>Funis Estratégicos</span>
+                <span class="seta">→</span>
+            </a>
+
+            <a href="#" class="botao">
+                <span>Livros</span>
+                <span class="seta">→</span>
+            </a>
+        </div>
 
     </div>
-</div>
+
 </body>
 </html>
