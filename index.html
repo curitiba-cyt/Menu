@@ -19,26 +19,27 @@
             width: 100%;
         }
 
-        /* CONTAINER FIXO NO TOPO */
+        /* CONTAINER NO TOPO */
         .container {
             width: 100%;
-            position: relative;
             padding-top: 20px;
         }
 
-        /* IMAGEM SEM ANIMAÇÃO */
+        /* IMAGEM FIXA, SEM ANIMAÇÃO, CANTOS 10PX */
         .perfil {
-            width: 65vw;
-            max-width: 240px;
+            width: 92%;
+            max-width: 420px;
             aspect-ratio: 1 / 1;
-            border-radius: 50%;
-            background-image: url("sua-imagem.jpg");
+            margin: 0 auto 22px auto;
+
+            background-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEiMAODE_Tf10ltvfx6ZFjmuq04G5N70hx2xDmmEFp0v-q4dxCcV-RQoe5TxxrWqdV7knSFr5nYqc9p--5hcGHxgXmlFN6OY9BKCmXlpentzlRiNvQ84S5W3WeaMmsb8rAAsTu0aV5Hu5QJ2mVxsay1O19Z0_g51HWKUflrB_LiNmFevYmXQ6lmdJkbXqCo");
             background-size: cover;
             background-position: center;
-            margin: 0 auto 24px auto;
+
+            border-radius: 10px;
         }
 
-        /* BOTÕES */
+        /* ÁREA DOS BOTÕES */
         .botoes {
             width: 100%;
             padding: 0 14px 40px 14px;
@@ -47,6 +48,7 @@
             gap: 16px;
         }
 
+        /* BLOCO VERDE */
         .botao {
             width: 100%;
             background-color: #00ff4c;
@@ -65,13 +67,13 @@
             border-radius: 10px;
         }
 
-        /* ANIMAÇÕES ALTERNADAS */
+        /* BALANÇO ALTERNADO */
         .botao:nth-child(odd) {
-            animation: balancoDireita 2.2s ease-in-out infinite;
+            animation: balancoDireita 2.3s ease-in-out infinite;
         }
 
         .botao:nth-child(even) {
-            animation: balancoEsquerda 2.2s ease-in-out infinite;
+            animation: balancoEsquerda 2.3s ease-in-out infinite;
         }
 
         .seta {
@@ -101,10 +103,10 @@
 
     <div class="container">
 
-        <!-- IMAGEM FIXA -->
+        <!-- SUA IMAGEM -->
         <div class="perfil"></div>
 
-        <!-- BOTÕES NO TOPO -->
+        <!-- BOTÕES -->
         <div class="botoes">
             <a href="#" class="botao">
                 <span>Criação de Blogger</span>
@@ -112,7 +114,7 @@
             </a>
 
             <a href="#" class="botao">
-                <span>Funis Estratégicos</span>
+                <span>Funis Estratégicos Universais</span>
                 <span class="seta">→</span>
             </a>
 
