@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Christian Wagner Barbalho</title>
 
-    <!-- VIEWPORT CORRETO PARA INSTAGRAM -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -20,11 +19,14 @@
             width: 100%;
         }
 
+        /* CONTAINER FIXO NO TOPO */
         .container {
             width: 100%;
+            position: relative;
+            padding-top: 20px;
         }
 
-        /* IMAGEM EM DESTAQUE */
+        /* IMAGEM SEM ANIMAÇÃO */
         .perfil {
             width: 65vw;
             max-width: 240px;
@@ -33,10 +35,10 @@
             background-image: url("sua-imagem.jpg");
             background-size: cover;
             background-position: center;
-            margin: 28px auto 24px auto;
+            margin: 0 auto 24px auto;
         }
 
-        /* ÁREA DOS BOTÕES */
+        /* BOTÕES */
         .botoes {
             width: 100%;
             padding: 0 14px 40px 14px;
@@ -50,6 +52,7 @@
             background-color: #00ff4c;
             color: #000;
             text-decoration: none;
+
             padding: 22px 22px;
             display: flex;
             justify-content: space-between;
@@ -60,20 +63,35 @@
             line-height: 1.2;
 
             border-radius: 10px;
+        }
 
-            animation: balanco 2s ease-in-out infinite;
+        /* ANIMAÇÕES ALTERNADAS */
+        .botao:nth-child(odd) {
+            animation: balancoDireita 2.2s ease-in-out infinite;
+        }
+
+        .botao:nth-child(even) {
+            animation: balancoEsquerda 2.2s ease-in-out infinite;
         }
 
         .seta {
             font-size: 26px;
-            margin-left: 10px;
+            margin-left: 12px;
         }
 
-        @keyframes balanco {
+        @keyframes balancoDireita {
             0% { transform: translateX(0); }
-            25% { transform: translateX(6px); }
+            25% { transform: translateX(7px); }
             50% { transform: translateX(0); }
-            75% { transform: translateX(-6px); }
+            75% { transform: translateX(3px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes balancoEsquerda {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-7px); }
+            50% { transform: translateX(0); }
+            75% { transform: translateX(-3px); }
             100% { transform: translateX(0); }
         }
     </style>
@@ -83,10 +101,10 @@
 
     <div class="container">
 
-        <!-- IMAGEM -->
+        <!-- IMAGEM FIXA -->
         <div class="perfil"></div>
 
-        <!-- BOTÕES GRANDES -->
+        <!-- BOTÕES NO TOPO -->
         <div class="botoes">
             <a href="#" class="botao">
                 <span>Criação de Blogger</span>
