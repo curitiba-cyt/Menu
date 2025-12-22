@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Christian Wagner Barbalho</title>
 
-    <!-- VIEWPORT OBRIGATÓRIO PARA CELULAR / INSTAGRAM -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <!-- VIEWPORT CORRETO PARA INSTAGRAM -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         * {
@@ -24,25 +24,25 @@
             width: 100%;
         }
 
-        /* IMAGEM GRANDE PARA MOBILE */
+        /* IMAGEM EM DESTAQUE */
         .perfil {
-            width: 60vw;
-            max-width: 220px;
+            width: 65vw;
+            max-width: 240px;
             aspect-ratio: 1 / 1;
             border-radius: 50%;
             background-image: url("sua-imagem.jpg");
             background-size: cover;
             background-position: center;
-            margin: 30px auto 20px auto;
+            margin: 28px auto 24px auto;
         }
 
-        /* BOTÕES MOBILE */
+        /* ÁREA DOS BOTÕES */
         .botoes {
             width: 100%;
-            padding: 0 16px 40px 16px;
+            padding: 0 14px 40px 14px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
         }
 
         .botao {
@@ -50,17 +50,23 @@
             background-color: #00ff4c;
             color: #000;
             text-decoration: none;
-            padding: 18px 20px;
+            padding: 22px 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 18px;
-            font-weight: 700;
+
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+
+            border-radius: 10px;
+
             animation: balanco 2s ease-in-out infinite;
         }
 
         .seta {
-            font-size: 22px;
+            font-size: 26px;
+            margin-left: 10px;
         }
 
         @keyframes balanco {
@@ -77,10 +83,10 @@
 
     <div class="container">
 
-        <!-- IMAGEM PRINCIPAL -->
+        <!-- IMAGEM -->
         <div class="perfil"></div>
 
-        <!-- BOTÕES GRANDES PARA TOQUE -->
+        <!-- BOTÕES GRANDES -->
         <div class="botoes">
             <a href="#" class="botao">
                 <span>Criação de Blogger</span>
@@ -88,7 +94,7 @@
             </a>
 
             <a href="#" class="botao">
-                <span>Funis Estratégicos Universais</span>
+                <span>Funis Estratégicos</span>
                 <span class="seta">→</span>
             </a>
 
