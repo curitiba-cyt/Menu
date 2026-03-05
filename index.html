@@ -2,132 +2,131 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Christian Wagner Barbalho</title>
-
+    <title>AlemTech | Christian Wagner Barbalho</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         body {
-            background-color: #000;
+            background-color: #050505; /* Preto Profundo */
+            color: #ffffff;
             width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
-        /* CONTAINER NO TOPO */
         .container {
             width: 100%;
-            padding-top: 20px;
+            max-width: 480px;
+            padding: 20px 16px;
         }
 
-        /* IMAGEM FIXA, SEM ANIMAÇÃO, CANTOS 10PX */
+        /* IMAGEM DE PERFIL - IMPACTO VISUAL */
         .perfil {
-            width: 92%;
-            max-width: 420px;
+            width: 100%;
             aspect-ratio: 1 / 1;
-            margin: 0 auto 22px auto;
-
+            margin: 0 auto 25px auto;
             background-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEgbAg7W_m4Rr6zZBQvxHOTMjekJB7_zYZydhWNBLiSMiE5jj6Dn1gbIfwXgLWMugNjVlpoCuQfacAxidaAr-JqKg7919mkV10KZ_12awpoXNpTqZNLoLWhuRBohHNc9hLbKPbGdpsObqEMgJ6NCwaa5XvsDX8kPo7X18LStPDLhQqE4xyqLHSrz2DhufXI");
             background-size: cover;
             background-position: center;
-
-            border-radius: 10px;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* ÁREA DOS BOTÕES */
+        /* GRID DE BOTÕES LADO A LADO */
+        .grid-duplo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
         .botoes {
-            width: 100%;
-            padding: 0 14px 40px 14px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* BLOCO VERDE */
+        /* ESTILO DOS BOTÕES ALEMTECH */
         .botao {
-            width: 100%;
-            background-color: #00ff4c;
-            color: #000;
             text-decoration: none;
-
-            padding: 22px 22px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-
-            font-size: 22px;
-            font-weight: 800;
-            line-height: 1.2;
-
-            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            padding: 18px 10px;
+            border: 1px solid #333;
         }
 
-        /* BALANÇO ALTERNADO */
-        .botao:nth-child(odd) {
-            animation: balancoDireita 2.3s ease-in-out infinite;
+        /* BOTÃO DE DESTAQUE (CURA ESCONDIDA) */
+        .primario {
+            background: #e0e0e0; /* Cinza Metálico */
+            color: #000;
         }
 
-        .botao:nth-child(even) {
-            animation: balancoEsquerda 2.3s ease-in-out infinite;
+        /* BOTÕES DE INFRAESTRUTURA */
+        .secundario {
+            background: #111;
+            color: #fff;
+            border: 1px solid #222;
         }
 
-        .seta {
-            font-size: 26px;
-            margin-left: 12px;
+        /* BOTÃO DE CONTATO/WHATSAPP (O TIRO) */
+        .destaque {
+            background: transparent;
+            color: #00ff4c;
+            border: 1px solid #00ff4c;
+            margin-top: 10px;
         }
 
-        @keyframes balancoDireita {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(7px); }
-            50% { transform: translateX(0); }
-            75% { transform: translateX(3px); }
-            100% { transform: translateX(0); }
+        .botao:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+            box-shadow: 0 5px 15px rgba(0,255,76,0.1);
         }
 
-        @keyframes balancoEsquerda {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-7px); }
-            50% { transform: translateX(0); }
-            75% { transform: translateX(-3px); }
-            100% { transform: translateX(0); }
-        }
+        .seta { margin-left: 8px; font-size: 18px; }
     </style>
 </head>
-
 <body>
 
     <div class="container">
-
-        <!-- SUA IMAGEM -->
         <div class="perfil"></div>
 
-        <!-- BOTÕES -->
         <div class="botoes">
-            <a href="#" class="botao">
-                <span>Criação de Blogger Turbo</span>
-                <span class="seta">→</span>
+            <div class="grid-duplo">
+                <a href="https://www.alemtech.com.br/" class="botao primario">Home</a>
+                <a href="https://www.alemtech.com.br/p/blindagem-digital-defeza-estrategica.html" class="botao primario">Blindado</a>
+            </div>
+
+            <a href="https://youtube.com/@cwbarbalhoofficial?si=dHRCU8-IB3uFd_ig" class="botao secundario">
+                YouTube <span class="seta">→</span>
             </a>
 
-            <a href="https://www.alemtech.com.br/2025/12/funil-estrategico.html?m=1" class="botao">
-                <span>Funis Estratégicos Universais</span>
-                <span class="seta">→</span>
+            <a href="https://www.alemtech.com.br/2025/12/funil-estrategico.html?m=1" class="botao secundario">
+                Funis Estratégicos <span class="seta">→</span>
             </a>
 
-            <a href="https://www.alemtech.com.br/p/christian-wagner-barbalho-livros.html?m=1" class="botao">
-                <span>Página de Livros</span>
-                <span class="seta">→</span>
+            <a href="https://www.alemtech.com.br/p/christian-wagner-barbalho-livros.html?m=1" class="botao secundario">
+                Página de Livros <span class="seta">→</span>
             </a>
-            <a href="https://wa.me/5547997439300?text=Ol%C3%A1%20Christian%2C%20quero%20melhorar%20meu%20perfil%20e%20descobrir%20como%20posso%20evoluir.%20Voc%C3%AA%20poderia%20analisar%20para%20mim%3F" class="botao">
-                <span>Análise de perfil</span>
-                <span class="seta">→</span>
+
+            <a href="https://wa.me/5547997439300?text=Ol%C3%A1%20Christian%2C%20vi%20sua%20infraestrutura.%20Quero%20uma%20an%C3%A1lise." class="botao destaque">
+                Análise de Perfil Profissional
             </a>
         </div>
-
     </div>
 
 </body>
