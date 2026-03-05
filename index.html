@@ -5,6 +5,7 @@
     <title>AlemTech | Infraestrutura de Elite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* RESET TOTAL PARA EVITAR ELEMENTOS EXTERNOS */
         * {
             margin: 0;
             padding: 0;
@@ -12,24 +13,38 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
+        /* GARANTE QUE O FUNDO PRETO CUBRA TUDO E NADA SOBRE EMBAIXO */
+        html, body {
+            background-color: #000;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
-            background-color: #000; /* Fundo Total Preto - Blindagem */
             color: #fff;
             display: flex;
             justify-content: center;
             min-height: 100vh;
         }
 
+        /* BLOQUEIO DE RODAPÉ/ANÚNCIOS INJETADOS */
+        footer, .footer, #footer, .github-footer, [id*="footer"], [class*="footer"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
         .container {
             width: 100%;
             max-width: 500px;
             padding: 20px 15px;
+            z-index: 10;
         }
 
         /* IMAGEM 16:9 - FORMATO CAPA CINEMATOGRÁFICA */
         .perfil {
             width: 100%;
-            aspect-ratio: 16 / 9; /* Proporção solicitada */
+            aspect-ratio: 16 / 9;
             margin-bottom: 20px;
             background-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEgbAg7W_m4Rr6zZBQvxHOTMjekJB7_zYZydhWNBLiSMiE5jj6Dn1gbIfwXgLWMugNjVlpoCuQfacAxidaAr-JqKg7919mkV10KZ_12awpoXNpTqZNLoLWhuRBohHNc9hLbKPbGdpsObqEMgJ6NCwaa5XvsDX8kPo7X18LStPDLhQqE4xyqLHSrz2DhufXI");
             background-size: cover;
@@ -68,8 +83,7 @@
             border: 1px solid #333;
         }
 
-        /* ESTILO ALEMTECH - CINZA METÁLICO (AUTORIDADE) */
-        /* ESTE ESTILO AGORA É USADO POR TODOS OS BOTÕES PRINCIPAIS */
+        /* TODOS OS BOTÕES NO CINZA EXATO DOS DOIS PRIMEIROS */
         .primario {
             background: #d1d1d1;
             color: #000;
