@@ -5,7 +5,6 @@
     <title>AlemTech | Infraestrutura de Elite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* RESET TOTAL PARA EVITAR ELEMENTOS EXTERNOS */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +12,6 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* GARANTE QUE O FUNDO PRETO CUBRA TUDO E NADA SOBRE EMBAIXO */
         html, body {
             background-color: #000;
             height: 100%;
@@ -27,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* BLOQUEIO DE RODAPÉ/ANÚNCIOS INJETADOS */
         footer, .footer, #footer, .github-footer, [id*="footer"], [class*="footer"] {
             display: none !important;
             opacity: 0 !important;
@@ -39,22 +36,30 @@
             max-width: 500px;
             padding: 20px 15px;
             z-index: 10;
+            text-align: center;
         }
 
-        /* IMAGEM 16:9 - FORMATO CAPA CINEMATOGRÁFICA */
         .perfil {
             width: 100%;
             aspect-ratio: 16 / 9;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEgbAg7W_m4Rr6zZBQvxHOTMjekJB7_zYZydhWNBLiSMiE5jj6Dn1gbIfwXgLWMugNjVlpoCuQfacAxidaAr-JqKg7919mkV10KZ_12awpoXNpTqZNLoLWhuRBohHNc9hLbKPbGdpsObqEMgJ6NCwaa5XvsDX8kPo7X18LStPDLhQqE4xyqLHSrz2DhufXI");
             background-size: cover;
             background-position: center;
             border-radius: 8px;
             border: 1px solid #222;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
-        /* GRID PARA BOTÕES LADO A LADO */
+        /* TEXTO DE AUTORIDADE ALEMTECH */
+        .manifesto-curto {
+            font-size: 14px;
+            color: #d1d1d1;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            font-weight: 400;
+            font-style: italic;
+        }
+
         .grid-topo {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -77,29 +82,34 @@
             border-radius: 6px;
             transition: 0.3s;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 1px;
-            padding: 20px 10px;
+            padding: 18px 10px;
             border: 1px solid #333;
         }
 
-        /* TODOS OS BOTÕES NO CINZA EXATO DOS DOIS PRIMEIROS */
-        .primario {
-            background: #d1d1d1;
+        .primario { background: #d1d1d1; color: #000; }
+        
+        /* DESTAQUE PARA O DIAGNÓSTICO */
+        .whatsapp {
+            background: #00ff4c;
             color: #000;
+            border: none;
+            margin-top: 5px;
+            font-size: 13px;
         }
 
-        /* BOTÃO DE TIRO FINAL - WHATSAPP */
-        .whatsapp {
-            background: transparent;
-            color: #00ff4c;
-            border: 1px solid #00ff4c;
-            margin-top: 8px;
+        .exclusividade {
+            font-size: 11px;
+            color: #555;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .botao:hover {
             filter: brightness(1.2);
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
         .seta { margin-left: 8px; }
@@ -109,28 +119,36 @@
 
     <div class="container">
         <div class="perfil"></div>
+        
+        <p class="manifesto-curto">
+            Identifico as fragilidades invisíveis que impedem o seu lucro. <br>
+            <b>Saia do looping agora.</b>
+        </p>
 
         <div class="lista-botoes">
+            
+            <a href="https://wa.me/5547997439300?text=Vi%20seu%20video.%20Quero%20um%20diagnóstico%20de%20fragilidade." class="botao whatsapp">
+                Solicitar Diagnóstico de Fragilidade <span class="seta">→</span>
+            </a>
+
             <div class="grid-topo">
                 <a href="https://www.alemtech.com.br/" class="botao primario">Home</a>
                 <a href="https://www.alemtech.com.br/p/blindagem-digital-defeza-estrategica.html" class="botao primario">Blindado</a>
             </div>
 
-            <a href="https://youtube.com/@cwbarbalhoofficial?si=dHRCU8-IB3uFd_ig" class="botao primario">
-                YouTube <span class="seta">→</span>
-            </a>
-
             <a href="https://www.alemtech.com.br/p/tecnologia-na-pratica.html" class="botao primario">
-                Estratégia de Ponta <span class="seta">→</span>
+                O Método AlemTech (Consultoria)
             </a>
 
             <a href="https://www.alemtech.com.br/p/christian-wagner-barbalho-livros.html?m=1" class="botao primario">
-                Página de Livros <span class="seta">→</span>
+                Território Intelectual (Livros)
             </a>
 
-            <a href="https://wa.me/5547997439300?text=Vi%20sua%20infraestrutura.%20Quero%20uma%20an%C3%A1lise." class="botao whatsapp">
-                Análise de Perfil Profissional
+            <a href="https://youtube.com/@cwbarbalhoofficial?si=dHRCU8-IB3uFd_ig" class="botao primario" style="opacity: 0.7; font-size: 10px;">
+                Conteúdo Gratuito (YouTube)
             </a>
+
+            <p class="exclusividade">Eu não faço isso para todos.</p>
         </div>
     </div>
 
