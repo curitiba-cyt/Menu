@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ALEMTECH.V16 - MILITARY OMNI RADAR</title>
+    <title>ALEMTECH.V16 - TRIPLE MILITARY RADAR</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        // SEGURANÇA ORIGINAL
+        // SEGURANÇA ORIGINAL (MANTIDA)
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('acesso') === 'v16') {
@@ -23,48 +23,52 @@
     <style>
         * { box-sizing: border-box !important; margin: 0; padding: 0; }
         body { 
-            background-color: #0a0d0a; 
-            background-image: linear-gradient(rgba(0, 255, 0, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, .05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: #d4af37; /* Dourado */
+            background-color: #050805; 
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, .05) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(0, 255, 0, .05) 1px, transparent 1px);
+            background-size: 25px 25px;
+            color: #d4af37; /* Dourado iper fininho */
             font-family: 'Courier New', monospace;
-            overflow: hidden; height: 100vh;
+            overflow-x: hidden;
         }
 
-        .dashboard { display: grid; grid-template-columns: 300px 1fr; height: 100vh; border: 2px solid #1b261b; }
+        .dashboard { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; border: 1px solid #1b261b; }
         
         /* Lateral */
-        .sidebar { background: rgba(10, 20, 10, 0.9); border-right: 2px solid #1b261b; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .sidebar-logo { font-weight: 900; color: #ff0000; font-size: 1.5rem; text-align: center; border: 1px solid #ff0000; padding: 10px; }
-        .ipf-box { border: 1px solid #d4af37; padding: 15px; background: rgba(0,0,0,0.5); }
-        .ipf-label { font-size: 10px; margin-bottom: 5px; color: #0f0; }
-        .ipf-value { font-size: 1.3rem; font-weight: bold; }
+        .sidebar { background: rgba(5, 10, 5, 0.95); border-right: 2px solid #1b261b; padding: 20px; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 0; height: 100vh; }
+        .sidebar-logo { font-weight: 900; color: #ff0000; font-size: 1.4rem; text-align: center; border: 1px solid #ff0000; padding: 10px; margin-bottom: 10px; }
+        .ipf-box { border: 1px solid #d4af37; padding: 12px; background: rgba(0,0,0,0.6); }
+        .ipf-label { font-size: 9px; margin-bottom: 4px; color: #0f0; letter-spacing: 1px; }
+        .ipf-value { font-size: 1.2rem; font-weight: bold; font-family: monospace; }
 
         /* Centro */
-        .main { display: flex; flex-direction: column; overflow-y: auto; padding: 20px; gap: 20px; }
-        .header-nav { display: flex; gap: 10px; background: #111; padding: 10px; border: 1px solid #1b261b; }
-        .url-input { flex: 1; background: #000; border: 1px solid #0f0; padding: 10px; color: #0f0; outline: none; }
-        .btn-scan { background: #d4af37; color: #000; border: none; padding: 0 20px; font-weight: 900; cursor: pointer; }
+        .main { display: flex; flex-direction: column; padding: 20px; gap: 25px; }
+        .header-nav { display: flex; gap: 10px; background: #000; padding: 10px; border: 1px solid #1b261b; position: sticky; top: 0; z-index: 100; }
+        .url-input { flex: 1; background: #050505; border: 1px solid #0f0; padding: 12px; color: #0f0; outline: none; font-size: 14px; }
+        .btn-scan { background: #d4af37; color: #000; border: none; padding: 0 25px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-        /* Gráficos Estilo Militar */
-        .chart-section { display: flex; flex-direction: column; gap: 20px; }
-        .military-chart-box { 
-            background: rgba(0, 20, 0, 0.4); 
+        /* Blocos de Gráficos Verticais */
+        .military-block { 
+            background: rgba(0, 15, 0, 0.5); 
             border: 1px solid #1b261b; 
             padding: 15px; 
-            position: relative; 
-            height: 220px;
+            height: 280px;
+            position: relative;
         }
-        .chart-header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px; color: #0f0; }
+        .block-header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 10px; color: #0f0; border-bottom: 1px solid #1b261b; padding-bottom: 5px; }
+        
+        /* Divisor do Terceiro Bloco */
+        .split-block { display: grid; grid-template-rows: 1fr 1fr; gap: 10px; height: 100%; }
+        .sub-graph { border: 1px solid #1b261b; padding: 5px; position: relative; }
 
-        /* Meta Row (Dividido em 2) */
-        .meta-row { display: grid; grid-template-rows: 1fr 1fr; gap: 10px; height: 300px; }
-        .meta-sub-box { border: 1px solid #1b261b; background: rgba(0,10,0,0.3); padding: 10px; position: relative; }
+        /* Terminais (1000 caracteres) */
+        .terminal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .terminal { background: #000; border: 1px solid #1b261b; padding: 15px; font-size: 11px; color: #0f0; height: 180px; overflow-y: auto; line-height: 1.4; }
+        .terminal b { color: #d4af37; display: block; margin-bottom: 8px; }
 
-        /* Terminais de Diagnóstico (1000 chars) */
-        .terminal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 250px; }
-        .terminal { background: #000; border: 1px solid #1b261b; padding: 15px; font-size: 11px; color: #0f0; overflow-y: auto; line-height: 1.5; }
-        .terminal::before { content: "[RELATÓRIO TÁTICO V16]"; display: block; color: #d4af37; margin-bottom: 10px; font-weight: bold; }
+        /* Barra de Progresso que caminha */
+        .progress-line { height: 2px; background: #d4af37; position: absolute; bottom: 0; left: 0; width: 0%; transition: width 0.1s linear; box-shadow: 0 0 10px #d4af37; }
     </style>
 </head>
 <body>
@@ -73,124 +77,125 @@
     <aside class="sidebar">
         <div class="sidebar-logo">ALEMTECH V16</div>
         <div class="ipf-box">
-            <div class="ipf-label">BRASÍLIA TIME (SYNC)</div>
+            <div class="ipf-label">HORÁRIO BRASÍLIA (ACT)</div>
             <div id="relogio-br" class="ipf-value" style="color: #0f0;">00:00:00</div>
         </div>
         <div class="ipf-box">
-            <div class="ipf-label">PREJUÍZO ACUMULADO</div>
+            <div class="ipf-label">PREJUÍZO TÉCNICO</div>
             <div id="loss-val" class="ipf-value">R$ 0,00</div>
         </div>
         <div class="ipf-box" style="border-color: #0f0;">
-            <div class="ipf-label">OURO RETIDO</div>
+            <div class="ipf-label">CONVERSÃO RETIDA</div>
             <div id="gold-val" class="ipf-value" style="color: #0f0;">R$ 0,00</div>
         </div>
     </aside>
 
     <main class="main">
         <div class="header-nav">
-            <input type="text" id="target-url" class="url-input" placeholder="ALVO: INSERIR DOMÍNIO...">
-            <button class="btn-scan" onclick="iniciarScan()">VARREDURA TOTAL</button>
+            <input type="text" id="site-url" class="url-input" placeholder="ALVO: INSERIR DOMÍNIO PARA INVESTIGAÇÃO...">
+            <button class="btn-scan" onclick="ataqueV16()">INICIAR VARREDURA</button>
         </div>
 
-        <div class="chart-section">
-            <div class="military-chart-box">
-                <div class="chart-header"><span>TRAÇÃO DE MERCADO (DOU)</span><span id="day-bar">PROGRESÃO DIA: 0%</span></div>
-                <canvas id="chartTraction"></canvas>
-            </div>
-            
-            <div class="military-chart-box">
-                <div class="chart-header"><span>CONTAGEM DE FLUXO ATIVO</span><span>STATUS: ONLINE</span></div>
-                <canvas id="chartCount"></canvas>
-            </div>
+        <div class="military-block">
+            <div class="block-header"><span>01 - TRAÇÃO DE MERCADO (DOU)</span><span id="p1">PROGRESSO: 0%</span></div>
+            <canvas id="chart1"></canvas>
+            <div class="progress-line" id="bar1"></div>
         </div>
 
-        <div class="meta-row">
-            <div class="meta-sub-box">
-                <div class="chart-header"><span>META DA SEMANA (PROGRESSIVA)</span></div>
-                <canvas id="chartWeek"></canvas>
-            </div>
-            <div class="meta-sub-box">
-                <div class="chart-header"><span>CRESCIMENTO DE META GERAL</span></div>
-                <canvas id="chartGrowth"></canvas>
-            </div>
+        <div class="military-block">
+            <div class="block-header"><span>02 - FLUXO DE CONTAGEM ATIVA</span><span id="p2">PROGRESSO: 0%</span></div>
+            <canvas id="chart2"></canvas>
+            <div class="progress-line" id="bar2"></div>
         </div>
 
-        <div class="terminal-grid">
-            <div class="terminal" id="diag1">Aguardando varredura para diagnóstico de sintomas...</div>
-            <div class="terminal" id="diag2">Aguardando dados para estratégia de intervenção...</div>
+        <div class="military-block" style="height: 400px;">
+            <div class="block-header"><span>03 - SISTEMA DE METAS ALEMTECH</span><span id="p3">PROGRESSO: 0%</span></div>
+            <div class="split-block">
+                <div class="sub-graph">
+                    <span style="font-size: 9px;">META SEMANAL CORRENTE</span>
+                    <canvas id="chart3"></canvas>
+                </div>
+                <div class="sub-graph">
+                    <span style="font-size: 9px;">CRESCIMENTO DE AUTORIDADE</span>
+                    <canvas id="chart4"></canvas>
+                </div>
+            </div>
+            <div class="progress-line" id="bar3"></div>
+        </div>
+
+        <div class="terminal-row">
+            <div class="terminal" id="term1"><b>> SINTOMAS DETECTADOS:</b>Aguardando varredura total...</div>
+            <div class="terminal" id="term2" style="border-color: #0f0;"><b>> ESTRATÉGIA DE CURA:</b>Aguardando diagnóstico...</div>
         </div>
     </main>
 </div>
 
 <script>
-    // Relógio Brasília
-    function atualizarRelogio() {
-        const agora = new Date();
-        const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('relogio-br').innerText = agora.toLocaleTimeString('pt-BR', options);
+    // Relógio Brasília Real
+    function clock() {
+        const now = new Date();
+        document.getElementById('relogio-br').innerText = now.toLocaleTimeString('pt-BR', {timeZone: 'America/Sao_Paulo'});
     }
-    setInterval(atualizarRelogio, 1000);
+    setInterval(clock, 1000);
 
-    // Configuração de Gráficos (Estilo Militar Dourado)
-    const militaryStyle = {
+    // Estilo Militar Dourado Iper Fininho
+    const goldLine = {
         borderColor: '#d4af37',
         borderWidth: 1,
         pointRadius: 0,
         fill: true,
-        backgroundColor: 'rgba(212, 175, 55, 0.05)',
-        tension: 0.4
+        backgroundColor: 'rgba(212, 175, 55, 0.03)',
+        tension: 0.3
     };
 
     let charts = {};
 
-    function initCharts() {
-        const ctx1 = document.getElementById('chartTraction').getContext('2d');
-        const ctx2 = document.getElementById('chartCount').getContext('2d');
-        const ctx3 = document.getElementById('chartWeek').getContext('2d');
-        const ctx4 = document.getElementById('chartGrowth').getContext('2d');
-
-        const config = (label) => ({
-            type: 'line',
-            data: {
-                labels: Array.from({length: 31}, (_, i) => i + 1),
-                datasets: [{ ...militaryStyle, label: label, data: Array.from({length: 31}, () => Math.random() * 50 + 20) }]
-            },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-        });
-
-        charts.traction = new Chart(ctx1, config('Tração'));
-        charts.count = new Chart(ctx2, config('Contagem'));
-        charts.week = new Chart(ctx3, config('Semana'));
-        charts.growth = new Chart(ctx4, config('Crescimento'));
+    function init() {
+        const opt = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } };
+        
+        charts.c1 = new Chart(document.getElementById('chart1'), { type: 'line', data: { labels: Array(30).fill(''), datasets: [{ ...goldLine, data: Array(30).fill(0) }] }, options: opt });
+        charts.c2 = new Chart(document.getElementById('chart2'), { type: 'line', data: { labels: Array(30).fill(''), datasets: [{ ...goldLine, data: Array(30).fill(0) }] }, options: opt });
+        charts.c3 = new Chart(document.getElementById('chart3'), { type: 'line', data: { labels: Array(30).fill(''), datasets: [{ ...goldLine, data: Array(30).fill(0) }] }, options: opt });
+        charts.c4 = new Chart(document.getElementById('chart4'), { type: 'line', data: { labels: Array(30).fill(''), datasets: [{ ...goldLine, data: Array(30).fill(0) }] }, options: opt });
     }
 
-    // Função de Varredura
-    async function iniciarScan() {
-        let url = document.getElementById('target-url').value;
+    async function ataqueV16() {
+        let url = document.getElementById('site-url').value;
         if(!url) return;
         
-        // Simulação de barra andando com os dias
-        let prog = 0;
-        let interval = setInterval(() => {
-            prog++;
-            document.getElementById('day-bar').innerText = `PROGRESÃO DIA: ${prog}%`;
-            if(prog >= 100) clearInterval(interval);
-        }, 30);
+        let p = 0;
+        let timer = setInterval(() => {
+            p++;
+            document.getElementById('p1').innerText = `PROGRESSO: ${p}%`;
+            document.getElementById('p2').innerText = `PROGRESSO: ${p}%`;
+            document.getElementById('p3').innerText = `PROGRESSO: ${p}%`;
+            document.getElementById('bar1').style.width = p + "%";
+            document.getElementById('bar2').style.width = p + "%";
+            document.getElementById('bar3').style.width = p + "%";
 
-        // Preencher Diagnósticos com "1000 caracteres" de impacto
-        const diagLongo = "ALVO DETECTADO COM FRAGILIDADE CRÍTICA NA ESTRUTURA DE CARREGAMENTO (LCP). O TEMPO DE RESPOSTA DO SERVIDOR APRESENTA ASSIMETRIA DE DADOS. " + "OPERADOR IDENTIFICOU PERDA DE RETENÇÃO DE USUÁRIOS EM DISPOSITIVOS MÓVEIS... ".repeat(10);
-        document.getElementById('diag1').innerText = diagLongo;
-        document.getElementById('diag2').innerText = "ESTRATÉGIA ALEMTECH: INTERVENÇÃO IMEDIATA NOS MOTORES DE BUSCA. RECONSTRUÇÃO DO TERRITÓRIO INTELECTUAL DO SITE PARA RECUPERAR O OURO RETIDO... ".repeat(10);
+            // Fazendo as linhas dos gráficos "andarem" em tempo real
+            [charts.c1, charts.c2, charts.c3, charts.c4].forEach(c => {
+                c.data.datasets[0].data.shift();
+                c.data.datasets[0].data.push(Math.random() * 100);
+                c.update('none');
+            });
 
-        // Atualizar valores
-        document.getElementById('loss-val').innerText = "R$ " + (Math.random() * 5000 + 2000).toLocaleString('pt-BR');
-        document.getElementById('gold-val').innerText = "R$ " + (Math.random() * 15000 + 5000).toLocaleString('pt-BR');
+            if(p >= 100) clearInterval(timer);
+        }, 50);
+
+        // Relatórios Táticos (1000+ Caracteres)
+        const text1 = "> FRAGILIDADE TÉCNICA IDENTIFICADA NO ALVO. " + "SINTOMAS DE LENTIDÃO CRÍTICA (LCP > 4s). PERDA DE AUTORIDADE DIGITAL NO GOOGLE SEARCH CONSOLE. CONVERSÃO SENDO DRENADA POR ATRITO NA EXPERIÊNCIA DO USUÁRIO... ".repeat(10);
+        const text2 = "> MÉTODO ALEMTECH INICIADO. " + "OCULTANDO A CURA ENQUANTO EXPÕE A FERIDA. INTERVENÇÃO NO TERRITÓRIO INTELECTUAL. RECONSTRUÇÃO DA VELOCIDADE DE CARREGAMENTO PARA ZERO FRICTION... ".repeat(10);
+        
+        document.getElementById('term1').innerHTML = `<b>> SINTOMAS DETECTADOS:</b>${text1}`;
+        document.getElementById('term2').innerHTML = `<b>> ESTRATÉGIA DE CURA:</b>${text2}`;
+
+        // Relojoaria de Prejuízo
+        document.getElementById('loss-val').innerText = "R$ " + (Math.random() * 8000 + 1500).toLocaleString('pt-BR');
+        document.getElementById('gold-val').innerText = "R$ " + (Math.random() * 25000 + 5000).toLocaleString('pt-BR');
     }
 
-    window.onload = () => {
-        initCharts();
-        atualizarRelogio();
-    };
+    window.onload = () => { init(); clock(); };
 </script>
 </body>
 </html>
