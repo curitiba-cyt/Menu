@@ -63,22 +63,22 @@
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
+                <div class="chart-title"><span>PROJEÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
                 <canvas id="monthChart"></canvas>
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: MONITORANDO ALVO</span></div>
+                <div class="chart-title"><span>VARREDURA EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: EMITINDO FREQUÊNCIA</span></div>
                 <canvas id="dayChart"></canvas>
             </div>
 
             <div class="report-section">
                 <div class="text-block" style="border-left: 4px solid #ff0000;">
-                    <div style="color: #ff0000; font-weight: 900; margin-bottom: 15px; font-size: 0.7rem; letter-spacing: 1px;">DIAGNÓSTICO DE FRAGILIDADE DIGITAL</div>
+                    <div style="color: #ff0000; font-weight: 900; margin-bottom: 15px; font-size: 0.7rem;">DIAGNÓSTICO DE FRAGILIDADE</div>
                     <div id="text-diag" class="content-area">Aguardando varredura...</div>
                 </div>
                 <div class="text-block" style="border-left: 4px solid #00ff00;">
-                    <div style="color: #00ff00; font-weight: 900; margin-bottom: 15px; font-size: 0.7rem; letter-spacing: 1px;">INTERVENÇÃO ESTRATÉGICA ALEMTECH</div>
+                    <div style="color: #00ff00; font-weight: 900; margin-bottom: 15px; font-size: 0.7rem;">SOLUÇÃO ESTRATÉGICA ALEMTECH</div>
                     <div id="text-solu" class="content-area">Aguardando dados...</div>
                 </div>
             </div>
@@ -90,8 +90,8 @@
         let charts = {};
         let scanning = false;
 
-        const radarPlugin = {
-            id: 'radarPlugin',
+        const emissionPlugin = {
+            id: 'emissionPlugin',
             beforeDatasetsDraw(chart) {
                 if (!scanning) return;
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
@@ -108,15 +108,15 @@
                     xPos = x.getPixelForTick(hora) + (progressoHora * (x.getPixelForTick(1) - x.getPixelForTick(0)));
                 }
 
-                // CORTAR O GRÁFICO (Só mostra o ouro até a posição da barra branca)
+                // CORTAR O GRÁFICO: Só desenha a linha dourada da barra branca para a DIREITA (emissão)
                 ctx.save();
                 ctx.beginPath();
-                ctx.rect(left, top, xPos - left, bottom - top);
+                ctx.rect(xPos, top, right - xPos, bottom - top);
                 ctx.clip();
             },
             afterDraw(chart) {
                 if (!scanning) return;
-                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
+                const {ctx, chartArea: {top, bottom}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos;
 
@@ -128,18 +128,23 @@
                     xPos = x.getPixelForTick(hora) + (prog * (x.getPixelForTick(1) - x.getPixelForTick(0)));
                 }
 
-                ctx.restore(); // Remove o clip para desenhar a barra branca sobre tudo
+                ctx.restore(); 
 
-                // BARRA BRANCA (O SCANNER)
+                // BARRA BRANCA (A ORIGEM DA LINHA)
                 ctx.save();
                 ctx.beginPath();
                 ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.shadowBlur = 10;
+                ctx.lineWidth = 3;
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = '#fff';
                 ctx.moveTo(xPos, top);
                 ctx.lineTo(xPos, bottom);
                 ctx.stroke();
+                
+                // INDICADOR DE SYNC
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 9px monospace';
+                ctx.fillText('EMISSÃO V16', xPos - 30, top - 5);
                 ctx.restore();
             }
         };
@@ -147,21 +152,21 @@
         window.onload = () => {
             const config = (count) => ({
                 type: 'line',
-                plugins: [radarPlugin],
+                plugins: [emissionPlugin],
                 data: {
                     labels: Array.from({length: count}, (_, i) => i + (count === 24 ? 'h' : 1)),
                     datasets: [{
-                        borderColor: '#FFD700', // LINHA DE OURO
+                        borderColor: '#FFD700', 
                         borderWidth: 2,
                         pointRadius: 0,
-                        tension: 0.3,
+                        tension: 0.4,
                         data: Array.from({length: count}, () => Math.random() * 40 + 30)
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, animation: false,
                     scales: {
-                        x: { grid: { color: '#111' }, ticks: { color: '#333', font: {size: 9} } },
+                        x: { grid: { color: '#111' }, ticks: { color: '#333' } },
                         y: { display: false, min: 0, max: 100 }
                     },
                     plugins: { legend: { display: false } }
@@ -182,23 +187,21 @@
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
             const btn = document.getElementById('btn-scan');
-            btn.innerText = "SINCRO-SCAN...";
+            btn.innerText = "SINCRO-EMISSÃO...";
             
-            // Gerador de 1000 caracteres de texto denso para preencher o visual
-            const generateDensedText = (title) => {
-                let text = `[ALEMTECH V16 SYSTEM REPORT - ${title}]\n\n`;
-                while(text.length < 1000) {
-                    text += "O ativo digital analisado apresenta falhas críticas na infraestrutura de conversão. O vazamento de autoridade identificado compromete a retenção do tráfego orgânico. ";
-                }
-                return text.substring(0, 1000);
+            const generateText = (t) => {
+                let s = `[PROTOCOLO ALEMTECH V16 - ${t}]\n\n`;
+                let body = "Analise de infraestrutura detectada. Vazamento de capital intelectual identificado através de falhas estruturais no SEO e tempo de resposta. O radar aponta que a concorrência está absorvendo o tráfego que deveria ser retido. ";
+                while(s.length < 1000) s += body;
+                return s.substring(0, 1000);
             };
 
             setTimeout(() => {
-                document.getElementById('text-diag').innerText = generateDensedText("FRAGILIDADE");
-                document.getElementById('text-solu').innerText = generateDensedText("INTERVENÇÃO");
+                document.getElementById('text-diag').innerText = generateText("FRAGILIDADE");
+                document.getElementById('text-solu').innerText = generateText("INTERVENÇÃO");
                 scanning = true;
-                btn.innerText = "RADAR ATIVO";
-            }, 1000);
+                btn.innerText = "SISTEMA ONLINE";
+            }, 800);
         }
 
         setInterval(() => {
