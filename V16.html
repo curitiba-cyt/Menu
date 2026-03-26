@@ -7,13 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        // CONFIGURAÇÃO DE RASTREAMENTO OMNI
-        const TRACKING_IDS = {
-            fb_ig: "1867727074186246",
-            platform_x: "rb2wm",
-            google_g4: "G-2DNN3MJ51E"
-        };
-
+        // SISTEMA DE SEGURANÇA ALEMTECH V16
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('acesso') === 'v16') {
@@ -46,8 +40,11 @@
         .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
         .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; }
         .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; }
+        
+        /* Ajuste nos containers de gráfico para caberem dois */
         .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; }
         .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; }
+        
         .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; }
         .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
@@ -67,8 +64,8 @@
                 <div id="valor-oportunidade" class="ipf-value" style="color: #00ff00;">R$ 0,00</div>
             </div>
             <div class="ipf-box" style="border-color: #00ff00; background: #000;">
-                <div class="ipf-label">STATUS OMNI-SYNC</div>
-                <div id="relogio-sync" class="ipf-value" style="color: #00ff00; font-size: 0.8rem;">G4: ACTIVE | X: rb2wm</div>
+                <div class="ipf-label">TEMPO DE CONEXÃO RADAR (SYNC)</div>
+                <div id="relogio-sync" class="ipf-value" style="color: #00ff00; font-size: 1rem;">00:00:00:00</div>
             </div>
         </aside>
 
@@ -88,12 +85,12 @@
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>VARREDURA MENSAL (RADAR DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
+                <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
                 <canvas id="monthChart"></canvas>
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>VARREDURA EM TEMPO REAL (RADAR HORAS)</span><span style="color: #ff0000;">STATUS: V16_ACTIVE</span></div>
+                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div>
                 <canvas id="dayChart"></canvas>
             </div>
 
@@ -113,131 +110,147 @@
     <script>
         const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0";
         let charts = {};
+        let ms = 0;
 
-        const initData = (key, size) => {
-            const saved = localStorage.getItem(key);
-            return saved ? JSON.parse(saved) : Array(size).fill(null);
-        };
-
-        // PLUGIN DE MOVIMENTO FLUIDO (SCANNER)
-        const v16FluidScannerPlugin = {
-            id: 'v16FluidScanner',
-            afterDatasetsDraw(chart) {
-                const {ctx, chartArea: {left, right, top, bottom}} = chart;
-                const now = new Date();
-                let xPos;
-                let label;
-
-                if (chart.canvas.id === 'monthChart') {
-                    const totalDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                    const progress = (now.getDate() - 1 + (now.getHours() / 24)) / totalDays;
-                    xPos = left + (right - left) * progress;
-                    label = `DIA_${now.getDate()}`;
-                } else {
-                    const progress = (now.getHours() + (now.getMinutes() / 60) + (now.getSeconds() / 3600)) / 24;
-                    xPos = left + (right - left) * progress;
-                    label = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} SYNC`;
+        // Configuração Padrão dos Gráficos AlemTech
+        const chartOptions = (maxTicks, labelPrefix) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 0 },
+            scales: {
+                x: { 
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
+                    ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } 
+                },
+                y: { 
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
+                    ticks: { display: false },
+                    min: 0, max: 100
                 }
+            },
+            plugins: { 
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        });
 
+        // Plugin para desenhar o marcador "G" na ponta da linha
+        const customMarkerPlugin = {
+            id: 'customMarker',
+            afterDatasetsDraw(chart) {
+                const {ctx, data, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
                 ctx.save();
-                ctx.beginPath();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 3;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = '#fff';
-                ctx.moveTo(xPos, top);
-                ctx.lineTo(xPos, bottom);
-                ctx.stroke();
-                
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 10px monospace';
-                ctx.fillText(label, xPos + 8, top + 15);
+                const meta = chart.getDatasetMeta(0);
+                const lastPoint = meta.data[meta.data.length - 1];
+                if (lastPoint) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.fillText(' G', lastPoint.x + 5, lastPoint.y + 3);
+                }
                 ctx.restore();
             }
         };
 
         window.onload = () => {
+            // Inicializa Gráfico 30 Dias
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line',
-                plugins: [v16FluidScannerPlugin],
-                data: {
-                    labels: Array.from({length: 31}, (_, i) => i + 1),
-                    datasets: [{ borderColor: '#00ff00', borderWidth: 2, pointRadius: 0, data: initData('v16_m_v4', 31), spanGaps: true, tension: 0.4 }]
+                plugins: [customMarkerPlugin],
+                data: { 
+                    labels: Array.from({length: 30}, (_, i) => i + 1), 
+                    datasets: [{ 
+                        borderColor: '#fff', 
+                        borderWidth: 1, 
+                        pointRadius: 0,
+                        data: Array.from({length: 30}, () => Math.random() * 40 + 30) 
+                    }] 
                 },
-                options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, scales: { x: { display: true, grid: { color: '#111' } }, y: { display: false, min: 0, max: 100 } }, plugins: { legend: { display: false } } }
+                options: chartOptions(30)
             });
 
+            // Inicializa Gráfico 24 Horas
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line',
-                plugins: [v16FluidScannerPlugin],
-                data: {
-                    labels: Array.from({length: 24}, (_, i) => i + 'h'),
-                    datasets: [{ borderColor: '#ff0000', borderWidth: 2, pointRadius: 0, data: initData('v16_d_v4', 24), spanGaps: true, tension: 0.4 }]
+                plugins: [customMarkerPlugin],
+                data: { 
+                    labels: Array.from({length: 24}, (_, i) => i + 'h'), 
+                    datasets: [{ 
+                        borderColor: '#fff', 
+                        borderWidth: 1, 
+                        pointRadius: 0,
+                        data: Array.from({length: 24}, () => Math.random() * 50 + 20) 
+                    }] 
                 },
-                options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, scales: { x: { display: true, grid: { color: '#111' } }, y: { display: false, min: 0, max: 100 } }, plugins: { legend: { display: false } } }
+                options: chartOptions(24)
             });
 
-            // Loop de Animação - 60 FPS para movimento ultra suave
-            function animate() {
-                charts.day.update('none');
-                charts.month.update('none');
-                document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
-                requestAnimationFrame(animate);
-            }
-            requestAnimationFrame(animate);
-
-            // Geração de Dados Fictícios de Monitoramento
+            // Loop de atualização em tempo real
             setInterval(() => {
-                const now = new Date();
-                const dIdx = now.getHours();
-                const mIdx = now.getDate() - 1;
-                
-                charts.day.data.datasets[0].data[dIdx] = Math.random() * 40 + 30;
-                charts.month.data.datasets[0].data[mIdx] = Math.random() * 30 + 50;
-                
-                localStorage.setItem('v16_d_v4', JSON.stringify(charts.day.data.datasets[0].data));
-                localStorage.setItem('v16_m_v4', JSON.stringify(charts.month.data.datasets[0].data));
-            }, 5000);
+                [charts.month, charts.day].forEach(chart => {
+                    chart.data.datasets[0].data.shift();
+                    chart.data.datasets[0].data.push(Math.random() * 60 + 20);
+                    chart.update();
+                });
+            }, 2000);
         };
 
         function subirNumero(id, valorFinal, sufixo = "") {
             let elemento = document.getElementById(id);
             let valorInicial = 0;
+            let incremento = valorFinal / 90;
             let cronometro = setInterval(() => {
-                valorInicial += valorFinal / 30;
+                valorInicial += incremento;
                 if (valorInicial >= valorFinal) {
                     elemento.innerText = (id.includes('valor') ? "R$ " + valorFinal.toLocaleString('pt-BR') : valorFinal + sufixo);
                     clearInterval(cronometro);
                 } else {
                     elemento.innerText = (id.includes('valor') ? "R$ " + Math.floor(valorInicial).toLocaleString('pt-BR') : Math.floor(valorInicial) + sufixo);
                 }
-            }, 30);
+            }, 16);
         }
+
+        setInterval(() => {
+            ms += 13;
+            let d = new Date(ms);
+            document.getElementById('relogio-sync').innerText = 
+                d.getUTCHours().toString().padStart(2, '0') + ":" + 
+                d.getUTCMinutes().toString().padStart(2, '0') + ":" + 
+                d.getUTCSeconds().toString().padStart(2, '0') + ":" + 
+                Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
+            
+            let agora = new Date();
+            document.getElementById('relogio-brasilia').innerText = agora.toLocaleTimeString('pt-BR');
+        }, 13);
 
         async function executarVarredura() {
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
+            if (!site.startsWith('http')) site = 'https://' + site;
             const btn = document.getElementById('btn-scan');
-            btn.innerText = "RADAR OMNI SYNC...";
-            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site.startsWith('http') ? site : 'https://'+site}`;
+            btn.innerText = "INVESTIGANDO...";
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
 
             try {
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
                 const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
                 
-                const scores = { perf: perf, seo: 94, acc: 88, bp: 91, cls: 82, fid: 97 };
+                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+
                 Object.keys(scores).forEach(key => {
-                    document.getElementById('circ-' + key).style.background = `conic-gradient(${scores[key] > 80 ? '#00ff00' : '#ff0000'} ${scores[key]}%, #222 0%)`;
-                    subirNumero('val-' + key, scores[key], "%");
+                    const val = scores[key];
+                    const color = val > 80 ? "#00ff00" : "#ff0000";
+                    document.getElementById('circ-' + key).style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
+                    subirNumero('val-' + key, val, "%");
                 });
 
-                subirNumero('valor-perda', (100 - perf) * 1150);
-                subirNumero('valor-oportunidade', (100 - perf) * 5200);
-                document.getElementById('text-diag').innerText = `INVESTIGAÇÃO CONCLUÍDA: ${site.toUpperCase()}. FRAGILIDADE EXPOSTA EM REDES OMNI.`;
-                document.getElementById('text-solu').innerText = `IDs VINCULADOS: FB_IG ${TRACKING_IDS.fb_ig} | GOOGLE ${TRACKING_IDS.google_g4}. INICIANDO RECUPERAÇÃO DE TRÁFEGO.`;
-                btn.innerText = "VARREDURA COMPLETA";
-            } catch (e) { btn.innerText = "ERRO NA REDE"; }
+                subirNumero('valor-perda', (100 - perf) * 850);
+                subirNumero('valor-oportunidade', (100 - perf) * 3600);
+
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
+                btn.innerText = "CONCLUÍDO";
+            } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
         }
     </script>
 </body>
