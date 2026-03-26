@@ -109,10 +109,10 @@
         let ms = 0;
         let scanning = false;
 
-        const chartOptions = (maxTicks) => ({
+        const chartOptions = () => ({
             responsive: true,
             maintainAspectRatio: false,
-            animation: { duration: 800 },
+            animation: false,
             scales: {
                 x: { 
                     grid: { color: '#1a1a1a', lineWidth: 1 }, 
@@ -130,28 +130,39 @@
             }
         });
 
-        // PLUGIN DA BARRA BRANCA VERTICAL
-        const verticalLinePlugin = {
-            id: 'verticalLine',
+        // PLUGIN DA BARRA DE SCANNER TEMPORAL
+        const verticalScannerPlugin = {
+            id: 'verticalScanner',
             afterDatasetsDraw(chart) {
                 if (!scanning) return;
-                const {ctx, chartArea: {top, bottom}, scales: {x}} = chart;
-                const meta = chart.getDatasetMeta(0);
-                const lastPoint = meta.data[meta.data.length - 1];
-                
-                if (lastPoint) {
+                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
+                const agora = new Date();
+                let xPos;
+
+                if (chart.canvas.id === 'monthChart') {
+                    // Posiciona baseado no dia do mês (1 a 30)
+                    const dia = agora.getDate();
+                    xPos = x.getPixelForValue(dia);
+                } else {
+                    // Posiciona baseado na hora do dia (0 a 23)
+                    const hora = agora.getHours();
+                    xPos = x.getPixelForValue(hora + 'h');
+                }
+
+                if (xPos >= left && xPos <= right) {
                     ctx.save();
                     ctx.beginPath();
                     ctx.strokeStyle = '#ffffff';
                     ctx.lineWidth = 2;
-                    ctx.moveTo(lastPoint.x, top);
-                    ctx.lineTo(lastPoint.x, bottom);
+                    ctx.setLineDash([0]);
+                    ctx.moveTo(xPos, top);
+                    ctx.lineTo(xPos, bottom);
                     ctx.stroke();
                     
-                    // Marcador "G" na ponta
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 10px monospace';
-                    ctx.fillText(' G', lastPoint.x + 5, lastPoint.y + 3);
+                    // Pequeno triângulo ou indicador na base
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 9px monospace';
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5);
                     ctx.restore();
                 }
             }
@@ -160,43 +171,41 @@
         window.onload = () => {
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line',
-                plugins: [verticalLinePlugin],
+                plugins: [verticalScannerPlugin],
                 data: { 
                     labels: Array.from({length: 30}, (_, i) => i + 1), 
                     datasets: [{ 
-                        borderColor: '#fff', 
-                        borderWidth: 1, 
+                        borderColor: '#333', 
+                        borderWidth: 1.5, 
                         pointRadius: 0,
-                        data: Array.from({length: 30}, () => 0) 
+                        data: Array.from({length: 30}, () => Math.random() * 40 + 20) 
                     }] 
                 },
-                options: chartOptions(30)
+                options: chartOptions()
             });
 
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line',
-                plugins: [verticalLinePlugin],
+                plugins: [verticalScannerPlugin],
                 data: { 
                     labels: Array.from({length: 24}, (_, i) => i + 'h'), 
                     datasets: [{ 
-                        borderColor: '#fff', 
-                        borderWidth: 1, 
+                        borderColor: '#333', 
+                        borderWidth: 1.5, 
                         pointRadius: 0,
-                        data: Array.from({length: 24}, () => 0) 
+                        data: Array.from({length: 24}, () => Math.random() * 50 + 10) 
                     }] 
                 },
-                options: chartOptions(24)
+                options: chartOptions()
             });
 
-            // Loop de atualização (Só ativa se scanning for true)
+            // Atualização visual constante da barra
             setInterval(() => {
-                if(!scanning) return;
-                [charts.month, charts.day].forEach(chart => {
-                    chart.data.datasets[0].data.shift();
-                    chart.data.datasets[0].data.push(Math.random() * 40 + 30);
-                    chart.update('none');
-                });
-            }, 1500);
+                if(scanning) {
+                    charts.month.draw();
+                    charts.day.draw();
+                }
+            }, 1000);
         };
 
         function subirNumero(id, valorFinal, sufixo = "") {
@@ -255,7 +264,7 @@
                 document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
                 document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
-                // Ativa os gráficos e a barra vertical
+                // Ativa a barra branca que marca o tempo real
                 scanning = true;
                 btn.innerText = "CONCLUÍDO";
             } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
