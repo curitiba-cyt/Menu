@@ -130,23 +130,26 @@
             }
         });
 
-        // PLUGIN DA BARRA DE SCANNER TEMPORAL
+        // PLUGIN DA BARRA DE SCANNER TEMPORAL REAL
         const verticalScannerPlugin = {
             id: 'verticalScanner',
-            afterDatasetsDraw(chart) {
+            afterDraw(chart) {
                 if (!scanning) return;
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos;
 
                 if (chart.canvas.id === 'monthChart') {
-                    // Posiciona baseado no dia do mês (1 a 30)
+                    // Cálculo preciso para o mês (Dia + fração de horas/minutos para movimento fluido)
                     const dia = agora.getDate();
-                    xPos = x.getPixelForValue(dia);
+                    const progressoDia = (agora.getHours() * 3600 + agora.getMinutes() * 60 + agora.getSeconds()) / 86400;
+                    xPos = x.getPixelForValue(dia + progressoDia);
                 } else {
-                    // Posiciona baseado na hora do dia (0 a 23)
+                    // Cálculo preciso para as 24h (Hora + fração de minutos/segundos)
                     const hora = agora.getHours();
-                    xPos = x.getPixelForValue(hora + 'h');
+                    const progressoHora = (agora.getMinutes() * 60 + agora.getSeconds()) / 3600;
+                    // Labels são '0h', '1h'... mapeamos para o index da hora + a fração
+                    xPos = x.getPixelForTick(hora) + (progressoHora * (x.getPixelForTick(1) - x.getPixelForTick(0)));
                 }
 
                 if (xPos >= left && xPos <= right) {
@@ -154,15 +157,16 @@
                     ctx.beginPath();
                     ctx.strokeStyle = '#ffffff';
                     ctx.lineWidth = 2;
-                    ctx.setLineDash([0]);
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ffffff';
                     ctx.moveTo(xPos, top);
                     ctx.lineTo(xPos, bottom);
                     ctx.stroke();
                     
-                    // Pequeno triângulo ou indicador na base
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 9px monospace';
-                    ctx.fillText('▼ SYNC', xPos - 15, top - 5);
+                    ctx.font = 'bold 10px monospace';
+                    ctx.shadowBlur = 0;
+                    ctx.fillText('SYNC', xPos + 5, top + 15);
                     ctx.restore();
                 }
             }
@@ -199,13 +203,15 @@
                 options: chartOptions()
             });
 
-            // Atualização visual constante da barra
-            setInterval(() => {
+            // Refresh da animação da barra (60fps para fluidez total)
+            function loop() {
                 if(scanning) {
-                    charts.month.draw();
-                    charts.day.draw();
+                    charts.month.render();
+                    charts.day.render();
                 }
-            }, 1000);
+                requestAnimationFrame(loop);
+            }
+            loop();
         };
 
         function subirNumero(id, valorFinal, sufixo = "") {
@@ -264,7 +270,6 @@
                 document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
                 document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
-                // Ativa a barra branca que marca o tempo real
                 scanning = true;
                 btn.innerText = "CONCLUÍDO";
             } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
