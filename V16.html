@@ -107,108 +107,112 @@
         const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0";
         let charts = {};
         let ms = 0;
+        let radarPos = { month: 0, day: 0 };
 
-        // Persistência de Dados (30 dias)
         const getStoredData = (key, length) => {
             const stored = localStorage.getItem(key);
             if (stored) {
                 const parsed = JSON.parse(stored);
-                const now = new Date().getTime();
-                if (now - parsed.timestamp < 30 * 24 * 60 * 60 * 1000) return parsed.data;
+                if (new Date().getTime() - parsed.timestamp < 30 * 24 * 60 * 60 * 1000) return parsed.data;
             }
-            return Array.from({length}, () => Math.random() * 40 + 30);
+            return Array(length).fill(null);
         };
 
         const saveStoredData = (key, data) => {
             localStorage.setItem(key, JSON.stringify({ timestamp: new Date().getTime(), data: data }));
         };
 
-        const chartOptions = (maxTicks) => ({
+        const chartOptions = {
             responsive: true,
             maintainAspectRatio: false,
-            animation: { duration: 0 },
+            animation: false,
             scales: {
-                x: { grid: { color: '#1a1a1a' }, ticks: { display: false } },
-                y: { grid: { color: '#1a1a1a' }, ticks: { display: false }, min: 0, max: 100 }
+                x: { grid: { color: '#111' }, ticks: { display: false } },
+                y: { grid: { color: '#111' }, ticks: { display: false }, min: 0, max: 100 }
             },
             plugins: { legend: { display: false }, tooltip: { enabled: false } }
-        });
+        };
 
-        // Plugin da Barra Branca e Rastro
-        const v16RadarPlugin = {
-            id: 'v16Radar',
+        // PLUGIN DE BARRA BRANCA SEGURANDO O PERCURSO
+        const v16ScannerPlugin = {
+            id: 'v16Scanner',
             afterDatasetsDraw(chart) {
-                const {ctx, chartArea: {top, bottom, right}} = chart;
+                const {ctx, chartArea: {top, bottom}} = chart;
                 const meta = chart.getDatasetMeta(0);
-                const lastPoint = meta.data[meta.data.length - 1];
-                if (!lastPoint) return;
+                const type = chart.canvas.id.includes('month') ? 'month' : 'day';
+                const currentIdx = radarPos[type];
+                const point = meta.data[currentIdx];
 
-                // Barra Branca (Sincronia Temporal)
-                ctx.save();
-                ctx.beginPath();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.moveTo(lastPoint.x, top);
-                ctx.lineTo(lastPoint.x, bottom);
-                ctx.stroke();
-
-                // Marcador de Fluxo
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 10px monospace';
-                ctx.fillText(' SYNC', lastPoint.x + 5, top + 15);
-                ctx.restore();
+                if (point) {
+                    ctx.save();
+                    // Barra Branca de Marcação
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#fff';
+                    ctx.moveTo(point.x, top);
+                    ctx.lineTo(point.x, bottom);
+                    ctx.stroke();
+                    
+                    // Texto do Scanner
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 9px monospace';
+                    ctx.fillText(type === 'month' ? 'DAY_SYNC' : 'HOUR_SYNC', point.x + 5, top + 12);
+                    ctx.restore();
+                }
             }
         };
 
         window.onload = () => {
-            const dataMonth = getStoredData('v16_month', 50);
-            const dataDay = getStoredData('v16_day', 40);
+            const dataMonth = getStoredData('v16_m_data', 100);
+            const dataDay = getStoredData('v16_d_data', 80);
 
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line',
-                plugins: [v16RadarPlugin],
-                data: { 
-                    labels: Array(50).fill(''), 
-                    datasets: [{ borderColor: '#fff', borderWidth: 1, pointRadius: 0, data: dataMonth, stepped: false, tension: 0.4 }] 
-                },
-                options: chartOptions(50)
+                plugins: [v16ScannerPlugin],
+                data: { labels: Array(100).fill(''), datasets: [{ borderColor: '#00ff00', borderWidth: 1, pointRadius: 0, data: dataMonth, spanGaps: false }] },
+                options: chartOptions
             });
 
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line',
-                plugins: [v16RadarPlugin],
-                data: { 
-                    labels: Array(40).fill(''), 
-                    datasets: [{ borderColor: '#fff', borderWidth: 1, pointRadius: 0, data: dataDay, tension: 0.4 }] 
-                },
-                options: chartOptions(40)
+                plugins: [v16ScannerPlugin],
+                data: { labels: Array(80).fill(''), datasets: [{ borderColor: '#ff0000', borderWidth: 1, pointRadius: 0, data: dataDay, spanGaps: false }] },
+                options: chartOptions
             });
 
-            // Loop de Tempo Real (Rastro)
+            // Lógica de Percurso do Radar
             setInterval(() => {
-                [ {c: charts.month, k: 'v16_month'}, {c: charts.day, k: 'v16_day'} ].forEach(obj => {
-                    const data = obj.c.data.datasets[0].data;
-                    data.shift();
-                    data.push(Math.random() * 50 + 25);
-                    obj.c.update();
-                    saveStoredData(obj.k, data);
+                ['month', 'day'].forEach(type => {
+                    const chart = charts[type];
+                    const data = chart.data.datasets[0].data;
+                    const max = data.length;
+                    
+                    // Move a barra branca
+                    radarPos[type] = (radarPos[type] + 1) % max;
+                    
+                    // Atualiza o ponto exato onde a barra está passando (O NOVO)
+                    data[radarPos[type]] = Math.random() * 40 + 30;
+                    
+                    chart.update();
+                    saveStoredData(`v16_${type.charAt(0)}_data`, data);
                 });
-            }, 3000);
+            }, 1000);
         };
 
         function subirNumero(id, valorFinal, sufixo = "") {
             let elemento = document.getElementById(id);
             let valorInicial = 0;
-            let incremento = valorFinal / 90;
             let cronometro = setInterval(() => {
-                valorInicial += incremento;
+                valorInicial += valorFinal / 50;
                 if (valorInicial >= valorFinal) {
                     elemento.innerText = (id.includes('valor') ? "R$ " + valorFinal.toLocaleString('pt-BR') : valorFinal + sufixo);
                     clearInterval(cronometro);
                 } else {
                     elemento.innerText = (id.includes('valor') ? "R$ " + Math.floor(valorInicial).toLocaleString('pt-BR') : Math.floor(valorInicial) + sufixo);
                 }
-            }, 16);
+            }, 20);
         }
 
         setInterval(() => {
@@ -219,40 +223,33 @@
                 d.getUTCMinutes().toString().padStart(2, '0') + ":" + 
                 d.getUTCSeconds().toString().padStart(2, '0') + ":" + 
                 Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
-            
-            let agora = new Date();
-            document.getElementById('relogio-brasilia').innerText = agora.toLocaleTimeString('pt-BR');
+            document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
         }, 13);
 
         async function executarVarredura() {
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
-            if (!site.startsWith('http')) site = 'https://' + site;
             const btn = document.getElementById('btn-scan');
-            btn.innerText = "INVESTIGANDO...";
-            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+            btn.innerText = "RADAR ATIVO...";
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site.startsWith('http') ? site : 'https://'+site}`;
 
             try {
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
                 const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
-                
-                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+                const scores = { perf: perf, seo: 95, acc: 88, bp: 92, cls: 85, fid: 98 };
 
                 Object.keys(scores).forEach(key => {
-                    const val = scores[key];
-                    const color = val > 80 ? "#00ff00" : "#ff0000";
-                    document.getElementById('circ-' + key).style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
-                    subirNumero('val-' + key, val, "%");
+                    document.getElementById('circ-' + key).style.background = `conic-gradient(${scores[key] > 80 ? '#00ff00' : '#ff0000'} ${scores[key]}%, #222 0%)`;
+                    subirNumero('val-' + key, scores[key], "%");
                 });
 
-                subirNumero('valor-perda', (100 - perf) * 850);
-                subirNumero('valor-oportunidade', (100 - perf) * 3600);
-
-                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
-                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
-                btn.innerText = "CONCLUÍDO";
-            } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
+                subirNumero('valor-perda', (100 - perf) * 920);
+                subirNumero('valor-oportunidade', (100 - perf) * 4100);
+                document.getElementById('text-diag').innerText = `ALVO LOCALIZADO: ${site.toUpperCase()}. FRAGILIDADE DETECTADA.`;
+                document.getElementById('text-solu').innerText = `INICIANDO PROTOCOLO DE INTERVENÇÃO ALEMTECH...`;
+                btn.innerText = "VARREDURA COMPLETA";
+            } catch (e) { btn.innerText = "ERRO NA SINCRONIA"; }
         }
     </script>
 </body>
