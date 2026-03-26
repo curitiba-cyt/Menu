@@ -1,5 +1,3 @@
-G
-______________________________________________________________
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -9,21 +7,17 @@ ______________________________________________________________
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        //<![CDATA[
         // SISTEMA DE SEGURANÇA ALEMTECH V16
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('acesso') === 'v16') {
                 localStorage.setItem('access_token', 'v16_autorizado');
-                // Limpa a URL para ninguém ver a chave
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
-
             if (localStorage.getItem('access_token') !== 'v16_autorizado') {
                 window.location.href = "https://www.google.com"; 
             }
         })();
-        //]]>
     </script>
 
     <style>
@@ -46,11 +40,14 @@ ______________________________________________________________
         .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
         .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; }
         .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; }
-        .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 20px; margin: 0 30px 20px; border-radius: 4px; height: 220px; position: relative; }
-        .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 15px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; }
+        
+        /* Ajuste nos containers de gráfico para caberem dois */
+        .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; }
+        .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; }
+        
         .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; }
-        .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 200px; overflow-y: auto; }
+        .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -88,8 +85,13 @@ ______________________________________________________________
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>TRAÇÃO MENSAL</span><span id="relogio-brasilia">00:00:00</span></div>
+                <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
                 <canvas id="monthChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div>
+                <canvas id="dayChart"></canvas>
             </div>
 
             <div class="report-section">
@@ -109,6 +111,88 @@ ______________________________________________________________
         const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0";
         let charts = {};
         let ms = 0;
+
+        // Configuração Padrão dos Gráficos AlemTech
+        const chartOptions = (maxTicks, labelPrefix) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 0 },
+            scales: {
+                x: { 
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
+                    ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } 
+                },
+                y: { 
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
+                    ticks: { display: false },
+                    min: 0, max: 100
+                }
+            },
+            plugins: { 
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        });
+
+        // Plugin para desenhar o marcador "G" na ponta da linha
+        const customMarkerPlugin = {
+            id: 'customMarker',
+            afterDatasetsDraw(chart) {
+                const {ctx, data, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
+                ctx.save();
+                const meta = chart.getDatasetMeta(0);
+                const lastPoint = meta.data[meta.data.length - 1];
+                if (lastPoint) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.fillText(' G', lastPoint.x + 5, lastPoint.y + 3);
+                }
+                ctx.restore();
+            }
+        };
+
+        window.onload = () => {
+            // Inicializa Gráfico 30 Dias
+            charts.month = new Chart(document.getElementById('monthChart'), {
+                type: 'line',
+                plugins: [customMarkerPlugin],
+                data: { 
+                    labels: Array.from({length: 30}, (_, i) => i + 1), 
+                    datasets: [{ 
+                        borderColor: '#fff', 
+                        borderWidth: 1, 
+                        pointRadius: 0,
+                        data: Array.from({length: 30}, () => Math.random() * 40 + 30) 
+                    }] 
+                },
+                options: chartOptions(30)
+            });
+
+            // Inicializa Gráfico 24 Horas
+            charts.day = new Chart(document.getElementById('dayChart'), {
+                type: 'line',
+                plugins: [customMarkerPlugin],
+                data: { 
+                    labels: Array.from({length: 24}, (_, i) => i + 'h'), 
+                    datasets: [{ 
+                        borderColor: '#fff', 
+                        borderWidth: 1, 
+                        pointRadius: 0,
+                        data: Array.from({length: 24}, () => Math.random() * 50 + 20) 
+                    }] 
+                },
+                options: chartOptions(24)
+            });
+
+            // Loop de atualização em tempo real
+            setInterval(() => {
+                [charts.month, charts.day].forEach(chart => {
+                    chart.data.datasets[0].data.shift();
+                    chart.data.datasets[0].data.push(Math.random() * 60 + 20);
+                    chart.update();
+                });
+            }, 2000);
+        };
 
         function subirNumero(id, valorFinal, sufixo = "") {
             let elemento = document.getElementById(id);
@@ -133,6 +217,9 @@ ______________________________________________________________
                 d.getUTCMinutes().toString().padStart(2, '0') + ":" + 
                 d.getUTCSeconds().toString().padStart(2, '0') + ":" + 
                 Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
+            
+            let agora = new Date();
+            document.getElementById('relogio-brasilia').innerText = agora.toLocaleTimeString('pt-BR');
         }, 13);
 
         async function executarVarredura() {
@@ -165,14 +252,6 @@ ______________________________________________________________
                 btn.innerText = "CONCLUÍDO";
             } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
         }
-
-        window.onload = () => {
-            charts.month = new Chart(document.getElementById('monthChart'), {
-                type: 'line',
-                data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#00ff00', borderWidth: 1, data: Array.from({length: 30}, () => Math.random() * 100) }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        };
     </script>
 </body>
 </html>
