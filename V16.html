@@ -2,167 +2,166 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ALEMTECH.V16 - ELITE OMNI RADAR</title>
+    <title>ALEMTECH.V16 - OMNI RADAR</title>
+    
+    <script>
+    //<![CDATA[
+        (function() {
+            // 1. TENTA CAPTURAR A CHAVE NA URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('acesso') === 'v16') {
+                localStorage.setItem('access_token', 'v16_autorizado');
+                // Limpa a URL para não ficar feio, mas mantém na página
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // 2. VERIFICAÇÃO FINAL
+            if (localStorage.getItem('access_token') !== 'v16_autorizado') {
+                window.location.replace("https://www.google.com"); 
+            }
+        })();
+    //]]>
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; }
-        .bg-matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; pointer-events: none; z-index: 0; }
-        
-        .interface { position: relative; z-index: 10; display: grid; grid-template-columns: 320px 1fr 280px; height: 100vh; gap: 10px; padding: 10px; background: rgba(0,5,0,0.9); }
-        
-        /* Lateral Esquerda */
-        .panel-l { background: rgba(10,10,10,0.9); border: 1px solid #222; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-        .logo { font-size: 1.5rem; font-weight: 900; color: #f00; border-bottom: 2px solid #f00; padding-bottom: 5px; text-shadow: 0 0 10px #f00; }
-        .preview { width: 100%; height: 150px; background: #050505; border: 1px solid #333; overflow: hidden; position: relative; }
-        .preview img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-        
-        .stat-box { background: #080808; border-left: 3px solid #f00; padding: 10px; }
-        .stat-label { font-size: 10px; color: #888; text-transform: uppercase; }
-        .stat-val { font-size: 1.4rem; font-weight: 900; color: #fff; }
+        /* ESTILO DE PROTEÇÃO: SÓ MOSTRA O CONTEÚDO SE TIVER A CHAVE */
+        body { display: none; background: #020202; }
+        .auth-ok body { display: block !important; }
 
-        /* Centro */
-        .panel-c { display: flex; flex-direction: column; gap: 10px; }
-        .scanner-header { background: #111; padding: 15px; border: 1px solid #333; display: flex; gap: 10px; }
-        .url-input { flex: 1; background: #000; border: 1px solid #0f0; padding: 10px; color: #0f0; outline: none; }
-        .scan-btn { background: #f00; color: #fff; border: none; padding: 0 20px; font-weight: 900; transition: 0.3s; }
-        .scan-btn:hover { background: #b00; box-shadow: 0 0 15px #f00; }
-
-        .radar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-        .radar-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; text-align: center; position: relative; }
-        .circle { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #222; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
-
-        .big-chart { flex: 1; background: #050505; border: 1px solid #1a1a1a; padding: 15px; position: relative; }
-        
-        /* Rodapé Diagnóstico */
-        .footer-diag { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 120px; }
-        .terminal { background: #000; border: 1px solid #222; padding: 10px; font-size: 11px; overflow-y: auto; color: #0f0; }
-
-        /* Animações */
-        @keyframes scanline { 0% { top: -100%; } 100% { top: 100%; } }
-        .scanline { position: absolute; width: 100%; height: 2px; background: rgba(0,255,0,0.2); animation: scanline 4s linear infinite; }
+        * { box-sizing: border-box !important; margin: 0; padding: 0; }
+        html, body { width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; }
+        .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; }
+        .sidebar { width: 300px; background: #080808; border-right: 1px solid #1a1111; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; }
+        .sidebar-logo { font-weight: 900; color: #ff0000; margin-bottom: 25px; font-size: 1.4rem; letter-spacing: 3px; border-left: 5px solid #ff0000; padding-left: 12px; }
+        .live-preview-box { border: 1px solid #333; height: 180px; background: #000; position: relative; overflow: hidden; margin-bottom: 20px; border-radius: 4px; }
+        #site-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        .ipf-box { background: linear-gradient(180deg, #1a0505 0%, #000 100%); padding: 18 : px; border: 1px solid #3d0000; border-radius: 4px; margin-bottom: 15px; }
+        .ipf-label { font-size: 0.6rem; color: #ff4d4d; text-transform: uppercase; font-weight: 800; }
+        .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; color: #fff; }
+        .main-content { flex: 1; height: 100vh; overflow-y: auto; background: #040404; display: flex; flex-direction: column; }
+        .analysis-header { background: #0a0a0a; padding: 20px 30px; border-bottom: 1px solid #151515; display: flex; gap: 15px; position: sticky; top: 0; z-index: 1000; }
+        .analysis-input { flex: 1; background: #000; border: 1px solid #333; padding: 14px; color: #00ff00; font-family: monospace; outline: none; }
+        .analysis-btn { background: #ff0000; color: #fff; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .mini-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 20px 30px; }
+        .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 4px; text-align: center; }
+        .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; text-transform: uppercase; }
+        .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; }
+        .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 8px auto; }
+        .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 20px; margin: 0 30px 20px; border-radius: 4px; height: 200px; }
+        .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 20px; border-radius: 4px; }
+        .content-area { font-size: 0.85rem; color: #aaa; height: 200px; overflow-y: auto; }
     </style>
 </head>
-<body>
-    <div class="bg-matrix" id="matrix"></div>
-    <div class="interface">
-        <div class="panel-l">
-            <div class="logo">ALEMTECH V16.ELITE</div>
-            <div class="preview">
-                <div class="scanline"></div>
-                <img id="img-alvo" src="" alt="Aguardando...">
+<body onload="document.documentElement.classList.add('auth-ok'); initCharts();">
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-logo">ALEMTECH.V16</div>
+            <div class="live-preview-box"><img id="site-preview" src="" alt="Radar Offline"></div>
+            <div class="ipf-box">
+                <div class="ipf-label">PREJUÍZO TÉCNICO</div>
+                <div id="valor-perda" class="ipf-value">R$ 0,00</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-label">PREJUÍZO TÉCNICO ACUMULADO</div>
-                <div class="stat-val" id="loss-val" style="color: #f00;">R$ 0,00</div>
+            <div class="ipf-box" style="border-color: #00ff00;">
+                <div class="ipf-label" style="color:#00ff00">OURO RETIDO</div>
+                <div id="valor-oportunidade" class="ipf-value" style="color:#00ff00">R$ 0,00</div>
             </div>
-            <div class="stat-box" style="border-color: #0f0;">
-                <div class="stat-label">OURO RETIDO (OPORTUNIDADE)</div>
-                <div class="stat-val" id="gold-val" style="color: #0f0;">R$ 0,00</div>
+            <div class="ipf-box">
+                <div class="ipf-label">SYNC RADAR</div>
+                <div id="relogio-sync" class="ipf-value" style="font-size: 1rem; color:#00ff00">00:00:00:00</div>
             </div>
-            <div class="terminal" id="mini-log" style="height: 150px; font-size: 9px;">
-                > SISTEMA PRONTO...<br>> AGUARDANDO ALVO...
-            </div>
-        </div>
+        </aside>
 
-        <div class="panel-c">
-            <div class="scanner-header">
-                <input type="text" id="url-input" class="url-input" placeholder="INSIRA O DOMÍNIO DO ALVO (EX: GOOGLE.COM)">
-                <button class="scan-btn" onclick="iniciarAtaque()">VARREDURA TOTAL</button>
-            </div>
-            
-            <div class="radar-grid">
-                <div class="radar-card"><div class="stat-label">LCP</div><div class="circle" id="c1">--</div></div>
-                <div class="radar-card"><div class="stat-label">FCP</div><div class="circle" id="c2">--</div></div>
-                <div class="radar-card"><div class="stat-label">CLS</div><div class="circle" id="c3">--</div></div>
-                <div class="radar-card"><div class="stat-label">FID</div><div class="circle" id="c4">--</div></div>
-                <div class="radar-card"><div class="stat-label">SPEED</div><div class="circle" id="c5">--</div></div>
-                <div class="radar-card"><div class="stat-label">SEO</div><div class="circle" id="c6">--</div></div>
+        <main class="main-content">
+            <div class="analysis-header">
+                <input type="text" id="siteUrl" class="analysis-input" placeholder="DOMÍNIO DO ALVO...">
+                <button class="analysis-btn" id="btn-scan" onclick="executarVarredura()">VARREDURA</button>
             </div>
 
-            <div class="big-chart">
-                <canvas id="grafico-principal"></canvas>
+            <div class="mini-stats-grid">
+                <div class="mini-card"><div class="mini-label">LCP</div><div class="progress-circle" id="circ-perf"></div><div id="val-perf" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">SEO</div><div class="progress-circle" id="circ-seo"></div><div id="val-seo" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">LOAD</div><div class="progress-circle" id="circ-acc"></div><div id="val-acc" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">MOBILE</div><div class="progress-circle" id="circ-bp"></div><div id="val-bp" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">DESKTOP</div><div class="progress-circle" id="circ-cls"></div><div id="val-cls" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">UX/FID</div><div class="progress-circle" id="circ-fid"></div><div id="val-fid" class="mini-value">--</div></div>
             </div>
 
-            <div class="footer-diag">
-                <div class="terminal" id="diag-box">> DIAGNÓSTICO DE FRAGILIDADE ATIVO...</div>
-                <div class="terminal" id="solu-box">> ESTRATÉGIA DE INTERVENÇÃO...</div>
+            <div class="chart-container">
+                <canvas id="monthChart"></canvas>
             </div>
-        </div>
-        
-        <div class="panel-r" style="background: #080808; border: 1px solid #222; padding: 10px;">
-            <div class="stat-label" style="text-align: center; margin-bottom: 10px;">FLUXO DE DADOS (SYNC)</div>
-            <div id="data-flow" style="font-size: 9px; color: #050; height: 100%; overflow: hidden;"></div>
-        </div>
+
+            <div class="report-section">
+                <div class="text-block" style="border-left: 4px solid red">
+                    <div id="text-diag" class="content-area">Aguardando alvo...</div>
+                </div>
+                <div class="text-block" style="border-left: 4px solid green">
+                    <div id="text-solu" class="content-area">Análise pendente...</div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
-        // Simulação de Matrix no fundo
-        const flow = document.getElementById('data-flow');
-        setInterval(() => {
-            const line = document.createElement('div');
-            line.innerText = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            flow.prepend(line);
-            if(flow.children.length > 50) flow.lastChild.remove();
-        }, 50);
+    //<![CDATA[
+        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0";
+        let ms = 0;
 
-        let chart;
-        function initChart() {
-            const ctx = document.getElementById('grafico-principal').getContext('2d');
-            chart = new Chart(ctx, {
+        function subirNumero(id, valorFinal) {
+            let el = document.getElementById(id);
+            let atual = 0;
+            let step = valorFinal / 50;
+            let timer = setInterval(() => {
+                atual += step;
+                if(atual >= valorFinal) {
+                    el.innerText = "R$ " + valorFinal.toLocaleString('pt-BR');
+                    clearInterval(timer);
+                } else {
+                    el.innerText = "R$ " + Math.floor(atual).toLocaleString('pt-BR');
+                }
+            }, 20);
+        }
+
+        setInterval(() => {
+            ms += 13;
+            let d = new Date(ms);
+            document.getElementById('relogio-sync').innerText = d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0') + ":" + d.getUTCSeconds().toString().padStart(2, '0') + ":" + Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
+        }, 13);
+
+        function initCharts() {
+            new Chart(document.getElementById('monthChart'), {
                 type: 'line',
-                data: {
-                    labels: Array.from({length: 20}, (_, i) => i),
-                    datasets: [{
-                        label: 'TRAÇÃO DE MERCADO',
-                        borderColor: '#0f0',
-                        borderWidth: 2,
-                        data: Array.from({length: 20}, () => Math.random() * 100),
-                        fill: true,
-                        backgroundColor: 'rgba(0, 255, 0, 0.1)'
-                    }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#ccff00', data: Array(30).fill(0).map(() => Math.random()*100), tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        async function iniciarAtaque() {
-            let url = document.getElementById('url-input').value;
+        async function executarVarredura() {
+            let url = document.getElementById('siteUrl').value;
             if(!url) return;
-            if(!url.startsWith('http')) url = 'https://' + url;
+            document.getElementById('btn-scan').innerText = "INVESTIGANDO...";
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/https://${url.replace('https://','')}`;
             
-            document.getElementById('mini-log').innerHTML += `<br>> INICIANDO VARREDURA EM ${url}...`;
-            document.getElementById('img-alvo').src = `https://image.thum.io/get/width/400/crop/800/${url}`;
-
             try {
-                const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile`);
-                const data = await res.json();
-                const score = Math.round(data.lighthouseResult.categories.performance.score * 100);
+                const r = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://${url.replace('https://','')}&key=${API_KEY}&strategy=mobile&category=performance`);
+                const d = await r.json();
+                const score = Math.round(d.lighthouseResult.categories.performance.score * 100);
                 
-                // Preencher círculos
-                const colors = score > 80 ? '#0f0' : '#f00';
-                for(let i=1; i<=6; i++) {
-                    const el = document.getElementById('c'+i);
-                    el.innerText = score + "%";
-                    el.style.borderColor = colors;
-                    el.style.color = colors;
-                }
-
-                // Subir Números
-                let loss = (100 - score) * 1250;
-                document.getElementById('loss-val').innerText = "R$ " + loss.toLocaleString();
-                document.getElementById('gold-val').innerText = "R$ " + (loss * 4.5).toLocaleString();
+                document.getElementById('val-perf').innerText = score;
+                document.getElementById('circ-perf').style.background = `conic-gradient(#ff0000 ${score}%, #222 0%)`;
                 
-                document.getElementById('diag-box').innerHTML = `> ALVO: ${url}<br>> FRAGILIDADE DETECTADA: ${100-score}%<br>> SITE VULNERÁVEL A PERDA DE RETENÇÃO.`;
-                document.getElementById('solu-box').innerHTML = `> APLICANDO MÉTODO ALEMTECH...<br>> OTIMIZAÇÃO DE LCP EM CURSO...<br>> RECUPERAÇÃO ESTIMADA: 85%`;
-
-            } catch(e) {
-                document.getElementById('mini-log').innerHTML += `<br>> ERRO NA CONEXÃO...`;
-            }
+                subirNumero('valor-perda', (100 - score) * 950);
+                subirNumero('valor-oportunidade', (100 - score) * 4200);
+                
+                document.getElementById('text-diag').innerText = "VULNERABILIDADE DETECTADA. O ATIVO APRESENTA FUGA DE CAPITAL POR LENTIDÃO ESTRUTURAL.";
+                document.getElementById('text-solu').innerText = "MÉTODO ALEMTECH APLICÁVEL. INTERVENÇÃO NECESSÁRIA PARA RECUPERAR O OURO RETIDO.";
+                document.getElementById('btn-scan').innerText = "CONCLUÍDO";
+            } catch(e) { document.getElementById('btn-scan').innerText = "ERRO"; }
         }
-
-        window.onload = initChart;
+    //]]>
     </script>
 </body>
 </html>
