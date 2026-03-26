@@ -63,12 +63,12 @@
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>PROJEÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
+                <div class="chart-title"><span>EMISSÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
                 <canvas id="monthChart"></canvas>
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>VARREDURA EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: EMITINDO FREQUÊNCIA</span></div>
+                <div class="chart-title"><span>EMISSÃO TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: EMITINDO FREQUÊNCIA</span></div>
                 <canvas id="dayChart"></canvas>
             </div>
 
@@ -93,29 +93,25 @@
         const emissionPlugin = {
             id: 'emissionPlugin',
             beforeDatasetsDraw(chart) {
-                if (!scanning) return;
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos;
 
                 if (chart.canvas.id === 'monthChart') {
-                    const dia = agora.getDate();
-                    const progressoDia = (agora.getHours() * 3600 + agora.getMinutes() * 60 + agora.getSeconds()) / 86400;
-                    xPos = x.getPixelForValue(dia + progressoDia);
+                    xPos = x.getPixelForValue(agora.getDate() + (agora.getHours()*3600 + agora.getMinutes()*60 + agora.getSeconds())/86400);
                 } else {
                     const hora = agora.getHours();
-                    const progressoHora = (agora.getMinutes() * 60 + agora.getSeconds()) / 3600;
-                    xPos = x.getPixelForTick(hora) + (progressoHora * (x.getPixelForTick(1) - x.getPixelForTick(0)));
+                    const prog = (agora.getMinutes()*60 + agora.getSeconds())/3600;
+                    xPos = x.getPixelForTick(hora) + (prog * (x.getPixelForTick(1) - x.getPixelForTick(0)));
                 }
 
-                // CORTAR O GRÁFICO: Só desenha a linha dourada da barra branca para a DIREITA (emissão)
+                // CORTAR O GRÁFICO: Só desenha da barra para a DIREITA
                 ctx.save();
                 ctx.beginPath();
                 ctx.rect(xPos, top, right - xPos, bottom - top);
                 ctx.clip();
             },
             afterDraw(chart) {
-                if (!scanning) return;
                 const {ctx, chartArea: {top, bottom}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos;
@@ -130,7 +126,7 @@
 
                 ctx.restore(); 
 
-                // BARRA BRANCA (A ORIGEM DA LINHA)
+                // BARRA BRANCA (A CABEÇA DA EMISSÃO)
                 ctx.save();
                 ctx.beginPath();
                 ctx.strokeStyle = '#ffffff';
@@ -140,11 +136,6 @@
                 ctx.moveTo(xPos, top);
                 ctx.lineTo(xPos, bottom);
                 ctx.stroke();
-                
-                // INDICADOR DE SYNC
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px monospace';
-                ctx.fillText('EMISSÃO V16', xPos - 30, top - 5);
                 ctx.restore();
             }
         };
@@ -154,19 +145,19 @@
                 type: 'line',
                 plugins: [emissionPlugin],
                 data: {
-                    labels: Array.from({length: count}, (_, i) => i + (count === 24 ? 'h' : 1)),
+                    labels: Array.from({length: count + 1}, (_, i) => i + (count === 24 ? 'h' : 1)),
                     datasets: [{
                         borderColor: '#FFD700', 
                         borderWidth: 2,
                         pointRadius: 0,
                         tension: 0.4,
-                        data: Array.from({length: count}, () => Math.random() * 40 + 30)
+                        data: Array.from({length: count + 1}, () => Math.random() * 40 + 30)
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, animation: false,
                     scales: {
-                        x: { grid: { color: '#111' }, ticks: { color: '#333' } },
+                        x: { grid: { color: '#111' }, ticks: { color: '#333' }, min: (count === 24 ? '0h' : 1) },
                         y: { display: false, min: 0, max: 100 }
                     },
                     plugins: { legend: { display: false } }
@@ -177,7 +168,8 @@
             charts.day = new Chart(document.getElementById('dayChart'), config(24));
 
             function loop() {
-                if(scanning) { charts.month.draw(); charts.day.draw(); }
+                charts.month.draw(); 
+                charts.day.draw();
                 requestAnimationFrame(loop);
             }
             loop();
@@ -199,7 +191,6 @@
             setTimeout(() => {
                 document.getElementById('text-diag').innerText = generateText("FRAGILIDADE");
                 document.getElementById('text-solu').innerText = generateText("INTERVENÇÃO");
-                scanning = true;
                 btn.innerText = "SISTEMA ONLINE";
             }, 800);
         }
