@@ -20,7 +20,7 @@
     </script>
 
    <style>
-    /* TODA A SUA ESTRUTURA DE CSS ORIGINAL MANTIDA 100% */
+    /* SUA ESTRUTURA ORIGINAL */
     * { box-sizing: border-box !important; margin: 0; padding: 0; } 
     html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; }
     .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; }
@@ -110,6 +110,7 @@
         let charts = {}; 
         let ms = 0;      
         let scanning = false; 
+        let radarTimeout = null; // Controle do loop
 
         const chartOptions = () => ({
             responsive: true, maintainAspectRatio: false, animation: false,
@@ -174,6 +175,9 @@
         }, 13);
 
         async function executarVarredura() {
+            // Limpa qualquer repetição que já esteja agendada para evitar travamentos
+            if(radarTimeout) clearTimeout(radarTimeout);
+
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
             if (!site.startsWith('http')) site = 'https://' + site;
@@ -202,16 +206,16 @@
                 document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
                 scanning = true;
-                btn.innerText = "CONCLUÍDO";
+                btn.innerText = "RADAR ATIVO";
 
-                // ÚNICA ALTERAÇÃO: Chama a varredura novamente em 10 segundos
-                setTimeout(executarVarredura, 10000);
+                // AGENDA A PRÓXIMA VARREDURA PARA DAQUI A 10 SEGUNDOS
+                radarTimeout = setTimeout(executarVarredura, 10000);
 
             } catch (e) { 
                 btn.innerText = "ERRO DE SINCRONIA";
                 console.error(e);
-                // Tenta de novo em 5s se der erro
-                setTimeout(executarVarredura, 5000);
+                // Tenta reconectar em 5s
+                radarTimeout = setTimeout(executarVarredura, 5000);
             }
         }
     </script>
