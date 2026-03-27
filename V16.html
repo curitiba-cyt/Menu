@@ -129,6 +129,7 @@
                 data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
                 options: chartOptions()
             });
+                /* -------------------Linha do grafico cinza Fixo--------------------------- */
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
                 data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
