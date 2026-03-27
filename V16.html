@@ -97,332 +97,38 @@
         let ms = 0; // Variável para o cronômetro milissegundos
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
- 
-        // ===================== CONFIG ORIGINAL (MANTIDO) =====================
-// ===================== CONFIG ORIGINAL (MANTIDO) =====================
-const chartOptions = () => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: false,
-    scales: {
-        x: {
-            grid: { color: '#1a1a1a', lineWidth: 1 },
-            ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 }
-        },
-        y: {
-            grid: { color: '#1a1a1a', lineWidth: 1 },
-            ticks: { display: false },
-            min: 0,
-            max: 100
-        }
-    },
-    plugins: {
-        legend: { display: false },
-        tooltip: { enabled: false }
-    }
-});
 
-const verticalScannerPlugin = {
-    id: 'verticalScanner',
-    afterDatasetsDraw(chart) {
-        if (!scanning) return;
+        const chartOptions = () => ({ // Configurações padrão visuais dos gráficos
+            responsive: true, maintainAspectRatio: false, animation: false,
+            scales: {
+                x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
+                y: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { display: false }, min: 0, max: 100 }
+            },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        });
 
-        const { ctx, chartArea: { top, bottom, left, right }, scales: { x } } = chart;
-        const agora = new Date();
-
-        let xPos = chart.canvas.id === 'monthChart'
-            ? x.getPixelForValue(agora.getDate())
-            : x.getPixelForValue(agora.getHours() + 'h');
-
-        if (xPos >= left && xPos <= right) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.moveTo(xPos, top);
-            ctx.lineTo(xPos, bottom);
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 9px monospace';
-            ctx.fillText('▼ SYNC', xPos - 15, top - 5);
-            ctx.restore();
-        }
-    }
-};
-
-// ===================== CACHE =====================
-const DB_NAME = "AlemTechCache";
-const STORE_NAME = "analises";
-
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
-        request.onupgradeneeded = e => {
-            e.target.result.createObjectStore(STORE_NAME, { keyPath: "id" });
-        };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
-
-async function saveData(id, data) {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put({
-        id,
-        data,
-        updatedAt: Date.now()
-    });
-}
-
-async function loadData(id) {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const req = tx.objectStore(STORE_NAME).get(id);
-
-    return new Promise(resolve => {
-        req.onsuccess = () => resolve(req.result);
-    });
-}
-
-function isExpired(timestamp) {
-    return Date.now() - timestamp > (30 * 24 * 60 * 60 * 1000);
-}
-
-// ===================== ESTADO =====================
-let history = [];
-let charts = {};
-let scanning = true;
-let analysisId = "meusite.com"; // ALTERE POR CLIENTE
-
-// ===================== DADOS =====================
-async function fetchRealData() {
-    try {
-        const response = await fetch("AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0");
-        const data = await response.json();
-
-        return {
-            timestamp: Date.now(),
-            value: data.performance || Math.random() * 100
-        };
-    } catch (e) {
-        return {
-            timestamp: Date.now(),
-            value: Math.random() * 100
-        };
-    }
-}
-
-// ===================== UPDATE =====================
-function updateChart() {
-    const chart = charts.month;
-
-    chart.data.datasets[1].data = history.map(p => ({
-        x: new Date(p.timestamp).getDate(),
-        y: p.value
-    }));
-
-    chart.update('none');
-}
-
-// ===================== LOOP =====================
-function startRealtime() {
-    setInterval(async () => {
-
-        const newPoint = await fetchRealData();
-        const last = history[history.length - 1];
-
-        if (!last || newPoint.timestamp > last.timestamp) {
-
-            history.push(newPoint);
-
-            if (history.length > 30) history.shift();
-
-            updateChart();
-            saveData(analysisId, history);
-        }
-
-    }, 30000);
-}
-
-// ===================== INIT =====================
-window.onload = async () => {
-
-    const cached = await loadData(analysisId);
-
-    if (cached && !isExpired(cached.updatedAt)) {
-        history = cached.data;
-    }
-
-    // 🔥 GARANTE QUE SEMPRE TEM PASSADO VISÍVEL
-    if (history.length === 0) {
-        history = Array.from({ length: 10 }, (_, i) => ({
-            timestamp: Date.now() - (10 - i) * 60000,
-            value: Math.random() * 100
-        }));
-    }
-
-    charts.month = new Chart(document.getElementById('monthChart'), {
-        type: 'line',
-        plugins: [verticalScannerPlugin],
-        data: {
-            labels: Array.from({ length: 30 }, (_, i) => i + 1),
-            datasets: [
-                {
-                    borderColor: '#333',
-                    borderWidth: 1.5,
-                    pointRadius: 0,
-                    data: Array.from({ length: 30 }, () => Math.random() * 40 + 20)
-                },
-                {
-                    borderColor: '#00ffcc',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    tension: 0.3,
-                    parsing: false,
-                    data: history.map(p => ({
-                        x: new Date(p.timestamp).getDate(),
-                        y: p.value
-                    }))
+        const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
+            id: 'verticalScanner',
+            afterDatasetsDraw(chart) {
+                if (!scanning) return;
+                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
+                const agora = new Date();
+                let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
+                if (xPos >= left && xPos <= right) {
+                    ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); ctx.restore();
                 }
-            ]
-        },
-        options: chartOptions()
-    });
-
-    startRealtime();
-};
-
-// ===================== CACHE INDEXEDDB =====================
-const DB_NAME = "AlemTechCache";
-const STORE_NAME = "analises";
-
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
-        request.onupgradeneeded = e => {
-            e.target.result.createObjectStore(STORE_NAME, { keyPath: "id" });
+            }
         };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
 
-async function saveData(id, data) {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put({
-        id,
-        data,
-        updatedAt: Date.now()
-    });
-}
-
-async function loadData(id) {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const req = tx.objectStore(STORE_NAME).get(id);
-
-    return new Promise(resolve => {
-        req.onsuccess = () => resolve(req.result);
-    });
-}
-
-function isExpired(timestamp) {
-    return Date.now() - timestamp > (30 * 24 * 60 * 60 * 1000);
-}
-
-// ===================== ESTADO GLOBAL =====================
-let history = [];
-let charts = {};
-let scanning = true;
-
-// 🔴 MUDE AQUI PARA CADA CLIENTE
-let analysisId = "meusite.com";
-
-// ===================== API REAL =====================
-async function fetchRealData() {
-    // CHAVES INTEGRADAS PARA MONITORAMENTO
-    const CONFIG = {
-        META_ID: "1867727074186246",
-        META_PIXEL: "1653412125852286",
-        X_ID: "rb2wm",
-        GOOGLE_GA4: "G-2DNN3MJ51E"
-    };
-
-    try {
-        // Exemplo de chamada unificada usando suas IDs
-        const response = await fetch(`https://api.alemtech.com.br/v1/sync?meta=${CONFIG.META_ID}&ga4=${CONFIG.GOOGLE_GA4}&x=${CONFIG.X_ID}`);
-        const data = await response.json();
-
-        return {
-            timestamp: Date.now(),
-            value: data.performance || Math.random() * 100
-        };
-    } catch (e) {
-        return {
-            timestamp: Date.now(),
-            value: Math.random() * 100
-        };
-    }
-}
-
-// ===================== UPDATE GRÁFICO =====================
-function updateChart() {
-    const chart = charts.month;
-    chart.data.datasets[1].data = history.map(p => p.value);
-    chart.update('none');
-}
-
-// ===================== LOOP TEMPO REAL =====================
-function startRealtime() {
-    setInterval(async () => {
-        const newPoint = await fetchRealData();
-        const last = history[history.length - 1];
-
-        if (!last || newPoint.timestamp > last.timestamp) {
-            history.push(newPoint);
-            if (history.length > 30) history.shift();
-            updateChart();
-            saveData(analysisId, history);
-        }
-    }, 30000);
-}
-
-// ===================== INIT =====================
-window.onload = async () => {
-    const cached = await loadData(analysisId);
-
-    if (cached && !isExpired(cached.updatedAt)) {
-        history = cached.data;
-    }
-
-    charts.month = new Chart(document.getElementById('monthChart'), {
-        type: 'line',
-        plugins: [verticalScannerPlugin],
-        data: {
-            labels: Array.from({ length: 30 }, (_, i) => i + 1),
-            datasets: [
-                {
-                    borderColor: '#333',
-                    borderWidth: 1.5,
-                    pointRadius: 0,
-                    data: Array.from({ length: 30 }, () => Math.random() * 40 + 20)
-                },
-                {
-                    borderColor: '#00ffcc',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    data: history.map(p => p.value)
-                }
-            ]
-        },
-        options: chartOptions()
-    });
-
-    startRealtime();
-};
+        window.onload = () => { // Inicializa os gráficos assim que a página carrega
+            charts.month = new Chart(document.getElementById('monthChart'), {
+                type: 'line', plugins: [verticalScannerPlugin],
+                data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
+                options: chartOptions()
+            });
                 /* -------------------Linha do grafico cinza Fixo--------------------------- */
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
