@@ -128,40 +128,65 @@
     }
 
     /* 6. GRADE DE MÉTRICAS: Os 6 mini indicadores redondos */
-    .mini-stats-grid { 
-        display: grid; 
-        grid-template-columns: repeat(6, 1fr); /* Divide em 6 colunas iguais */
-        gap: 12px; 
-        padding: 20px 30px; 
-    }
-    .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; text-align: center; }
-    .progress-circle { 
-        width: 35px; 
-        height: 35px; 
-        border-radius: 50%; /* Faz o quadrado virar círculo */
-        background: #222; 
-        margin: 0 auto 8px; 
-    }
+.mini-stats-grid { 
+    display: grid;                   /* Ativa o sistema de grade para alinhar os itens */
+    grid-template-columns: repeat(6, 1fr); /* Divide o espaço em 6 colunas de tamanho igual */
+    gap: 12px;                       /* Distância de separação entre um card e outro */
+    padding: 20px 30px;              /* Respiro interno da grade (topo/baixo e lados) */
+}
 
-    /* 7. GRÁFICOS: Espaço onde as linhas de tração são desenhadas */
-    .chart-container { 
-        background: #080808; 
-        border: 1px solid #1a1a1a; 
-        padding: 15px; 
-        margin: 0 30px 15px; 
-        height: 180px; 
-    }
-    .chart-title { font-size: 0.65rem; color: #00ff00; display: flex; justify-content: space-between; }
+.mini-card { 
+    background: #0a0a0a;             /* Cor de fundo cinza escuro dos mini cards */
+    border: 1px solid #1a1a1a;       /* Borda sutil para dar relevo ao card */
+    padding: 15px;                   /* Espaço interno para o conteúdo não colar na borda */
+    text-align: center;              /* Centraliza todos os textos e círculos no card */
+}
 
-    /* 8. RELATÓRIO FINAL: As duas caixas de texto no rodapé */
-    .report-section { 
-        margin: 0 30px 40px; 
-        display: grid; 
-        grid-template-columns: 1fr 1fr; /* Lado a lado: Diagnóstico vs Intervenção */
-        gap: 20px; 
-    }
-    .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; }
-    .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
+.progress-circle { 
+    width: 35px;                     /* Largura fixa do indicador circular */
+    height: 35px;                    /* Altura fixa do indicador circular */
+    border-radius: 50%;              /* O "pulo do gato": transforma o quadrado em círculo */
+    background: #222;                /* Cor de fundo neutra antes da varredura pintar */
+    margin: 0 auto 8px;              /* Centraliza na horizontal e empurra o valor para baixo */
+}
+
+/* 7. GRÁFICOS: Espaço onde as linhas de tração são desenhadas */
+.chart-container { 
+    background: #080808;             /* Fundo da área do gráfico (ligeiramente mais claro que o fundo) */
+    border: 1px solid #1a1a1a;       /* Moldura técnica da área de tração */
+    padding: 15px;                   /* Espaço para o gráfico não encostar nos limites da caixa */
+    margin: 0 30px 15px;             /* Alinhamento lateral com o resto do dashboard */
+    height: 180px;                   /* Altura total do visor do gráfico */
+}
+
+.chart-title { 
+    font-size: 0.65rem;              /* Fonte pequena para parecer terminal de monitoramento */
+    color: #00ff00;                  /* Verde neon clássico do sistema AlemTech */
+    display: flex;                   /* Permite alinhar título e relógio na mesma linha */
+    justify-content: space-between;  /* Joga o título para a esquerda e o tempo para a direita */
+}
+
+/* 8. RELATÓRIO FINAL: As duas caixas de texto no rodapé */
+.report-section { 
+    margin: 0 30px 40px;             /* Margens externas para o rodapé respirar */
+    display: grid;                   /* Ativa grade para as caixas de texto */
+    grid-template-columns: 1fr 1fr;  /* Divide o rodapé em duas colunas (Diagnóstico e Intervenção) */
+    gap: 20px;                       /* Espaço vazio entre as duas colunas de texto */
+}
+
+.text-block { 
+    background: #080808;             /* Cor de fundo dos blocos de relatório */
+    border: 1px solid #1a1a1a;       /* Moldura dos blocos de relatório */
+    padding: 25px;                   /* Espaço interno para leitura confortável do texto */
+}
+
+.content-area { 
+    font-size: 0.88rem;              /* Tamanho da letra dos dados técnicos do relatório */
+    line-height: 1.7;                /* Altura entre linhas para não embolar a leitura */
+    color: #aaa;                     /* Cinza claro para não cansar a vista como o branco puro */
+    height: 150px;                   /* Altura máxima da caixa de texto */
+    overflow-y: auto;                /* Ativa barra de rolagem se o texto for muito grande */
+}
 </style>
 </head>
 <body>
