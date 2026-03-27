@@ -98,8 +98,13 @@
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
 
-       // Criamos a memória do radar para os picos ficarem travados
+     
+      /* -------------------Inicio sessão Gráfico--------------------------- */       
+           // Criamos a memória do radar para os picos ficarem travados
 let dadosReaisRadar = []; 
+
+// Memória persistente para o rastro não sumir
+let rastrosAlemTech = []; 
 
 const verticalScannerPlugin = {
     id: 'verticalScanner',
@@ -107,33 +112,32 @@ const verticalScannerPlugin = {
         if (!scanning) return;
         const {ctx, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
         const agora = new Date();
-        // Identifica se estamos no gráfico de Horas ou Dias para bater a posição
         let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
         
         if (xPos >= left && xPos <= right) {
             ctx.save();
 
-            // --- DESENHO DOS PICOS AGUDOS REAIS ---
-            if (dadosReaisRadar.length > 1) {
+            // --- DESENHO DO RASTRO HISTÓRICO (ESTILO ANALYTICS) ---
+            if (rastrosAlemTech.length > 1) {
                 ctx.beginPath();
-                ctx.strokeStyle = '#FFD700'; // Dourado AlemTech
+                ctx.strokeStyle = '#FFD700'; // Dourado
                 ctx.lineWidth = 2;
-                ctx.lineJoin = 'miter'; // Deixa as pontas dos picos agudas/afiadas
+                ctx.lineJoin = 'miter'; // Pontas agudas (cones)
 
-                dadosReaisRadar.forEach((ponto, index) => {
-                    const posX = x.getPixelForValue(ponto.label);
-                    const posY = y.getPixelForValue(ponto.valor);
+                rastrosAlemTech.forEach((ponto, index) => {
+                    const px = x.getPixelForValue(ponto.xLabel);
+                    const py = y.getPixelForValue(ponto.yValue);
 
-                    // A linha só aparece se o radar (barra branca) já passou por ali
-                    if (posX <= xPos) {
-                        if (index === 0) ctx.moveTo(posX, posY);
-                        else ctx.lineTo(posX, posY);
+                    // Só desenha o rastro se a barra branca já passou por ele
+                    if (px <= xPos) {
+                        if (index === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
                     }
                 });
                 ctx.stroke();
             }
 
-            // --- BARRA VERTICAL SYNC (O SENSOR) ---
+            // --- BARRA VERTICAL SYNC ---
             ctx.beginPath(); 
             ctx.strokeStyle = '#ffffff'; 
             ctx.lineWidth = 2;
