@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -161,7 +162,7 @@
         transition: 0.3s; 
     }
 
-    /* 6. GRADE DE MÉTRICAS TÉCNICAS (MINI CARDS)
+  /* 6. GRADE DE MÉTRICAS TÉCNICAS (MINI CARDS)
        Os cards que mostram SEO, Performance, etc. */
 
     .mini-stats-grid { 
@@ -202,29 +203,26 @@
         position: relative;           /* Permite que o JavaScript desenhe o preenchimento por cima dele */
     }
 
-
-   /* 7. CONTAINERS DOS GRÁFICOS
+    /* 7. CONTAINERS DOS GRÁFICOS
        Define o tamanho e a estética das janelas de oscilação de dados. */
-    
     .chart-container { 
-        background: #080808;     /* Cinza quase preto. É o fundo da "tela do monitor" de dados. */
-        border: 1px solid #1a1a1a; /* Borda técnica fina que separa o gráfico do resto do sistema. */
-        padding: 15px;           /* Espaço interno para o gráfico não tocar na moldura e "respirar". */
-        margin: 0 30px 15px;     /* '0' (topo), '30px' (afasta das laterais da tela) e '15px' (espaço para o bloco de baixo). */
-        border-radius: 4px;      /* Arredondamento discreto para manter o padrão industrial AlemTech. */
-        height: 180px;           /* Altura fixa para garantir que o radar tenha sempre a mesma proporção. */
-        position: relative;      /* CRÍTICO: Permite que a barra branca de SCAN corra por cima do gráfico sem quebrar. */
+        background: #080808; 
+        border: 1px solid #1a1a1a; 
+        padding: 15px; 
+        margin: 0 30px 15px; 
+        border-radius: 4px; 
+        height: 180px; 
+        position: relative; 
     }
-
     .chart-title { 
-        font-size: 0.65rem;      /* Fonte pequena para dar estilo de "metadados" de terminal. */
-        color: #00ff00;          /* Verde Neon: sinaliza que o sistema de monitoramento está operante. */
-        font-weight: 900;        /* Negrito máximo para dar autoridade ao título do gráfico. */
-        margin-bottom: 10px;     /* Distância entre o título e o início do desenho das linhas. */
-        font-family: monospace;  /* Fonte de código/máquina, reforça o tom de investigação técnica. */
-        display: flex;           /* Faz o título se comportar como uma linha flexível. */
-        justify-content: space-between; /* Empurra o nome para a esquerda e o relógio/status para a direita. */
-        text-transform: uppercase; /* Força todas as letras em MAIÚSCULO para passar seriedade. */
+        font-size: 0.65rem; 
+        color: #00ff00; 
+        font-weight: 900; 
+        margin-bottom: 10px; 
+        font-family: monospace; 
+        display: flex; 
+        justify-content: space-between; 
+        text-transform: uppercase; 
     }
 
    /* 8. SEÇÃO DE RELATÓRIO E TEXTOS (DIAGNÓSTICO)
@@ -467,105 +465,52 @@
         }, 13);
 
         /**
-     /* * MONITOR DE ATIVOS ALEMTECH - SISTEMA DE RASTREIO INTEGRADO
- * Chaves Configuradas: Meta (Ads), Google (G4) e X (Twitter)
- */
+         * FUNÇÃO EXECUTAR VARREDURA (MÁQUINA PRINCIPAL)
+         * Conecta na API, pega os dados reais e atualiza toda a interface do radar.
+         */
+        async function executarVarredura() {
+            let site = document.getElementById('siteUrl').value.trim(); // Pega a URL digitada
+            if(!site) return;
+            if (!site.startsWith('http')) site = 'https://' + site; // Garante o protocolo seguro
+            const btn = document.getElementById('btn-scan');
+            btn.innerText = "INVESTIGANDO...";
+            // Gera o print do site em tempo real usando o serviço thum.io
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
 
-const API_KEY = 'SUA_CHAVE_PAGESPEED_AQUI'; // <--- Coloque sua chave do Google Cloud aqui
+            try {
+                // Chamada oficial ao PageSpeed Insights do Google
+                const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
+                const data = await resp.json();
+                
+                // Extrai a pontuação de performance (0 a 1) e converte para base 100
+                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
+                
+                // Define scores (Perf é real, os outros são simulados para autoridade visual)
+                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
 
-// IDs da sua rede para conferência
-const REDE_ALEMTECH = {
-    meta: "1653412125852286",
-    google: "G-2DNN3MJ51E",
-    x: "rb2wm"
-};
+                // Atualiza os círculos de progresso e números das métricas
+                Object.keys(scores).forEach(key => {
+                    const val = scores[key];
+                    const color = val > 80 ? "#00ff00" : "#ff0000"; // Verde para bom, Vermelho para ruim
+                    document.getElementById('circ-' + key).style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
+                    subirNumero('val-' + key, val, "%");
+                });
 
-let monitoramentoAtivo = null;
+                // CÁLCULO FINANCEIRO (Argumento de Venda AlemTech)
+                // Calcula perda baseado na ineficiência do site
+                subirNumero('valor-perda', (100 - perf) * 850); // Prejuízo técnico estimado
+                subirNumero('valor-oportunidade', (100 - perf) * 3600); // Ouro retido por falta de otimização
 
-async function iniciarRastreioAlemTech() {
-    let siteAlvo = document.getElementById('siteUrl').value.trim();
-    if(!siteAlvo) {
-        alert("Insira um link para iniciar o rastreio da rede.");
-        return;
-    }
-
-    if (!siteAlvo.startsWith('http')) siteAlvo = 'https://' + siteAlvo;
-
-    const btn = document.getElementById('btn-scan');
-    btn.innerText = "RASTREANDO ATIVOS...";
-
-    if (monitoramentoAtivo) clearTimeout(monitoramentoAtivo);
-
-    // Atualiza o preview do alvo
-    document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${siteAlvo}`;
-
-    try {
-        // 1. Busca dados de performance e estrutura do site
-        const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(siteAlvo)}&key=${API_KEY}&strategy=mobile&category=performance`);
-        const data = await resp.json();
-
-        // 2. Processa o Score de Performance
-        const perfBase = Math.round(data.lighthouseResult.categories.performance.score * 100);
-        const variacao = Math.floor(Math.random() * 3) - 1; 
-        const perfFinal = Math.max(0, Math.min(100, perfBase + variacao));
-
-        // 3. RASTREIO DE REDE (Verifica suas chaves específicas)
-        verificarSinaisDeRede(data.lighthouseResult.audits);
-
-        // 4. Atualiza Interface
-        atualizarInterfaceFocada(perfFinal, siteAlvo);
-
-        // 5. LOOP DE 10 SEGUNDOS (Manutenção do Monitoramento)
-        monitoramentoAtivo = setTimeout(() => {
-            iniciarRastreioAlemTech();
-        }, 10000);
-
-    } catch (e) {
-        btn.innerText = "ERRO DE CONEXÃO";
-        console.error("Falha no rastreio AlemTech:", e);
-        monitoramentoAtivo = setTimeout(iniciarRastreioAlemTech, 5000);
-    }
-}
-
-function verificarSinaisDeRede(audits) {
-    const corpoDoSite = JSON.stringify(audits);
-    
-    // Verificação detalhada de cada ativo da sua rede
-    const temGA4 = corpoDoSite.includes(REDE_ALEMTECH.google);
-    const temMeta = corpoDoSite.includes(REDE_ALEMTECH.meta);
-    const temX = corpoDoSite.includes(REDE_ALEMTECH.x);
-
-    // Atualização Visual GA4
-    const elGa4 = document.getElementById('status-ga4');
-    elGa4.style.color = temGA4 ? "#00ff00" : "#ff3333";
-    elGa4.innerText = temGA4 ? `GA4: ${REDE_ALEMTECH.google} ATIVO` : "GA4: NÃO DETECTADO";
-
-    // Atualização Visual Meta
-    const elMeta = document.getElementById('status-meta');
-    elMeta.style.color = temMeta ? "#00ff00" : "#ff3333";
-    elMeta.innerText = temMeta ? `META: ${REDE_ALEMTECH.meta} OK` : "META: PIXEL AUSENTE";
-
-    // Atualização Visual X
-    const elX = document.getElementById('status-x');
-    elX.style.color = temX ? "#00ff00" : "#555";
-    elX.innerText = temX ? `X-CORP: ${REDE_ALEMTECH.x} RASTREADO` : "X: SEM SINAL";
-}
-
-function atualizarInterfaceFocada(perf, site) {
-    // Cálculo de perda baseado no método AlemTech
-    subirNumero('valor-perda', (100 - perf) * 850); 
-    
-    document.getElementById('text-diag').innerText = `MONITORANDO ATIVO: ${site.toUpperCase()}`;
-    document.getElementById('text-solu').innerText = `FRAGILIDADE TÉCNICA EM ${100-perf}%...`;
-
-    const cor = perf > 80 ? "#00ff00" : (perf > 50 ? "#ffff00" : "#ff0000");
-    const circulo = document.getElementById('circ-perf');
-    
-    if(circulo) {
-        circulo.style.background = `conic-gradient(${cor} ${perf}%, #222 0%)`;
-        subirNumero('val-perf', perf, "%");
-    }
-}
+                // Atualiza os relatórios de diagnóstico e intervenção
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
+                
+                scanning = true; // Inicia o movimento das barras nos gráficos
+                btn.innerText = "CONCLUÍDO";
+            } catch (e) { 
+                btn.innerText = "ERRO DE SINCRONIA"; // Caso a API falhe ou a URL seja inválida
+            }
+        }
     </script>
 </body>
 </html>
