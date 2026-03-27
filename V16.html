@@ -127,66 +127,41 @@
         transition: 0.3s; /* Suaviza o efeito ao passar o mouse */
     }
 
-   /* 6. GRADE DE MÉTRICAS: Os 6 mini indicadores redondos */
-.mini-stats-grid { 
-    display: grid;                            /* Define o layout em grade (grid) */
-    grid-template-columns: repeat(6, 1fr);    /* Cria 6 colunas de larguras iguais */
-    gap: 12px;                                /* Espaçamento de 12px entre os cards */
-    padding: 20px 30px;                       /* Margem interna: 20px vertical, 30px horizontal */
-}
+    /* 6. GRADE DE MÉTRICAS: Os 6 mini indicadores redondos */
+    .mini-stats-grid { 
+        display: grid; 
+        grid-template-columns: repeat(6, 1fr); /* Divide em 6 colunas iguais */
+        gap: 12px; 
+        padding: 20px 30px; 
+    }
+    .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; text-align: center; }
+    .progress-circle { 
+        width: 35px; 
+        height: 35px; 
+        border-radius: 50%; /* Faz o quadrado virar círculo */
+        background: #222; 
+        margin: 0 auto 8px; 
+    }
 
-.mini-card { 
-    background: #0a0a0a;                      /* Cor de fundo cinza escuro do card */
-    border: 1px solid #1a1a1a;                /* Borda fina para destacar o card no fundo */
-    padding: 15px;                            /* Espaço interno entre a borda e o conteúdo */
-    text-align: center;                       /* Centraliza textos e círculos horizontalmente */
-}
+    /* 7. GRÁFICOS: Espaço onde as linhas de tração são desenhadas */
+    .chart-container { 
+        background: #080808; 
+        border: 1px solid #1a1a1a; 
+        padding: 15px; 
+        margin: 0 30px 15px; 
+        height: 180px; 
+    }
+    .chart-title { font-size: 0.65rem; color: #00ff00; display: flex; justify-content: space-between; }
 
-.progress-circle { 
-    width: 35px;                              /* Largura fixa do círculo */
-    height: 35px;                             /* Altura fixa do círculo */
-    border-radius: 50%;                       /* Transforma o elemento quadrado em círculo */
-    background: #222;                         /* Cor de fundo cinza neutro do círculo */
-    margin: 0 auto 8px;                       /* Centraliza o círculo e dá 8px de margem abaixo */
-}
-
-/* 7. GRÁFICOS: Espaço onde as linhas de tração são desenhadas */
-.chart-container { 
-    background: #080808;                      /* Cor de fundo da área do gráfico */
-    border: 1px solid #1a1a1a;                /* Borda fina ao redor do container do gráfico */
-    padding: 15px;                            /* Espaçamento interno de 15px */
-    margin: 0 30px 15px;                      /* Margens externas para alinhar com o layout */
-    height: 180px;                            /* Altura fixa da área do gráfico */
-}
-
-.chart-title { 
-    font-size: 0.65rem;                       /* Tamanho da fonte do título (bem pequeno) */
-    color: #00ff00;                           /* Cor verde neon para o título */
-    display: flex;                            /* Alinha os itens do título em linha */
-    justify-content: space-between;           /* Empurra os textos para as extremidades opostas */
-}
-
-/* 8. RELATÓRIO FINAL: As duas caixas de texto no rodapé */
-.report-section { 
-    margin: 0 30px 40px;                      /* Margens: 0 topo, 30px lados, 40px base */
-    display: grid;                            /* Define layout em grade para o relatório */
-    grid-template-columns: 1fr 1fr;           /* Divide o rodapé em duas colunas idênticas */
-    gap: 20px;                                /* Espaço de 20px entre as duas colunas */
-}
-
-.text-block { 
-    background: #080808;                      /* Cor de fundo do bloco de texto */
-    border: 1px solid #1a1a1a;                /* Borda de 1px ao redor do bloco */
-    padding: 25px;                            /* Espaçamento interno generoso para leitura */
-}
-
-.content-area { 
-    font-size: 0.88rem;                       /* Tamanho da fonte do texto do relatório */
-    line-height: 1.7;                         /* Altura da linha para melhorar a legibilidade */
-    color: #aaa;                              /* Cor do texto em cinza claro */
-    height: 150px;                            /* Altura máxima fixa para o texto */
-    overflow-y: auto;                         /* Habilita barra de rolagem se o texto for longo */
-}
+    /* 8. RELATÓRIO FINAL: As duas caixas de texto no rodapé */
+    .report-section { 
+        margin: 0 30px 40px; 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; /* Lado a lado: Diagnóstico vs Intervenção */
+        gap: 20px; 
+    }
+    .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; }
+    .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
 </style>
 </head>
 <body>
