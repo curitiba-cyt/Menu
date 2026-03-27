@@ -100,11 +100,8 @@
 
      
       /* -------------------Inicio sessão Gráfico--------------------------- */       
-           // Criamos a memória do radar para os picos ficarem travados
+         // Criamos a memória do radar para os picos ficarem travados (Fora do plugin para persistir)
 let dadosReaisRadar = []; 
-
-// Memória persistente para o rastro não sumir
-let rastrosAlemTech = []; 
 
 const verticalScannerPlugin = {
     id: 'verticalScanner',
@@ -112,32 +109,41 @@ const verticalScannerPlugin = {
         if (!scanning) return;
         const {ctx, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
         const agora = new Date();
+        
+        // Identifica a posição da barra branca (O Sensor)
         let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
         
         if (xPos >= left && xPos <= right) {
             ctx.save();
 
-            // --- DESENHO DO RASTRO HISTÓRICO (ESTILO ANALYTICS) ---
-            if (rastrosAlemTech.length > 1) {
+            // --- DESENHO DOS PICOS AGUDOS REAIS (O RASTRO QUE FICA PARADO) ---
+            if (dadosReaisRadar.length > 1) {
                 ctx.beginPath();
-                ctx.strokeStyle = '#FFD700'; // Dourado
+                ctx.strokeStyle = '#FFD700'; // Dourado AlemTech
                 ctx.lineWidth = 2;
-                ctx.lineJoin = 'miter'; // Pontas agudas (cones)
+                ctx.lineJoin = 'miter'; // Pontas agudas de cone (Estilo Analytics)
+                ctx.setLineDash([]); // Garante linha sólida no rastro
 
-                rastrosAlemTech.forEach((ponto, index) => {
-                    const px = x.getPixelForValue(ponto.xLabel);
-                    const py = y.getPixelForValue(ponto.yValue);
+                let primeiroPontoNoPassado = true;
 
-                    // Só desenha o rastro se a barra branca já passou por ele
-                    if (px <= xPos) {
-                        if (index === 0) ctx.moveTo(px, py);
-                        else ctx.lineTo(px, py);
+                dadosReaisRadar.forEach((ponto) => {
+                    const posX = x.getPixelForValue(ponto.label);
+                    const posY = y.getPixelForValue(ponto.valor);
+
+                    // Só desenha se o dado for do passado ou presente (onde a barra já passou)
+                    if (posX <= xPos) {
+                        if (primeiroPontoNoPassado) {
+                            ctx.moveTo(posX, posY);
+                            primeiroPontoNoPassado = false;
+                        } else {
+                            ctx.lineTo(posX, posY);
+                        }
                     }
                 });
                 ctx.stroke();
             }
 
-            // --- BARRA VERTICAL SYNC ---
+            // --- BARRA VERTICAL SYNC (O SENSOR) ---
             ctx.beginPath(); 
             ctx.strokeStyle = '#ffffff'; 
             ctx.lineWidth = 2;
