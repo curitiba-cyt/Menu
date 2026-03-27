@@ -98,32 +98,27 @@
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
 
-       // --- 1. DESENHO DA PREVISÃO (A LINHA QUE JÁ ESTÁ LÁ) ---
-ctx.save();
+     // --- LOGICA DA TRILHA DOURADA (PASSADO IMÓVEL) ---
 ctx.beginPath();
-ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)'; // Dourado bem transparente
-ctx.setLineDash([5, 5]); // Deixa a linha pontilhada
-ctx.lineWidth = 1;
-for (let i = left; i <= right; i += 10) {
-    let osc = Math.sin(i * 0.1) * 10; 
-    let y = (top + bottom) / 2 + osc;
-    if (i === left) ctx.moveTo(i, y); else ctx.lineTo(i, y);
-}
-ctx.stroke();
-ctx.restore();
-
-// --- 2. DESENHO DA REALIDADE (O RASTRO SÓLIDO ATÉ A BARRA) ---
-ctx.beginPath();
-ctx.strokeStyle = '#FFD700'; // Dourado Sólido AlemTech
-ctx.setLineDash([]); // Linha contínua
+ctx.strokeStyle = '#FFD700'; // Dourado Real
 ctx.lineWidth = 2;
-for (let i = left; i <= xPos; i += 5) { // SÓ VAI ATÉ A BARRA (xPos)
-    let osc = Math.sin(i * 0.1) * 10 + (Math.random() * 5); // Adiciona um "ruído" de análise real
-    let y = (top + bottom) / 2 + osc;
-    if (i === left) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+ctx.lineJoin = 'round';
+
+// Fazemos um loop para desenhar a trilha desde o início (esquerda) até a barra (xPos)
+for (let i = 0; i <= xPos; i += 5) {
+    // Aqui criamos o "cone de picos" (oscilação aleatória técnica)
+    // Se a performance (perf) for baixa, os picos ficam mais agressivos
+    let oscilacao = Math.sin(i * 0.2) * (Math.random() * 15); 
+    let yPos = (top + bottom) / 2 + oscilacao; // Centraliza a linha no gráfico
+
+    if (i === 0) {
+        ctx.moveTo(left, yPos);
+    } else {
+        ctx.lineTo(i, yPos);
+    }
 }
 ctx.stroke();
-
+// -----------------------------------------------
         const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
             id: 'verticalScanner',
             afterDatasetsDraw(chart) {
