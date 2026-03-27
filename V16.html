@@ -7,43 +7,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
+        /**
+         * FUNÇÃO DE CONTROLE DE ACESSO (IIFE - Immediately Invoked Function Expression)
+         * Serve para verificar se o usuário tem permissão de visualizar o radar via URL ou Token.
+         */
         (function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('acesso') === 'v16') {
-                localStorage.setItem('access_token', 'v16_autorizado');
-                window.history.replaceState({}, document.title, window.location.pathname);
+            const urlParams = new URLSearchParams(window.location.search); // Captura parâmetros da URL (ex: ?acesso=v16)
+            if (urlParams.get('acesso') === 'v16') { // Verifica se o parâmetro 'acesso' é igual a 'v16'
+                localStorage.setItem('access_token', 'v16_autorizado'); // Salva a permissão no navegador do usuário
+                window.history.replaceState({}, document.title, window.location.pathname); // Limpa a URL para esconder a senha
             }
-            if (localStorage.getItem('access_token') !== 'v16_autorizado') {
-                window.location.href = "https://www.google.com"; 
+            if (localStorage.getItem('access_token') !== 'v16_autorizado') { // Se não houver token de acesso...
+                window.location.href = "https://www.google.com"; // ...expulsa o usuário para o Google
             }
         })();
     </script>
 
     <style>
-        * { box-sizing: border-box !important; margin: 0; padding: 0; }
-        html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; }
-        .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; }
-        .sidebar { width: 300px; background: #080808; border-right: 1px solid #1a1111; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; }
-        .sidebar-logo { font-weight: 900; color: #ff0000; margin-bottom: 25px; font-size: 1.4rem; letter-spacing: 3px; border-left: 5px solid #ff0000; padding-left: 12px; }
-        .live-preview-box { border: 1px solid #333; height: 180px; background: #000; position: relative; overflow: hidden; margin-bottom: 20px; border-radius: 4px; box-shadow: inset 0 0 20px #000; }
-        #site-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-        .ipf-box { background: linear-gradient(180deg, #1a0505 0%, #000 100%); padding: 18px; border: 1px solid #3d0000; border-radius: 4px; margin-bottom: 15px; }
-        .ipf-label { font-size: 0.6rem; color: #ff4d4d; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-        .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; color: #fff; margin-top: 5px; }
-        .main-content { flex: 1; height: 100vh; overflow-y: auto; background: #040404; display: flex; flex-direction: column; }
-        .analysis-header { background: #0a0a0a; padding: 20px 30px; border-bottom: 1px solid #151515; display: flex; gap: 15px; position: sticky; top: 0; z-index: 1000; }
-        .analysis-input { flex: 1; background: #000; border: 1px solid #333; padding: 14px; color: #00ff00; font-family: monospace; font-size: 1rem; outline: none; border-radius: 4px; }
-        .analysis-btn { background: #ff0000; color: #fff; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .mini-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 20px 30px; }
-        .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 4px; text-align: center; }
-        .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-        .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; }
-        .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; }
-        .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; }
-        .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; }
-        .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; }
-        .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
+        /* CONFIGURAÇÕES DE INTERFACE E ESTÉTICA DARK (UI/UX) */
+        * { box-sizing: border-box !important; margin: 0; padding: 0; } /* Reseta margens e define cálculo de tamanho fixo */
+        html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; } /* Trava a tela e define o fundo preto absoluto */
+        .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; } /* Estrutura principal em Flexbox */
+        .sidebar { width: 300px; background: #080808; border-right: 1px solid #1a1111; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; } /* Barra lateral de controle */
+        .sidebar-logo { font-weight: 900; color: #ff0000; margin-bottom: 25px; font-size: 1.4rem; letter-spacing: 3px; border-left: 5px solid #ff0000; padding-left: 12px; } /* Logo da AlemTech */
+        .live-preview-box { border: 1px solid #333; height: 180px; background: #000; position: relative; overflow: hidden; margin-bottom: 20px; border-radius: 4px; box-shadow: inset 0 0 20px #000; } /* Moldura do print do site alvo */
+        #site-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; } /* Imagem do site capturado */
+        .ipf-box { background: linear-gradient(180deg, #1a0505 0%, #000 100%); padding: 18px; border: 1px solid #3d0000; border-radius: 4px; margin-bottom: 15px; } /* Boxes de prejuízo e oportunidade */
+        .ipf-label { font-size: 0.6rem; color: #ff4d4d; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; } /* Rótulo dos valores financeiros */
+        .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; color: #fff; margin-top: 5px; } /* Valor financeiro em destaque */
+        .main-content { flex: 1; height: 100vh; overflow-y: auto; background: #040404; display: flex; flex-direction: column; } /* Área central de relatórios */
+        .analysis-header { background: #0a0a0a; padding: 20px 30px; border-bottom: 1px solid #151515; display: flex; gap: 15px; position: sticky; top: 0; z-index: 1000; } /* Barra de busca superior */
+        .analysis-input { flex: 1; background: #000; border: 1px solid #333; padding: 14px; color: #00ff00; font-family: monospace; font-size: 1rem; outline: none; border-radius: 4px; } /* Campo de digitação da URL */
+        .analysis-btn { background: #ff0000; color: #fff; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; } /* Botão de varredura */
+        .mini-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 20px 30px; } /* Grade de métricas Core Web Vitals */
+        .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 4px; text-align: center; } /* Card individual de métrica */
+        .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; } /* Nome da métrica */
+        .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; } /* Valor numérico da métrica */
+        .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; } /* Indicador visual circular */
+        .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; } /* Container dos gráficos */
+        .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; } /* Cabeçalho do gráfico */
+        .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } /* Seção de texto de diagnóstico */
+        .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; } /* Bloco de texto informativo */
+        .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; } /* Área de log do diagnóstico */
     </style>
 </head>
 <body>
@@ -51,6 +56,7 @@
         <aside class="sidebar">
             <div class="sidebar-logo">ALEMTECH.V16</div>
             <div class="live-preview-box"><img id="site-preview" src="" alt="Aguardando alvo..."></div>
+            
             <div class="ipf-box">
                 <div class="ipf-label">PREJUÍZO TÉCNICO ACUMULADO</div>
                 <div id="valor-perda" class="ipf-value">R$ 0,00</div>
@@ -104,71 +110,83 @@
     </div>
 
     <script>
-        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0";
-        let charts = {};
-        let ms = 0;
-        let scanning = false;
+        /**
+         * CONFIGURAÇÕES GLOBAIS E ESTADO DO SISTEMA
+         */
+        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; // Chave de acesso à API do Google PageSpeed
+        let charts = {}; // Objeto para armazenar as instâncias dos gráficos
+        let ms = 0;      // Contador de milissegundos para o relógio de Sincronia
+        let scanning = false; // Flag para indicar se o sistema está em modo de varredura ativa
 
+        /**
+         * FUNÇÃO DE CONFIGURAÇÃO DE ESTILO DOS GRÁFICOS
+         * Define como as linhas, eixos e cores dos gráficos devem se comportar.
+         */
         const chartOptions = () => ({
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
+            responsive: true,           // Ajusta o gráfico ao tamanho do container
+            maintainAspectRatio: false, // Permite distorção para preencher a altura definida no CSS
+            animation: false,           // Desativa animação para parecer um terminal de dados bruto
             scales: {
                 x: { 
-                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
-                    ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } 
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, // Cor das linhas de grade horizontais
+                    ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } // Estilo do texto do eixo X
                 },
                 y: { 
-                    grid: { color: '#1a1a1a', lineWidth: 1 }, 
-                    ticks: { display: false },
-                    min: 0, max: 100
+                    grid: { color: '#1a1a1a', lineWidth: 1 }, // Cor das linhas de grade verticais
+                    ticks: { display: false }, // Esconde os valores numéricos do eixo Y para foco visual
+                    min: 0, max: 100 // Escala de 0 a 100%
                 }
             },
             plugins: { 
-                legend: { display: false },
-                tooltip: { enabled: false }
+                legend: { display: false }, // Remove a legenda do gráfico
+                tooltip: { enabled: false } // Desativa o popup ao passar o mouse
             }
         });
 
-        // PLUGIN DA BARRA DE SCANNER TEMPORAL
+        /**
+         * PLUGIN VERTICAL SCANNER
+         * Desenha aquela barra branca vertical que percorre o gráfico indicando o "tempo real".
+         */
         const verticalScannerPlugin = {
             id: 'verticalScanner',
-            afterDatasetsDraw(chart) {
-                if (!scanning) return;
+            afterDatasetsDraw(chart) { // Executa após o gráfico ser desenhado na tela
+                if (!scanning) return; // Só desenha a barra se estiver "escaneando"
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos;
 
                 if (chart.canvas.id === 'monthChart') {
-                    // Posiciona baseado no dia do mês (1 a 30)
-                    const dia = agora.getDate();
-                    xPos = x.getPixelForValue(dia);
+                    const dia = agora.getDate(); // Pega o dia atual do mês
+                    xPos = x.getPixelForValue(dia); // Converte o dia em coordenada de pixels
                 } else {
-                    // Posiciona baseado na hora do dia (0 a 23)
-                    const hora = agora.getHours();
-                    xPos = x.getPixelForValue(hora + 'h');
+                    const hora = agora.getHours(); // Pega a hora atual
+                    xPos = x.getPixelForValue(hora + 'h'); // Converte a hora em pixels
                 }
 
                 if (xPos >= left && xPos <= right) {
                     ctx.save();
                     ctx.beginPath();
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#ffffff'; // Cor da barra de scan (Branca)
+                    ctx.lineWidth = 2;           // Largura da barra
                     ctx.setLineDash([0]);
-                    ctx.moveTo(xPos, top);
-                    ctx.lineTo(xPos, bottom);
+                    ctx.moveTo(xPos, top);       // Início no topo do gráfico
+                    ctx.lineTo(xPos, bottom);    // Fim na base do gráfico
                     ctx.stroke();
                     
-                    // Pequeno triângulo ou indicador na base
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 9px monospace';
-                    ctx.fillText('▼ SYNC', xPos - 15, top - 5);
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); // Escreve o texto indicador
                     ctx.restore();
                 }
             }
         };
 
+        /**
+         * EVENTO ONLOAD
+         * Inicializa os gráficos vazios e inicia os ciclos de atualização visual ao carregar a página.
+         */
         window.onload = () => {
+            // Criação do gráfico mensal com dados aleatórios iniciais
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line',
                 plugins: [verticalScannerPlugin],
@@ -184,6 +202,7 @@
                 options: chartOptions()
             });
 
+            // Criação do gráfico diário com dados aleatórios iniciais
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line',
                 plugins: [verticalScannerPlugin],
@@ -199,32 +218,41 @@
                 options: chartOptions()
             });
 
-            // Atualização visual constante da barra
+            // Loop de Redesenho: Faz a barra branca se mover a cada 1 segundo
             setInterval(() => {
                 if(scanning) {
-                    charts.month.draw();
+                    charts.month.draw(); // Força o redesenho para atualizar a posição do plugin
                     charts.day.draw();
                 }
             }, 1000);
         };
 
+        /**
+         * FUNÇÃO SUBIR NÚMERO
+         * Cria o efeito visual dos números aumentando rapidamente até o valor final.
+         */
         function subirNumero(id, valorFinal, sufixo = "") {
             let elemento = document.getElementById(id);
             let valorInicial = 0;
-            let incremento = valorFinal / 90;
+            let incremento = valorFinal / 90; // Divide o total por frames para suavidade
             let cronometro = setInterval(() => {
                 valorInicial += incremento;
                 if (valorInicial >= valorFinal) {
+                    // Formata como Real (R$) se o ID for de valor financeiro, senão usa o sufixo (%)
                     elemento.innerText = (id.includes('valor') ? "R$ " + valorFinal.toLocaleString('pt-BR') : valorFinal + sufixo);
                     clearInterval(cronometro);
                 } else {
                     elemento.innerText = (id.includes('valor') ? "R$ " + Math.floor(valorInicial).toLocaleString('pt-BR') : Math.floor(valorInicial) + sufixo);
                 }
-            }, 16);
+            }, 16); // 16ms aprox. 60 frames por segundo
         }
 
+        /**
+         * LOOP DO RELÓGIO DE SINCRONIA E BRASÍLIA
+         * Atualiza os contadores de tempo na interface.
+         */
         setInterval(() => {
-            ms += 13;
+            ms += 13; // Incremento customizado para parecer um processamento rápido
             let d = new Date(ms);
             document.getElementById('relogio-sync').innerText = 
                 d.getUTCHours().toString().padStart(2, '0') + ":" + 
@@ -236,38 +264,52 @@
             document.getElementById('relogio-brasilia').innerText = agora.toLocaleTimeString('pt-BR');
         }, 13);
 
+        /**
+         * FUNÇÃO EXECUTAR VARREDURA (MÁQUINA PRINCIPAL)
+         * Conecta na API, pega os dados reais e atualiza toda a interface do radar.
+         */
         async function executarVarredura() {
-            let site = document.getElementById('siteUrl').value.trim();
+            let site = document.getElementById('siteUrl').value.trim(); // Pega a URL digitada
             if(!site) return;
-            if (!site.startsWith('http')) site = 'https://' + site;
+            if (!site.startsWith('http')) site = 'https://' + site; // Garante o protocolo seguro
             const btn = document.getElementById('btn-scan');
             btn.innerText = "INVESTIGANDO...";
+            // Gera o print do site em tempo real usando o serviço thum.io
             document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
 
             try {
+                // Chamada oficial ao PageSpeed Insights do Google
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
+                
+                // Extrai a pontuação de performance (0 a 1) e converte para base 100
                 const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
                 
+                // Define scores (Perf é real, os outros são simulados para autoridade visual)
                 const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
 
+                // Atualiza os círculos de progresso e números das métricas
                 Object.keys(scores).forEach(key => {
                     const val = scores[key];
-                    const color = val > 80 ? "#00ff00" : "#ff0000";
+                    const color = val > 80 ? "#00ff00" : "#ff0000"; // Verde para bom, Vermelho para ruim
                     document.getElementById('circ-' + key).style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
                     subirNumero('val-' + key, val, "%");
                 });
 
-                subirNumero('valor-perda', (100 - perf) * 850);
-                subirNumero('valor-oportunidade', (100 - perf) * 3600);
+                // CÁLCULO FINANCEIRO (Argumento de Venda AlemTech)
+                // Calcula perda baseado na ineficiência do site
+                subirNumero('valor-perda', (100 - perf) * 850); // Prejuízo técnico estimado
+                subirNumero('valor-oportunidade', (100 - perf) * 3600); // Ouro retido por falta de otimização
 
+                // Atualiza os relatórios de diagnóstico e intervenção
                 document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
                 document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
-                // Ativa a barra branca que marca o tempo real
-                scanning = true;
+                scanning = true; // Inicia o movimento das barras nos gráficos
                 btn.innerText = "CONCLUÍDO";
-            } catch (e) { btn.innerText = "ERRO DE SINCRONIA"; }
+            } catch (e) { 
+                btn.innerText = "ERRO DE SINCRONIA"; // Caso a API falhe ou a URL seja inválida
+            }
         }
     </script>
 </body>
