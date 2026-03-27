@@ -91,7 +91,7 @@
         </main>
     </div>
 
-    <script>
+   <script>
         const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; // Chave da API do Google PageSpeed
         let charts = {}; // Objeto para armazenar as instâncias dos gráficos
         let ms = 0; // Variável para o cronômetro milissegundos
@@ -114,11 +114,41 @@
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
+                
                 if (xPos >= left && xPos <= right) {
-                    ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.save();
+
+                    // --- CAMADA 1: PREVISÃO (Linha pontilhada que já existe no futuro) ---
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)'; // Dourado transparente
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 1;
+                    for (let i = left; i <= right; i += 10) {
+                        let y = (top + bottom) / 2 + Math.sin(i * 0.1) * 8;
+                        if (i === left) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+                    }
+                    ctx.stroke();
+
+                    // --- CAMADA 2: REALIDADE (Linha sólida que surge atrás da barra) ---
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#FFD700'; // Dourado Real
+                    ctx.setLineDash([]); 
+                    ctx.lineWidth = 2;
+                    ctx.lineJoin = 'round';
+                    for (let i = left; i <= xPos; i += 5) {
+                        // O cálculo de oscilação gera os picos técnicos
+                        let yPos = (top + bottom) / 2 + (Math.sin(i * 0.2) * 12 + (Math.random() * 5));
+                        if (i === left) ctx.moveTo(i, yPos); else ctx.lineTo(i, yPos);
+                    }
+                    ctx.stroke();
+
+                    // --- CAMADA 3: BARRA VERTICAL E TEXTO SYNC ---
+                    ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
                     ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
                     ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
-                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); ctx.restore();
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); 
+                    
+                    ctx.restore();
                 }
             }
         };
