@@ -98,59 +98,101 @@
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
 
+
+
+            /* -------------------------------------------------------------------------- */
+  
     // Criamos um array para guardar o histórico real das buscas
-let historicoReal = []; 
+        const AlemDb = {
+    name: 'AlemTechPerformance',
+    store: 'analises',
+    version: 1,
 
-const verticalScannerPlugin = {
-    id: 'verticalScanner',
-    afterDatasetsDraw(chart) {
-        if (!scanning) return;
-        const {ctx, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
-        const agora = new Date();
-        let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
-        
-        if (xPos >= left && xPos <= right) {
-            ctx.save();
+    async init() {
+        return new Promise((resolve) => {
+            const request = indexedDB.open(this.name, this.version);
+            request.onupgradeneeded = (e) => {
+                e.target.result.createObjectStore(this.store, { keyPath: 'id' });
+            };
+            request.onsuccess = (e) => resolve(e.target.result);
+        });
+    },
 
-            // --- DESENHO DA LINHA DOURADA (DADOS REAIS DO PAGESPEED) ---
-            if (historicoReal.length > 0) {
-                ctx.beginPath();
-                ctx.strokeStyle = '#FFD700'; // Dourado AlemTech
-                ctx.lineWidth = 2;
-                ctx.lineJoin = 'round';
+    async getHistory(id) {
+        const db = await this.init();
+        return new Promise((resolve) => {
+            const tx = db.transaction(this.store, 'readonly');
+            const req = tx.objectStore(this.store).get(id);
+            req.onsuccess = () => {
+                const res = req.result;
+                const expira = 30 * 24 * 60 * 60 * 1000;
+                if (res && (Date.now() - res.updatedAt < expira)) {
+                    resolve(res.data);
+                } else {
+                    resolve([]); // Expirado ou novo
+                }
+            };
+        });
+    },
 
-                historicoReal.forEach((ponto, index) => {
-                    // Converte o valor do PageSpeed (0-100) para a altura do gráfico
-                    const posX = x.getPixelForValue(ponto.hora);
-                    const posY = y.getPixelForValue(ponto.valor);
-
-                    // Só desenha o que já foi "escaneado" pela barra branca
-                    if (posX <= xPos) {
-                        // Adiciona o "pico de cone" para dar o visual técnico
-                        const picos = (Math.sin(index * 2) * 10); 
-                        if (index === 0) ctx.moveTo(posX, posY + picos);
-                        else ctx.lineTo(posX, posY + picos);
-                    }
-                });
-                ctx.stroke();
-            }
-
-            // --- BARRA VERTICAL SYNC ---
-            ctx.beginPath(); 
-            ctx.strokeStyle = '#ffffff'; 
-            ctx.lineWidth = 2;
-            ctx.moveTo(xPos, top); 
-            ctx.lineTo(xPos, bottom); 
-            ctx.stroke();
-            
-            ctx.fillStyle = '#ffffff'; 
-            ctx.font = 'bold 9px monospace';
-            ctx.fillText('▼ SYNC', xPos - 15, top - 5); 
-            
-            ctx.restore();
-        }
+    async savePoint(id, dataArray) {
+        const db = await this.init();
+        const tx = db.transaction(this.store, 'readwrite');
+        tx.objectStore(this.store).put({
+            id: id,
+            data: dataArray,
+            updatedAt: Date.now()
+        });
     }
 };
+            async function fetchPageSpeedData(url) {
+    try {
+        // Exemplo usando a métrica de Performance do Lighthouse via PageSpeed API
+        const api = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=performance`;
+        const response = await fetch(api);
+        const json = await response.json();
+        
+        // Retorna o score de 0 a 100
+        return Math.round(json.lighthouseResult.categories.performance.score * 100);
+    } catch (error) {
+        console.error("Erro na coleta AlemTech:", error);
+        return null;
+    }
+}
+            let analiseAtivaId = "meusite.com.br"; // ID único da análise atual
+
+async function iniciarSismografo(chartInstance) {
+    // 1. Carrega o que já existe no cache
+    historicoReal = await AlemDb.getHistory(analiseAtivaId);
+    chartInstance.update('none');
+
+    // 2. Loop de atualização (30 em 30 segundos)
+    setInterval(async () => {
+        const novoValor = await fetchPageSpeedData(analiseAtivaId);
+        
+        if (novoValor !== null) {
+            const agora = new Date();
+            const novoPonto = {
+                timestamp: agora.getTime(),
+                hora: agora.getHours() + 'h', // Compatível com seu plugin atual
+                valor: novoValor
+            };
+
+            // Evita duplicatas por timestamp
+            const ultimoPonto = historicoReal[historicoReal.length - 1];
+            if (!ultimoPonto || novoPonto.timestamp > ultimoPonto.timestamp) {
+                historicoReal.push(novoPonto);
+                
+                // Salva no IndexedDB (Persistência)
+                await AlemDb.savePoint(analiseAtivaId, historicoReal);
+                
+                // Atualiza o gráfico de forma leve
+                chartInstance.update('none');
+            }
+        }
+    }, 30000);
+}
+    /* -------------------------------------------------------------------------- */
         setInterval(() => { // Loop para atualizar os relógios de sincronia e horário de Brasília
             ms += 13;
             let d = new Date(ms);
