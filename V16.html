@@ -101,60 +101,64 @@
      
       /* -------------------Inicio sessão Gráfico--------------------------- */       
          // Criamos a memória do radar para os picos ficarem travados (Fora do plugin para persistir)
+// Memória persistente para os picos reais do PageSpeed
 let dadosReaisRadar = []; 
 
 const verticalScannerPlugin = {
     id: 'verticalScanner',
     afterDatasetsDraw(chart) {
         if (!scanning) return;
+        
+        // Puxamos ctx, as áreas do gráfico e as escalas (x e y)
         const {ctx, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
         const agora = new Date();
         
-        // Identifica a posição da barra branca (O Sensor)
-        let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
+        // Define a posição da barra branca baseada no tempo real
+        let xPos = chart.canvas.id === 'monthChart' ? 
+                   x.getPixelForValue(agora.getDate()) : 
+                   x.getPixelForValue(agora.getHours() + 'h');
         
         if (xPos >= left && xPos <= right) {
             ctx.save();
 
-            // --- DESENHO DOS PICOS AGUDOS REAIS (O RASTRO QUE FICA PARADO) ---
+            // --- 1. RASTRO DOURADO (PASSADO ESTÁTICO) ---
             if (dadosReaisRadar.length > 1) {
                 ctx.beginPath();
                 ctx.strokeStyle = '#FFD700'; // Dourado AlemTech
                 ctx.lineWidth = 2;
-                ctx.lineJoin = 'miter'; // Pontas agudas de cone (Estilo Analytics)
-                ctx.setLineDash([]); // Garante linha sólida no rastro
-
-                let primeiroPontoNoPassado = true;
-
+                ctx.lineJoin = 'miter'; // Pontas agudas (estilo sismógrafo)
+                
+                let primeiroPonto = true;
                 dadosReaisRadar.forEach((ponto) => {
-                    const posX = x.getPixelForValue(ponto.label);
-                    const posY = y.getPixelForValue(ponto.valor);
+                    const px = x.getPixelForValue(ponto.label);
+                    const py = y.getPixelForValue(ponto.valor);
 
-                    // Só desenha se o dado for do passado ou presente (onde a barra já passou)
-                    if (posX <= xPos) {
-                        if (primeiroPontoNoPassado) {
-                            ctx.moveTo(posX, posY);
-                            primeiroPontoNoPassado = false;
+                    // Só desenha se estiver à esquerda da barra branca (passado)
+                    if (px <= xPos) {
+                        if (primeiroPonto) {
+                            ctx.moveTo(px, py);
+                            primeiroPonto = false;
                         } else {
-                            ctx.lineTo(posX, posY);
+                            ctx.lineTo(px, py);
                         }
                     }
                 });
                 ctx.stroke();
             }
 
-            // --- BARRA VERTICAL SYNC (O SENSOR) ---
+            // --- 2. BARRA BRANCA (SYNC) ---
             ctx.beginPath(); 
             ctx.strokeStyle = '#ffffff'; 
             ctx.lineWidth = 2;
             ctx.moveTo(xPos, top); 
             ctx.lineTo(xPos, bottom); 
             ctx.stroke();
-            
+
+            // --- 3. TEXTO INDICADOR ---
             ctx.fillStyle = '#ffffff'; 
             ctx.font = 'bold 9px monospace';
-            ctx.fillText('▼ SYNC', xPos - 15, top - 5); 
-            
+            ctx.fillText('▼ SYNC', xPos - 15, top - 5);
+
             ctx.restore();
         }
     }
