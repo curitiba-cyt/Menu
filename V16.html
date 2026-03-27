@@ -467,100 +467,97 @@
         }, 13);
 
         /**
-      /* * MONITOR DE REDE E PERFORMANCE ALEMTECH - VERSÃO ALVO ÚNICO
- * Foco: Rastreio contínuo do link inserido pelo usuário.
+     /* * MONITOR DE ATIVOS ALEMTECH - SISTEMA DE RASTREIO INTEGRADO
+ * Chaves Configuradas: Meta (Ads), Google (G4) e X (Twitter)
  */
 
-// Variável global para controlar o tempo e evitar que o loop rode em dobro
-let monitoramentoAtivo = null; 
+const API_KEY = 'SUA_CHAVE_PAGESPEED_AQUI'; // <--- Coloque sua chave do Google Cloud aqui
+
+// IDs da sua rede para conferência
+const REDE_ALEMTECH = {
+    meta: "1653412125852286",
+    google: "G-2DNN3MJ51E",
+    x: "rb2wm"
+};
+
+let monitoramentoAtivo = null;
 
 async function iniciarRastreioAlemTech() {
-    // 1. CAPTURA DO ALVO: Lê o valor atual do campo de texto (o link que você colou)
     let siteAlvo = document.getElementById('siteUrl').value.trim();
-    
-    // 2. VALIDAÇÃO: Se o campo estiver vazio, ele para aqui e avisa
     if(!siteAlvo) {
-        alert("Por favor, insira um link para iniciar o monitoramento.");
+        alert("Insira um link para iniciar o rastreio da rede.");
         return;
     }
 
-    // 3. NORMALIZAÇÃO: Adiciona 'https://' caso você tenha esquecido, para a API não dar erro
-    if (!siteAlvo.startsWith('http')) siteAlvo = 'https://' + siteAlvo; 
+    if (!siteAlvo.startsWith('http')) siteAlvo = 'https://' + siteAlvo;
 
-    // 4. FEEDBACK VISUAL: Muda o texto do botão para indicar que a máquina está trabalhando
     const btn = document.getElementById('btn-scan');
-    btn.innerText = `RASTREANDO: ${siteAlvo.toUpperCase()}`;
+    btn.innerText = "RASTREANDO ATIVOS...";
 
-    // 5. RESET DE SEGURANÇA: Se já houver um loop rodando, ele mata o antigo antes de começar o novo
     if (monitoramentoAtivo) clearTimeout(monitoramentoAtivo);
 
-    // 6. PREVIEW: Atualiza a imagem do site em tempo real para o alvo atual
+    // Atualiza o preview do alvo
     document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${siteAlvo}`;
 
     try {
-        /* 7. CONEXÃO GOOGLE (API PAGESPEED): Busca os dados técnicos usando sua cota de 25.000 */
+        // 1. Busca dados de performance e estrutura do site
         const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(siteAlvo)}&key=${API_KEY}&strategy=mobile&category=performance`);
         const data = await resp.json();
 
-        /* 8. TRATAMENTO DO SCORE: Transforma o decimal (0.45) em porcentagem real (45%) */
+        // 2. Processa o Score de Performance
         const perfBase = Math.round(data.lighthouseResult.categories.performance.score * 100);
-        
-        /* 9. OSCILAÇÃO REALISTA: Adiciona um pequeno "pulso" de +/- 1% para mostrar que o dado é vivo */
         const variacao = Math.floor(Math.random() * 3) - 1; 
         const perfFinal = Math.max(0, Math.min(100, perfBase + variacao));
 
-        /* 10. INTEGRAÇÃO DE REDE: Verifica se GA4, Meta e X estão presentes no código do site */
+        // 3. RASTREIO DE REDE (Verifica suas chaves específicas)
         verificarSinaisDeRede(data.lighthouseResult.audits);
 
-        /* 11. ATUALIZAÇÃO DA TELA: Envia o resultado para os gráficos e textos do painel */
+        // 4. Atualiza Interface
         atualizarInterfaceFocada(perfFinal, siteAlvo);
 
-        /* 12. O LOOP INFINITO: Agenda a mesma função para rodar daqui a 10 segundos */
-        // Isso mantém o monitoramento constante do link que você escolheu
+        // 5. LOOP DE 10 SEGUNDOS (Manutenção do Monitoramento)
         monitoramentoAtivo = setTimeout(() => {
             iniciarRastreioAlemTech();
-        }, 10000); 
+        }, 10000);
 
     } catch (e) {
-        // Em caso de queda de internet ou erro de API, avisa e tenta de novo em 5 segundos
-        btn.innerText = "ERRO DE SINCRONIA";
-        console.error("Falha no rastreio:", e);
+        btn.innerText = "ERRO DE CONEXÃO";
+        console.error("Falha no rastreio AlemTech:", e);
         monitoramentoAtivo = setTimeout(iniciarRastreioAlemTech, 5000);
     }
 }
 
-/* * FUNÇÃO: VERIFICAR SINAIS DE REDE (GA4, META, X)
- * Analisa os scripts encontrados pela API do Google
- */
 function verificarSinaisDeRede(audits) {
-    // Transformamos os dados da auditoria em texto para procurar as tags
     const corpoDoSite = JSON.stringify(audits);
     
-    // Procura por vestígios do Google Analytics 4
-    const temGA4 = corpoDoSite.includes('gtag') || corpoDoSite.includes('G-');
-    // Procura por vestígios do Pixel do Meta (Facebook)
-    const temMeta = corpoDoSite.includes('fbevents') || corpoDoSite.includes('fbq');
+    // Verificação detalhada de cada ativo da sua rede
+    const temGA4 = corpoDoSite.includes(REDE_ALEMTECH.google);
+    const temMeta = corpoDoSite.includes(REDE_ALEMTECH.meta);
+    const temX = corpoDoSite.includes(REDE_ALEMTECH.x);
 
-    // Atualiza os indicadores visuais (Sinal Verde se ativo, Cinza se ausente)
-    document.getElementById('status-ga4').style.color = temGA4 ? "#00ff00" : "#555";
-    document.getElementById('status-ga4').innerText = temGA4 ? "GA4: CONECTADO" : "GA4: AUSENTE";
+    // Atualização Visual GA4
+    const elGa4 = document.getElementById('status-ga4');
+    elGa4.style.color = temGA4 ? "#00ff00" : "#ff3333";
+    elGa4.innerText = temGA4 ? `GA4: ${REDE_ALEMTECH.google} ATIVO` : "GA4: NÃO DETECTADO";
 
-    document.getElementById('status-meta').style.color = temMeta ? "#00ff00" : "#555";
-    document.getElementById('status-meta').innerText = temMeta ? "META: ATIVO" : "META: AUSENTE";
+    // Atualização Visual Meta
+    const elMeta = document.getElementById('status-meta');
+    elMeta.style.color = temMeta ? "#00ff00" : "#ff3333";
+    elMeta.innerText = temMeta ? `META: ${REDE_ALEMTECH.meta} OK` : "META: PIXEL AUSENTE";
+
+    // Atualização Visual X
+    const elX = document.getElementById('status-x');
+    elX.style.color = temX ? "#00ff00" : "#555";
+    elX.innerText = temX ? `X-CORP: ${REDE_ALEMTECH.x} RASTREADO` : "X: SEM SINAL";
 }
 
-/* * FUNÇÃO: ATUALIZAR INTERFACE FOCADA
- * Alimenta os gráficos e os contadores de prejuízo financeiro
- */
 function atualizarInterfaceFocada(perf, site) {
-    // Calcula o prejuízo financeiro (Exemplo: R$ 850 perdidos por cada 1% de lentidão)
+    // Cálculo de perda baseado no método AlemTech
     subirNumero('valor-perda', (100 - perf) * 850); 
     
-    // Atualiza as mensagens de diagnóstico
-    document.getElementById('text-diag').innerText = `INVESTIGANDO ATIVO: ${site.toUpperCase()}`;
-    document.getElementById('text-solu').innerText = `A FRAGILIDADE ATUAL É DE ${100-perf}%...`;
+    document.getElementById('text-diag').innerText = `MONITORANDO ATIVO: ${site.toUpperCase()}`;
+    document.getElementById('text-solu').innerText = `FRAGILIDADE TÉCNICA EM ${100-perf}%...`;
 
-    // Atualiza o círculo de performance (Verde para >80, Amarelo >50, Vermelho <50)
     const cor = perf > 80 ? "#00ff00" : (perf > 50 ? "#ffff00" : "#ff0000");
     const circulo = document.getElementById('circ-perf');
     
