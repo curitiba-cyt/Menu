@@ -467,52 +467,94 @@
         }, 13);
 
         /**
-         * FUNÇÃO EXECUTAR VARREDURA (MÁQUINA PRINCIPAL)
-         * Conecta na API, pega os dados reais e atualiza toda a interface do radar.
-         */
-        async function executarVarredura() {
-            let site = document.getElementById('siteUrl').value.trim(); // Pega a URL digitada
-            if(!site) return;
-            if (!site.startsWith('http')) site = 'https://' + site; // Garante o protocolo seguro
-            const btn = document.getElementById('btn-scan');
-            btn.innerText = "INVESTIGANDO...";
-            // Gera o print do site em tempo real usando o serviço thum.io
-            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+       /* * MOTOR DE VARREDURA EM MASSA - ALTEMTECH v2.0
+ * Foco: Processamento de 10 alvos simultâneos com looping infinito.
+ */
 
-            try {
-                // Chamada oficial ao PageSpeed Insights do Google
-                const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
-                const data = await resp.json();
-                
-                // Extrai a pontuação de performance (0 a 1) e converte para base 100
-                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
-                
-                // Define scores (Perf é real, os outros são simulados para autoridade visual)
-                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+// 1. A LISTA DE ALVOS (Coloque os 10 domínios aqui)
+const listaDeAlvos = [
+    "site1.com", "site2.com", "site3.com", "site4.com", "site5.com",
+    "site6.com", "site7.com", "site8.com", "site9.com", "site10.com"
+];
 
-                // Atualiza os círculos de progresso e números das métricas
-                Object.keys(scores).forEach(key => {
-                    const val = scores[key];
-                    const color = val > 80 ? "#00ff00" : "#ff0000"; // Verde para bom, Vermelho para ruim
-                    document.getElementById('circ-' + key).style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
-                    subirNumero('val-' + key, val, "%");
-                });
+let indiceAtual = 0; // Ponteiro para saber qual site da lista estamos olhando
+let monitoramentoAtivo = null; 
 
-                // CÁLCULO FINANCEIRO (Argumento de Venda AlemTech)
-                // Calcula perda baseado na ineficiência do site
-                subirNumero('valor-perda', (100 - perf) * 850); // Prejuízo técnico estimado
-                subirNumero('valor-oportunidade', (100 - perf) * 3600); // Ouro retido por falta de otimização
+async function iniciarVarreduraEmMassa() {
+    // Pegamos o site atual da nossa lista de 10
+    let site = listaDeAlvos[indiceAtual];
+    
+    // Normalização (Garante que a API não rejeite a URL)
+    if (!site.startsWith('http')) site = 'https://' + site; 
 
-                // Atualiza os relatórios de diagnóstico e intervenção
-                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
-                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
-                
-                scanning = true; // Inicia o movimento das barras nos gráficos
-                btn.innerText = "CONCLUÍDO";
-            } catch (e) { 
-                btn.innerText = "ERRO DE SINCRONIA"; // Caso a API falhe ou a URL seja inválida
-            }
+    console.log(`--- INVESTIGANDO ALVO ${indiceAtual + 1}/10: ${site} ---`);
+
+    // Atualiza a Interface para o Alvo Atual
+    const btn = document.getElementById('btn-scan');
+    btn.innerText = `VARRENDO: ${site.toUpperCase()}`;
+    
+    // Atualiza o Preview Visual do site que está sendo "atacado" agora
+    document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+
+    try {
+        /* A CONEXÃO (O GASTO DOS SEUS 25.000 CRÉDITOS) */
+        // Usamos o fetch para bater na porta do Google e pedir os dados de Performance Mobile
+        const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
+        const data = await resp.json();
+
+        // Extração do Score (0 a 100)
+        const perfBase = Math.round(data.lighthouseResult.categories.performance.score * 100);
+        
+        /* A LÓGICA DE ARGUMENTO (SINTOMAS SEM A CURA) */
+        // Criamos uma pequena variação para mostrar que o dado é "vivo" e oscila em tempo real
+        const variacao = Math.floor(Math.random() * 5) - 2; 
+        const perf = Math.max(0, Math.min(100, perfBase + variacao));
+
+        // Atualização dos Círculos de Status na Interface
+        atualizarInterface(perf, site);
+
+        /* O PULO DO GATO: A TRANSIÇÃO DO LOOP */
+        // Incrementamos o índice para ir para o próximo site da lista
+        indiceAtual++;
+
+        // Se chegarmos ao fim da lista (passamos pelos 10), voltamos ao zero para o looping infinito
+        if (indiceAtual >= listaDeAlvos.length) {
+            console.log("Ciclo de 10 concluído. Reiniciando Varredura...");
+            indiceAtual = 0; 
         }
+
+        // Agenda a próxima busca. 
+        // 5000ms (5 segundos) é o tempo ideal para o usuário ler o diagnóstico antes de mudar de site
+        monitoramentoAtivo = setTimeout(() => {
+            iniciarVarreduraEmMassa();
+        }, 5000);
+
+    } catch (e) {
+        console.error(`Erro no alvo ${site}:`, e);
+        // Em caso de erro, pula para o próximo para não travar o loop
+        indiceAtual++;
+        if (indiceAtual >= listaDeAlvos.length) indiceAtual = 0;
+        setTimeout(iniciarVarreduraEmMassa, 2000);
+    }
+}
+
+/* FUNÇÕES DE APOIO (DETALHADAS) */
+
+function atualizarInterface(perf, site) {
+    // 1. Mostra a "Ferida": Prejuízo financeiro baseado na lentidão
+    // Quanto menor a performance, maior o valor de perda exibido.
+    subirNumero('valor-perda', (100 - perf) * 850); 
+    
+    // 2. Atualiza os textos de Diagnóstico para o site atual
+    document.getElementById('text-diag').innerText = `ALVO: ${site.toUpperCase()} | FRAGILIDADE: ${100-perf}%`;
+    document.getElementById('text-solu').innerText = `IDENTIFICANDO RETENÇÃO DE CAPITAL POR FALHA TÉCNICA...`;
+
+    // 3. Atualiza o Gráfico Principal (Círculo de Performance)
+    const color = perf > 80 ? "#00ff00" : "#ff0000"; 
+    const circ = document.getElementById('circ-perf');
+    if(circ) circ.style.background = `conic-gradient(${color} ${perf}%, #222 0%)`;
+    subirNumero('val-perf', perf, "%");
+}
     </script>
 </body>
 </html>
