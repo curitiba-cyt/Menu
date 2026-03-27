@@ -14,7 +14,413 @@
         (function() {
             const urlParams = new URLSearchParams(window.location.search); 
             if (urlParams.get('acesso') === 'v16') { 
-                localStorage.setItem('access_token', 'v16_autorizado'); // Grava a permissão no navegador
+                localStorage.setItem('access_token', 'v16_<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALEMTECH.V16 - OMNI RADAR</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        /**
+         * FUNÇÃO DE CONTROLE DE ACESSO (IIFE - Immediately Invoked Function Expression)
+         */
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search); 
+            if (urlParams.get('acesso') === 'v16') { 
+                localStorage.setItem('access_token', 'v16_autorizado'); 
+                window.history.replaceState({}, document.title, window.location.pathname); 
+            }
+            if (localStorage.getItem('access_token') !== 'v16_autorizado') { 
+                window.location.href = "https://www.google.com"; 
+            }
+        })();
+    </script>
+
+   <style>
+    /* 1. RESET E FUNDAÇÃO DA TELA */
+    * { 
+        box-sizing: border-box !important; 
+        margin: 0; 
+        padding: 0; 
+    } 
+    html, body { 
+        width: 100vw; 
+        height: 100vh; 
+        overflow: hidden; 
+        background: #020202; 
+        font-family: 'Inter', sans-serif; 
+        color: #fff; 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+    }
+
+    /* 2. ESTRUTURA DO DASHBOARD */
+    .dashboard { 
+        display: flex; 
+        width: 100vw; 
+        height: 100vh; 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        z-index: 9999; 
+        background: #020202; 
+    }
+
+    /* 3. BARRA LATERAL */
+    .sidebar { 
+        width: 300px; 
+        background: #080808; 
+        border-right: 1px solid #1a1111; 
+        display: flex; 
+        flex-direction: column; 
+        padding: 25px; 
+        flex-shrink: 0; 
+    }
+    .sidebar-logo { 
+        font-weight: 900; 
+        color: #ff0000; 
+        margin-bottom: 25px; 
+        font-size: 1.4rem; 
+        letter-spacing: 3px; 
+        border-left: 5px solid #ff0000; 
+        padding-left: 12px; 
+    }
+
+    /* 4. PREVIEW E CAIXAS DE IMPACTO FINANCEIRO */
+    .live-preview-box { 
+        border: 1px solid #333; 
+        height: 180px; 
+        background: #000; 
+        position: relative; 
+        overflow: hidden; 
+        margin-bottom: 20px; 
+        border-radius: 4px; 
+        box-shadow: inset 0 0 20px #000; 
+    }
+    #site-preview { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        opacity: 0.7; 
+    }
+    .ipf-box { 
+        background: linear-gradient(180deg, #1a0505 0%, #000 100%); 
+        padding: 18px; 
+        border: 1px solid #3d0000; 
+        border-radius: 4px; 
+        margin-bottom: 15px; 
+    }
+    .ipf-label { 
+        font-size: 0.6rem; 
+        color: #ff4d4d; 
+        text-transform: uppercase; 
+        font-weight: 800; 
+        letter-spacing: 1px; 
+    }
+    .ipf-value { 
+        font-family: 'Courier New', monospace; 
+        font-size: 1.4rem; 
+        font-weight: 900; 
+        color: #fff; 
+        margin-top: 5px; 
+    }
+
+    /* 5. ÁREA DE CONTEÚDO E BUSCA */
+    .main-content { 
+        flex: 1; 
+        height: 100vh; 
+        overflow-y: auto; 
+        background: #040404; 
+        display: flex; 
+        flex-direction: column; 
+    }
+    .analysis-header { 
+        background: #0a0a0a; 
+        padding: 20px 30px; 
+        border-bottom: 1px solid #151515; 
+        display: flex; 
+        gap: 15px; 
+        position: sticky; 
+        top: 0; 
+        z-index: 1000; 
+    }
+    .analysis-input { 
+        flex: 1; 
+        background: #000; 
+        border: 1px solid #333; 
+        padding: 14px; 
+        color: #00ff00; 
+        font-family: monospace; 
+        font-size: 1rem; 
+        outline: none; 
+        border-radius: 4px; 
+    }
+    .analysis-btn { 
+        background: #ff0000; 
+        color: #fff; 
+        border: none; 
+        padding: 0 30px; 
+        font-weight: 900; 
+        cursor: pointer; 
+        text-transform: uppercase; 
+        letter-spacing: 1px; 
+        transition: 0.3s; 
+    }
+
+    /* 6. GRADE DE MÉTRICAS TÉCNICAS */
+    .mini-stats-grid { 
+        display: grid; 
+        grid-template-columns: repeat(6, 1fr); 
+        gap: 12px; 
+        padding: 20px 30px; 
+    }
+    .mini-card { 
+        background: #0a0a0a; 
+        border: 1px solid #1a1a1a; 
+        padding: 15px; 
+        border-radius: 4px; 
+        text-align: center; 
+    }
+    .mini-label { 
+        font-size: 0.55rem; 
+        color: #888; 
+        font-weight: 800; 
+        margin-bottom: 8px; 
+        text-transform: uppercase; 
+    }
+    .mini-value { 
+        font-size: 1.1rem; 
+        font-weight: 900; 
+        font-family: monospace; 
+    }
+    .progress-circle { 
+        width: 35px; 
+        height: 35px; 
+        border-radius: 50%; 
+        background: #222; 
+        margin: 0 auto 8px; 
+        position: relative; 
+    }
+
+    /* 7. CONTAINERS DOS GRÁFICOS */
+    .chart-container { 
+        background: #080808; 
+        border: 1px solid #1a1a1a; 
+        padding: 15px; 
+        margin: 0 30px 15px; 
+        border-radius: 4px; 
+        height: 180px; 
+        position: relative; 
+    }
+    .chart-title { 
+        font-size: 0.65rem; 
+        color: #00ff00; 
+        font-weight: 900; 
+        margin-bottom: 10px; 
+        font-family: monospace; 
+        display: flex; 
+        justify-content: space-between; 
+        text-transform: uppercase; 
+    }
+
+    /* 8. SEÇÃO DE RELATÓRIO E TEXTOS */
+    .report-section { 
+        margin: 0 30px 40px; 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 20px; 
+    }
+    .text-block { 
+        background: #080808; 
+        border: 1px solid #1a1a1a; 
+        padding: 25px; 
+        border-radius: 4px; 
+    }
+    .content-area { 
+        font-size: 0.88rem; 
+        line-height: 1.7; 
+        color: #aaa; 
+        height: 150px; 
+        overflow-y: auto; 
+    }
+</style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-logo">ALEMTECH.V16</div>
+            <div class="live-preview-box"><img id="site-preview" src="" alt="Aguardando alvo..."></div>
+            
+            <div class="ipf-box">
+                <div class="ipf-label">PREJUÍZO TÉCNICO ACUMULADO</div>
+                <div id="valor-perda" class="ipf-value">R$ 0,00</div>
+            </div>
+            <div class="ipf-box" style="border-color: #004d00; background: linear-gradient(180deg, #051a05 0%, #000 100%);">
+                <div class="ipf-label" style="color: #00ff00;">OURO RETIDO (CONVERSÃO)</div>
+                <div id="valor-oportunidade" class="ipf-value" style="color: #00ff00;">R$ 0,00</div>
+            </div>
+            <div class="ipf-box" style="border-color: #00ff00; background: #000;">
+                <div class="ipf-label">TEMPO DE CONEXÃO RADAR (SYNC)</div>
+                <div id="relogio-sync" class="ipf-value" style="color: #00ff00; font-size: 1rem;">00:00:00:00</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="analysis-header">
+                <input type="text" id="siteUrl" class="analysis-input" placeholder="DOMÍNIO DO ALVO PARA INVESTIGAÇÃO:">
+                <button class="analysis-btn" id="btn-scan" onclick="executarVarredura()">VARREDURA TOTAL</button>
+            </div>
+
+            <div class="mini-stats-grid">
+                <div class="mini-card"><div class="mini-label">LCP (CARGA)</div><div class="progress-circle" id="circ-perf"></div><div id="val-perf" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">SEO CORE</div><div class="progress-circle" id="circ-seo"></div><div id="val-seo" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">LOAD TIME</div><div class="progress-circle" id="circ-acc"></div><div id="val-acc" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">PERF. MOBILE</div><div class="progress-circle" id="circ-bp"></div><div id="val-bp" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">PERF. DESKTOP</div><div class="progress-circle" id="circ-cls"></div><div id="val-cls" class="mini-value">--</div></div>
+                <div class="mini-card"><div class="mini-label">UX / FID</div><div class="progress-circle" id="circ-fid"></div><div id="val-fid" class="mini-value">--</div></div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
+                <canvas id="monthChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div>
+                <canvas id="dayChart"></canvas>
+            </div>
+
+            <div class="report-section">
+                <div class="text-block" style="border-left: 4px solid #ff0000;">
+                    <div class="box-label" style="color: #ff0000; font-weight: 900;">DIAGNÓSTICO DE FRAGILIDADE</div>
+                    <div id="text-diag" class="content-area">Aguardando varredura...</div>
+                </div>
+                <div class="text-block" style="border-left: 4px solid #00ff00;">
+                    <div class="box-label" style="color: #00ff00; font-weight: 900;">INTERVENÇÃO ALEMTECH</div>
+                    <div id="text-solu" class="content-area">Aguardando dados...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; 
+        let charts = {}; 
+        let ms = 0;      
+        let scanning = false; 
+
+        const chartOptions = () => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
+                y: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { display: false }, min: 0, max: 100 }
+            },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        });
+
+        const verticalScannerPlugin = {
+            id: 'verticalScanner',
+            afterDatasetsDraw(chart) {
+                if (!scanning) return;
+                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
+                const agora = new Date();
+                let xPos;
+                if (chart.canvas.id === 'monthChart') {
+                    xPos = x.getPixelForValue(agora.getDate());
+                } else {
+                    xPos = x.getPixelForValue(agora.getHours() + 'h');
+                }
+                if (xPos >= left && xPos <= right) {
+                    ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); ctx.restore();
+                }
+            }
+        };
+
+        window.onload = () => {
+            charts.month = new Chart(document.getElementById('monthChart'), {
+                type: 'line', plugins: [verticalScannerPlugin],
+                data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
+                options: chartOptions()
+            });
+            charts.day = new Chart(document.getElementById('dayChart'), {
+                type: 'line', plugins: [verticalScannerPlugin],
+                data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
+                options: chartOptions()
+            });
+            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000);
+        };
+
+        function subirNumero(id, valorFinal, sufixo = "") {
+            let elemento = document.getElementById(id);
+            if(!elemento) return;
+            let valorInicial = 0;
+            let incremento = valorFinal / 60;
+            let cronometro = setInterval(() => {
+                valorInicial += incremento;
+                if (valorInicial >= valorFinal) {
+                    elemento.innerText = (id.includes('valor') ? "R$ " + valorFinal.toLocaleString('pt-BR') : valorFinal + sufixo);
+                    clearInterval(cronometro);
+                } else {
+                    elemento.innerText = (id.includes('valor') ? "R$ " + Math.floor(valorInicial).toLocaleString('pt-BR') : Math.floor(valorInicial) + sufixo);
+                }
+            }, 16);
+        }
+
+        setInterval(() => {
+            ms += 13;
+            let d = new Date(ms);
+            document.getElementById('relogio-sync').innerText = d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0') + ":" + d.getUTCSeconds().toString().padStart(2, '0') + ":" + Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
+            document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
+        }, 13);
+
+        async function executarVarredura() {
+            let site = document.getElementById('siteUrl').value.trim();
+            if(!site) return;
+            if (!site.startsWith('http')) site = 'https://' + site;
+            const btn = document.getElementById('btn-scan');
+            btn.innerText = "INVESTIGANDO...";
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+
+            try {
+                const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
+                const data = await resp.json();
+                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
+                
+                // Mapeamento corrigido das chaves para bater com os IDs do HTML
+                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+
+                Object.keys(scores).forEach(key => {
+                    const val = scores[key];
+                    const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000");
+                    const circ = document.getElementById('circ-' + key);
+                    if(circ) circ.style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
+                    subirNumero('val-' + key, val, "%");
+                });
+
+                subirNumero('valor-perda', (100 - perf) * 850);
+                subirNumero('valor-oportunidade', (100 - perf) * 3600);
+
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
+                
+                scanning = true;
+                btn.innerText = "CONCLUÍDO";
+            } catch (e) { 
+                btn.innerText = "ERRO DE SINCRONIA";
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>autorizado'); // Grava a permissão no navegador
                 window.history.replaceState({}, document.title, window.location.pathname); // Limpa a URL para esconder a senha
             }
             if (localStorage.getItem('access_token') !== 'v16_autorizado') { 
