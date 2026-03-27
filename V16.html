@@ -203,26 +203,28 @@
     }
 
 
-    /* 7. CONTAINERS DOS GRÁFICOS
+   /* 7. CONTAINERS DOS GRÁFICOS
        Define o tamanho e a estética das janelas de oscilação de dados. */
+    
     .chart-container { 
-        background: #080808; 
-        border: 1px solid #1a1a1a; 
-        padding: 15px; 
-        margin: 0 30px 15px; 
-        border-radius: 4px; 
-        height: 180px; 
-        position: relative; 
+        background: #080808;     /* Cinza quase preto. É o fundo da "tela do monitor" de dados. */
+        border: 1px solid #1a1a1a; /* Borda técnica fina que separa o gráfico do resto do sistema. */
+        padding: 15px;           /* Espaço interno para o gráfico não tocar na moldura e "respirar". */
+        margin: 0 30px 15px;     /* '0' (topo), '30px' (afasta das laterais da tela) e '15px' (espaço para o bloco de baixo). */
+        border-radius: 4px;      /* Arredondamento discreto para manter o padrão industrial AlemTech. */
+        height: 180px;           /* Altura fixa para garantir que o radar tenha sempre a mesma proporção. */
+        position: relative;      /* CRÍTICO: Permite que a barra branca de SCAN corra por cima do gráfico sem quebrar. */
     }
+
     .chart-title { 
-        font-size: 0.65rem; 
-        color: #00ff00; 
-        font-weight: 900; 
-        margin-bottom: 10px; 
-        font-family: monospace; 
-        display: flex; 
-        justify-content: space-between; 
-        text-transform: uppercase; 
+        font-size: 0.65rem;      /* Fonte pequena para dar estilo de "metadados" de terminal. */
+        color: #00ff00;          /* Verde Neon: sinaliza que o sistema de monitoramento está operante. */
+        font-weight: 900;        /* Negrito máximo para dar autoridade ao título do gráfico. */
+        margin-bottom: 10px;     /* Distância entre o título e o início do desenho das linhas. */
+        font-family: monospace;  /* Fonte de código/máquina, reforça o tom de investigação técnica. */
+        display: flex;           /* Faz o título se comportar como uma linha flexível. */
+        justify-content: space-between; /* Empurra o nome para a esquerda e o relógio/status para a direita. */
+        text-transform: uppercase; /* Força todas as letras em MAIÚSCULO para passar seriedade. */
     }
 
     /* 8. SEÇÃO DE RELATÓRIO E TEXTOS (DIAGNÓSTICO)
