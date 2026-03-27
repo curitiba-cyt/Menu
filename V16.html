@@ -98,101 +98,62 @@
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
 
-
-
-            /* -------------------------------------------------------------------------- */
-  
-    // Criamos um array para guardar o histórico real das buscas
-        const AlemDb = {
-    name: 'AlemTechPerformance',
-    store: 'analises',
-    version: 1,
-
-    async init() {
-        return new Promise((resolve) => {
-            const request = indexedDB.open(this.name, this.version);
-            request.onupgradeneeded = (e) => {
-                e.target.result.createObjectStore(this.store, { keyPath: 'id' });
-            };
-            request.onsuccess = (e) => resolve(e.target.result);
+        const chartOptions = () => ({ // Configurações padrão visuais dos gráficos
+            responsive: true, maintainAspectRatio: false, animation: false,
+            scales: {
+                x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
+                y: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { display: false }, min: 0, max: 100 }
+            },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
         });
-    },
 
-    async getHistory(id) {
-        const db = await this.init();
-        return new Promise((resolve) => {
-            const tx = db.transaction(this.store, 'readonly');
-            const req = tx.objectStore(this.store).get(id);
-            req.onsuccess = () => {
-                const res = req.result;
-                const expira = 30 * 24 * 60 * 60 * 1000;
-                if (res && (Date.now() - res.updatedAt < expira)) {
-                    resolve(res.data);
-                } else {
-                    resolve([]); // Expirado ou novo
+        const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
+            id: 'verticalScanner',
+            afterDatasetsDraw(chart) {
+                if (!scanning) return;
+                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
+                const agora = new Date();
+                let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
+                if (xPos >= left && xPos <= right) {
+                    ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); ctx.restore();
                 }
-            };
-        });
-    },
-
-    async savePoint(id, dataArray) {
-        const db = await this.init();
-        const tx = db.transaction(this.store, 'readwrite');
-        tx.objectStore(this.store).put({
-            id: id,
-            data: dataArray,
-            updatedAt: Date.now()
-        });
-    }
-};
-            async function fetchPageSpeedData(url) {
-    try {
-        // Exemplo usando a métrica de Performance do Lighthouse via PageSpeed API
-        const api = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&category=performance`;
-        const response = await fetch(api);
-        const json = await response.json();
-        
-        // Retorna o score de 0 a 100
-        return Math.round(json.lighthouseResult.categories.performance.score * 100);
-    } catch (error) {
-        console.error("Erro na coleta AlemTech:", error);
-        return null;
-    }
-}
-            let analiseAtivaId = "meusite.com.br"; // ID único da análise atual
-
-async function iniciarSismografo(chartInstance) {
-    // 1. Carrega o que já existe no cache
-    historicoReal = await AlemDb.getHistory(analiseAtivaId);
-    chartInstance.update('none');
-
-    // 2. Loop de atualização (30 em 30 segundos)
-    setInterval(async () => {
-        const novoValor = await fetchPageSpeedData(analiseAtivaId);
-        
-        if (novoValor !== null) {
-            const agora = new Date();
-            const novoPonto = {
-                timestamp: agora.getTime(),
-                hora: agora.getHours() + 'h', // Compatível com seu plugin atual
-                valor: novoValor
-            };
-
-            // Evita duplicatas por timestamp
-            const ultimoPonto = historicoReal[historicoReal.length - 1];
-            if (!ultimoPonto || novoPonto.timestamp > ultimoPonto.timestamp) {
-                historicoReal.push(novoPonto);
-                
-                // Salva no IndexedDB (Persistência)
-                await AlemDb.savePoint(analiseAtivaId, historicoReal);
-                
-                // Atualiza o gráfico de forma leve
-                chartInstance.update('none');
             }
+        };
+
+        window.onload = () => { // Inicializa os gráficos assim que a página carrega
+            charts.month = new Chart(document.getElementById('monthChart'), {
+                type: 'line', plugins: [verticalScannerPlugin],
+                data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
+                options: chartOptions()
+            });
+                /* -------------------Linha do grafico cinza Fixo--------------------------- */
+            charts.day = new Chart(document.getElementById('dayChart'), {
+                type: 'line', plugins: [verticalScannerPlugin],
+                data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
+                options: chartOptions()
+            });
+            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000); // Redesenha os gráficos a cada segundo se estiver varrendo
+        };
+
+        function subirNumero(id, valorFinal, sufixo = "") { // Função para criar o efeito de contador subindo (R$ ou %)
+            let elemento = document.getElementById(id);
+            if(!elemento) return;
+            let valorInicial = 0;
+            let incremento = valorFinal / 60; // Define a velocidade da animação
+            let cronometro = setInterval(() => {
+                valorInicial += incremento;
+                if (valorInicial >= valorFinal) {
+                    elemento.innerText = (id.includes('valor') ? "R$ " + valorFinal.toLocaleString('pt-BR') : valorFinal + sufixo);
+                    clearInterval(cronometro);
+                } else {
+                    elemento.innerText = (id.includes('valor') ? "R$ " + Math.floor(valorInicial).toLocaleString('pt-BR') : Math.floor(valorInicial) + sufixo);
+                }
+            }, 16);
         }
-    }, 30000);
-}
-    /* -------------------------------------------------------------------------- */
+
         setInterval(() => { // Loop para atualizar os relógios de sincronia e horário de Brasília
             ms += 13;
             let d = new Date(ms);
