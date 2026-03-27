@@ -163,39 +163,45 @@
 
     /* 6. GRADE DE MÉTRICAS TÉCNICAS (MINI CARDS)
        Os cards que mostram SEO, Performance, etc. */
+
     .mini-stats-grid { 
-        display: grid; 
-        grid-template-columns: repeat(6, 1fr); 
-        gap: 12px; 
-        padding: 20px 30px; 
+        display: grid;                /* Cria uma malha invisível para organizar os itens */
+        grid-template-columns: repeat(6, 1fr); /* Divide a linha em 6 colunas iguais (uma para cada métrica) */
+        gap: 12px;                    /* Espaço exato entre um card e outro */
+        padding: 20px 30px;           /* Afasta o grupo de cards das bordas da tela (20px topo/base, 30px laterais) */
     }
+
     .mini-card { 
-        background: #0a0a0a; 
-        border: 1px solid #1a1a1a; 
-        padding: 15px; 
-        border-radius: 4px; 
-        text-align: center; 
+        background: #0a0a0a;          /* Cinza grafite profundo (levemente mais claro que o fundo para destacar) */
+        border: 1px solid #1a1a1a;    /* Borda técnica sutil que define o limite do card */
+        padding: 15px;                /* Respiro interno para o conteúdo não tocar nas bordas do card */
+        border-radius: 4px;           /* Arredondamento industrial (passa sobriedade e precisão) */
+        text-align: center;           /* Garante que o círculo e os números fiquem no eixo central */
     }
+
     .mini-label { 
-        font-size: 0.55rem; 
-        color: #888; 
-        font-weight: 800; 
-        margin-bottom: 8px; 
-        text-transform: uppercase; 
+        font-size: 0.55rem;           /* Fonte reduzida para dar um ar de "monitor de sistema" */
+        color: #888;                  /* Cor cinza neutra para não competir com o valor principal */
+        font-weight: 800;             /* Negrito pesado para manter a leitura clara mesmo sendo pequeno */
+        margin-bottom: 8px;           /* Espaço entre o título da métrica e o círculo de progresso */
+        text-transform: uppercase;    /* Força todas as letras em maiúsculo (estilo terminal de dados) */
     }
+
     .mini-value { 
-        font-size: 1.1rem; 
-        font-weight: 900; 
-        font-family: monospace; 
+        font-size: 1.1rem;            /* Tamanho de destaque para o resultado da varredura */
+        font-weight: 900;             /* Peso máximo da fonte para transmitir certeza absoluta no dado */
+        font-family: monospace;       /* Fonte de máquina, reforçando que é um dado bruto processado */
     }
+
     .progress-circle { 
-        width: 35px; 
-        height: 35px; 
-        border-radius: 50%; 
-        background: #222; 
-        margin: 0 auto 8px; 
-        position: relative; 
+        width: 35px;                  /* Largura fixa do indicador circular */
+        height: 35px;                 /* Altura fixa do indicador circular */
+        border-radius: 50%;           /* Transforma o quadrado em um círculo perfeito */
+        background: #222;             /* Cor de base (escuro) antes do preenchimento da nota */
+        margin: 0 auto 8px;           /* Centraliza o círculo no card e dá distância para o valor abaixo */
+        position: relative;           /* Permite que o JavaScript desenhe o preenchimento por cima dele */
     }
+
 
     /* 7. CONTAINERS DOS GRÁFICOS
        Define o tamanho e a estética das janelas de oscilação de dados. */
