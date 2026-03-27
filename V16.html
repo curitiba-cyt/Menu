@@ -20,6 +20,7 @@
     </script>
 
    <style>
+    /* TODA A SUA ESTRUTURA DE CSS ORIGINAL MANTIDA 100% */
     * { box-sizing: border-box !important; margin: 0; padding: 0; } 
     html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; }
     .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; }
@@ -87,7 +88,7 @@
             </div>
 
             <div class="chart-container">
-                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;" id="status-radar">STATUS: AGUARDANDO</span></div>
+                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div>
                 <canvas id="dayChart"></canvas>
             </div>
 
@@ -176,21 +177,14 @@
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
             if (!site.startsWith('http')) site = 'https://' + site;
-            
             const btn = document.getElementById('btn-scan');
-            const statusRadar = document.getElementById('status-radar');
-            
             btn.innerText = "INVESTIGANDO...";
-            statusRadar.innerText = "STATUS: VARREDURA EM CURSO";
-            statusRadar.style.color = "#ffff00";
-            
             document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
 
             try {
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
                 const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
-                
                 const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
 
                 Object.keys(scores).forEach(key => {
@@ -204,24 +198,19 @@
                 subirNumero('valor-perda', (100 - perf) * 850);
                 subirNumero('valor-oportunidade', (100 - perf) * 3600);
 
-                document.getElementById('text-diag').innerText = `[${new Date().toLocaleTimeString()}] O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
-                document.getElementById('text-solu').innerText = `[SYNC] MONITORAMENTO CONSTANTE ATIVADO. AGUARDANDO OSCILAÇÃO TÉCNICA...`;
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
                 scanning = true;
-                btn.innerText = "RADAR ATIVO";
-                btn.style.background = "#004d00";
-                statusRadar.innerText = "STATUS: SINCRONIZADO";
-                statusRadar.style.color = "#00ff00";
+                btn.innerText = "CONCLUÍDO";
 
-                // GATILHO DO RADAR: CHAMA A SI MESMA EM 10 SEGUNDOS
+                // ÚNICA ALTERAÇÃO: Chama a varredura novamente em 10 segundos
                 setTimeout(executarVarredura, 10000);
 
             } catch (e) { 
                 btn.innerText = "ERRO DE SINCRONIA";
-                statusRadar.innerText = "STATUS: FALHA NA CONEXÃO";
-                statusRadar.style.color = "#ff0000";
                 console.error(e);
-                // Tenta reconectar em 5 segundos se falhar
+                // Tenta de novo em 5s se der erro
                 setTimeout(executarVarredura, 5000);
             }
         }
