@@ -107,52 +107,60 @@
             plugins: { legend: { display: false }, tooltip: { enabled: false } }
         });
 
-        const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
-            id: 'verticalScanner',
-            afterDatasetsDraw(chart) {
-                if (!scanning) return;
-                const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
-                const agora = new Date();
-                let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
-                
-                if (xPos >= left && xPos <= right) {
-                    ctx.save();
+       // Criamos um array para guardar o histórico real das buscas
+let historicoReal = []; 
 
-                    // --- CAMADA 1: PREVISÃO (Linha pontilhada que já existe no futuro) ---
-                    ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)'; // Dourado transparente
-                    ctx.setLineDash([5, 5]);
-                    ctx.lineWidth = 1;
-                    for (let i = left; i <= right; i += 10) {
-                        let y = (top + bottom) / 2 + Math.sin(i * 0.1) * 8;
-                        if (i === left) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+const verticalScannerPlugin = {
+    id: 'verticalScanner',
+    afterDatasetsDraw(chart) {
+        if (!scanning) return;
+        const {ctx, chartArea: {top, bottom, left, right}, scales: {x, y}} = chart;
+        const agora = new Date();
+        let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
+        
+        if (xPos >= left && xPos <= right) {
+            ctx.save();
+
+            // --- DESENHO DA LINHA DOURADA (DADOS REAIS DO PAGESPEED) ---
+            if (historicoReal.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#FFD700'; // Dourado AlemTech
+                ctx.lineWidth = 2;
+                ctx.lineJoin = 'round';
+
+                historicoReal.forEach((ponto, index) => {
+                    // Converte o valor do PageSpeed (0-100) para a altura do gráfico
+                    const posX = x.getPixelForValue(ponto.hora);
+                    const posY = y.getPixelForValue(ponto.valor);
+
+                    // Só desenha o que já foi "escaneado" pela barra branca
+                    if (posX <= xPos) {
+                        // Adiciona o "pico de cone" para dar o visual técnico
+                        const picos = (Math.sin(index * 2) * 10); 
+                        if (index === 0) ctx.moveTo(posX, posY + picos);
+                        else ctx.lineTo(posX, posY + picos);
                     }
-                    ctx.stroke();
-
-                    // --- CAMADA 2: REALIDADE (Linha sólida que surge atrás da barra) ---
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#FFD700'; // Dourado Real
-                    ctx.setLineDash([]); 
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = 'round';
-                    for (let i = left; i <= xPos; i += 5) {
-                        // O cálculo de oscilação gera os picos técnicos
-                        let yPos = (top + bottom) / 2 + (Math.sin(i * 0.2) * 12 + (Math.random() * 5));
-                        if (i === left) ctx.moveTo(i, yPos); else ctx.lineTo(i, yPos);
-                    }
-                    ctx.stroke();
-
-                    // --- CAMADA 3: BARRA VERTICAL E TEXTO SYNC ---
-                    ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
-                    ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
-                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
-                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); 
-                    
-                    ctx.restore();
-                }
+                });
+                ctx.stroke();
             }
-        };
 
+            // --- BARRA VERTICAL SYNC ---
+            ctx.beginPath(); 
+            ctx.strokeStyle = '#ffffff'; 
+            ctx.lineWidth = 2;
+            ctx.moveTo(xPos, top); 
+            ctx.lineTo(xPos, bottom); 
+            ctx.stroke();
+            
+            ctx.fillStyle = '#ffffff'; 
+            ctx.font = 'bold 9px monospace';
+            ctx.fillText('▼ SYNC', xPos - 15, top - 5); 
+            
+            ctx.restore();
+        }
+    }
+};
+           /* -------------------Fim desta cessão--------------------------- */
         window.onload = () => { // Inicializa os gráficos assim que a página carrega
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
