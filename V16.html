@@ -98,14 +98,26 @@
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
 
-        const chartOptions = () => ({ // Configurações padrão visuais dos gráficos
-            responsive: true, maintainAspectRatio: false, animation: false,
-            scales: {
-                x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
-                y: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { display: false }, min: 0, max: 100 }
-            },
-            plugins: { legend: { display: false }, tooltip: { enabled: false } }
-        });
+       // --- LOGICA DA TRILHA DOURADA (PASSADO IMÓVEL) ---
+ctx.beginPath();
+ctx.strokeStyle = '#FFD700'; // Dourado Real
+ctx.lineWidth = 2;
+ctx.lineJoin = 'round';
+
+// Fazemos um loop para desenhar a trilha desde o início (esquerda) até a barra (xPos)
+for (let i = 0; i <= xPos; i += 5) {
+    // Aqui criamos o "cone de picos" (oscilação aleatória técnica)
+    // Se a performance (perf) for baixa, os picos ficam mais agressivos
+    let oscilacao = Math.sin(i * 0.2) * (Math.random() * 15); 
+    let yPos = (top + bottom) / 2 + oscilacao; // Centraliza a linha no gráfico
+
+    if (i === 0) {
+        ctx.moveTo(left, yPos);
+    } else {
+        ctx.lineTo(i, yPos);
+    }
+}
+ctx.stroke();
 
         const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
             id: 'verticalScanner',
