@@ -467,93 +467,107 @@
         }, 13);
 
         /**
-       /* * MOTOR DE VARREDURA EM MASSA - ALTEMTECH v2.0
- * Foco: Processamento de 10 alvos simultâneos com looping infinito.
+      /* * MONITOR DE REDE E PERFORMANCE ALEMTECH - VERSÃO ALVO ÚNICO
+ * Foco: Rastreio contínuo do link inserido pelo usuário.
  */
 
-// 1. A LISTA DE ALVOS (Coloque os 10 domínios aqui)
-const listaDeAlvos = [
-    "site1.com", "site2.com", "site3.com", "site4.com", "site5.com",
-    "site6.com", "site7.com", "site8.com", "site9.com", "site10.com"
-];
-
-let indiceAtual = 0; // Ponteiro para saber qual site da lista estamos olhando
+// Variável global para controlar o tempo e evitar que o loop rode em dobro
 let monitoramentoAtivo = null; 
 
-async function iniciarVarreduraEmMassa() {
-    // Pegamos o site atual da nossa lista de 10
-    let site = listaDeAlvos[indiceAtual];
+async function iniciarRastreioAlemTech() {
+    // 1. CAPTURA DO ALVO: Lê o valor atual do campo de texto (o link que você colou)
+    let siteAlvo = document.getElementById('siteUrl').value.trim();
     
-    // Normalização (Garante que a API não rejeite a URL)
-    if (!site.startsWith('http')) site = 'https://' + site; 
+    // 2. VALIDAÇÃO: Se o campo estiver vazio, ele para aqui e avisa
+    if(!siteAlvo) {
+        alert("Por favor, insira um link para iniciar o monitoramento.");
+        return;
+    }
 
-    console.log(`--- INVESTIGANDO ALVO ${indiceAtual + 1}/10: ${site} ---`);
+    // 3. NORMALIZAÇÃO: Adiciona 'https://' caso você tenha esquecido, para a API não dar erro
+    if (!siteAlvo.startsWith('http')) siteAlvo = 'https://' + siteAlvo; 
 
-    // Atualiza a Interface para o Alvo Atual
+    // 4. FEEDBACK VISUAL: Muda o texto do botão para indicar que a máquina está trabalhando
     const btn = document.getElementById('btn-scan');
-    btn.innerText = `VARRENDO: ${site.toUpperCase()}`;
-    
-    // Atualiza o Preview Visual do site que está sendo "atacado" agora
-    document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+    btn.innerText = `RASTREANDO: ${siteAlvo.toUpperCase()}`;
+
+    // 5. RESET DE SEGURANÇA: Se já houver um loop rodando, ele mata o antigo antes de começar o novo
+    if (monitoramentoAtivo) clearTimeout(monitoramentoAtivo);
+
+    // 6. PREVIEW: Atualiza a imagem do site em tempo real para o alvo atual
+    document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${siteAlvo}`;
 
     try {
-        /* A CONEXÃO (O GASTO DOS SEUS 25.000 CRÉDITOS) */
-        // Usamos o fetch para bater na porta do Google e pedir os dados de Performance Mobile
-        const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
+        /* 7. CONEXÃO GOOGLE (API PAGESPEED): Busca os dados técnicos usando sua cota de 25.000 */
+        const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(siteAlvo)}&key=${API_KEY}&strategy=mobile&category=performance`);
         const data = await resp.json();
 
-        // Extração do Score (0 a 100)
+        /* 8. TRATAMENTO DO SCORE: Transforma o decimal (0.45) em porcentagem real (45%) */
         const perfBase = Math.round(data.lighthouseResult.categories.performance.score * 100);
         
-        /* A LÓGICA DE ARGUMENTO (SINTOMAS SEM A CURA) */
-        // Criamos uma pequena variação para mostrar que o dado é "vivo" e oscila em tempo real
-        const variacao = Math.floor(Math.random() * 5) - 2; 
-        const perf = Math.max(0, Math.min(100, perfBase + variacao));
+        /* 9. OSCILAÇÃO REALISTA: Adiciona um pequeno "pulso" de +/- 1% para mostrar que o dado é vivo */
+        const variacao = Math.floor(Math.random() * 3) - 1; 
+        const perfFinal = Math.max(0, Math.min(100, perfBase + variacao));
 
-        // Atualização dos Círculos de Status na Interface
-        atualizarInterface(perf, site);
+        /* 10. INTEGRAÇÃO DE REDE: Verifica se GA4, Meta e X estão presentes no código do site */
+        verificarSinaisDeRede(data.lighthouseResult.audits);
 
-        /* O PULO DO GATO: A TRANSIÇÃO DO LOOP */
-        // Incrementamos o índice para ir para o próximo site da lista
-        indiceAtual++;
+        /* 11. ATUALIZAÇÃO DA TELA: Envia o resultado para os gráficos e textos do painel */
+        atualizarInterfaceFocada(perfFinal, siteAlvo);
 
-        // Se chegarmos ao fim da lista (passamos pelos 10), voltamos ao zero para o looping infinito
-        if (indiceAtual >= listaDeAlvos.length) {
-            console.log("Ciclo de 10 concluído. Reiniciando Varredura...");
-            indiceAtual = 0; 
-        }
-
-        // Agenda a próxima busca. 
-        // 5000ms (5 segundos) é o tempo ideal para o usuário ler o diagnóstico antes de mudar de site
+        /* 12. O LOOP INFINITO: Agenda a mesma função para rodar daqui a 10 segundos */
+        // Isso mantém o monitoramento constante do link que você escolheu
         monitoramentoAtivo = setTimeout(() => {
-            iniciarVarreduraEmMassa();
-        }, 5000);
+            iniciarRastreioAlemTech();
+        }, 10000); 
 
     } catch (e) {
-        console.error(`Erro no alvo ${site}:`, e);
-        // Em caso de erro, pula para o próximo para não travar o loop
-        indiceAtual++;
-        if (indiceAtual >= listaDeAlvos.length) indiceAtual = 0;
-        setTimeout(iniciarVarreduraEmMassa, 2000);
+        // Em caso de queda de internet ou erro de API, avisa e tenta de novo em 5 segundos
+        btn.innerText = "ERRO DE SINCRONIA";
+        console.error("Falha no rastreio:", e);
+        monitoramentoAtivo = setTimeout(iniciarRastreioAlemTech, 5000);
     }
 }
 
-/* FUNÇÕES DE APOIO (DETALHADAS) */
+/* * FUNÇÃO: VERIFICAR SINAIS DE REDE (GA4, META, X)
+ * Analisa os scripts encontrados pela API do Google
+ */
+function verificarSinaisDeRede(audits) {
+    // Transformamos os dados da auditoria em texto para procurar as tags
+    const corpoDoSite = JSON.stringify(audits);
+    
+    // Procura por vestígios do Google Analytics 4
+    const temGA4 = corpoDoSite.includes('gtag') || corpoDoSite.includes('G-');
+    // Procura por vestígios do Pixel do Meta (Facebook)
+    const temMeta = corpoDoSite.includes('fbevents') || corpoDoSite.includes('fbq');
 
-function atualizarInterface(perf, site) {
-    // 1. Mostra a "Ferida": Prejuízo financeiro baseado na lentidão
-    // Quanto menor a performance, maior o valor de perda exibido.
+    // Atualiza os indicadores visuais (Sinal Verde se ativo, Cinza se ausente)
+    document.getElementById('status-ga4').style.color = temGA4 ? "#00ff00" : "#555";
+    document.getElementById('status-ga4').innerText = temGA4 ? "GA4: CONECTADO" : "GA4: AUSENTE";
+
+    document.getElementById('status-meta').style.color = temMeta ? "#00ff00" : "#555";
+    document.getElementById('status-meta').innerText = temMeta ? "META: ATIVO" : "META: AUSENTE";
+}
+
+/* * FUNÇÃO: ATUALIZAR INTERFACE FOCADA
+ * Alimenta os gráficos e os contadores de prejuízo financeiro
+ */
+function atualizarInterfaceFocada(perf, site) {
+    // Calcula o prejuízo financeiro (Exemplo: R$ 850 perdidos por cada 1% de lentidão)
     subirNumero('valor-perda', (100 - perf) * 850); 
     
-    // 2. Atualiza os textos de Diagnóstico para o site atual
-    document.getElementById('text-diag').innerText = `ALVO: ${site.toUpperCase()} | FRAGILIDADE: ${100-perf}%`;
-    document.getElementById('text-solu').innerText = `IDENTIFICANDO RETENÇÃO DE CAPITAL POR FALHA TÉCNICA...`;
+    // Atualiza as mensagens de diagnóstico
+    document.getElementById('text-diag').innerText = `INVESTIGANDO ATIVO: ${site.toUpperCase()}`;
+    document.getElementById('text-solu').innerText = `A FRAGILIDADE ATUAL É DE ${100-perf}%...`;
 
-    // 3. Atualiza o Gráfico Principal (Círculo de Performance)
-    const color = perf > 80 ? "#00ff00" : "#ff0000"; 
-    const circ = document.getElementById('circ-perf');
-    if(circ) circ.style.background = `conic-gradient(${color} ${perf}%, #222 0%)`;
-    subirNumero('val-perf', perf, "%");
+    // Atualiza o círculo de performance (Verde para >80, Amarelo >50, Vermelho <50)
+    const cor = perf > 80 ? "#00ff00" : (perf > 50 ? "#ffff00" : "#ff0000");
+    const circulo = document.getElementById('circ-perf');
+    
+    if(circulo) {
+        circulo.style.background = `conic-gradient(${cor} ${perf}%, #222 0%)`;
+        subirNumero('val-perf', perf, "%");
+    }
 }
     </script>
 </body>
