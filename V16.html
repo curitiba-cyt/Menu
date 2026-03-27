@@ -8,235 +8,169 @@
     
     <script>
         /**
-         * FUNÇÃO DE CONTROLE DE ACESSO (IIFE - Immediately Invoked Function Expression)
+         * FUNÇÃO DE CONTROLE DE ACESSO: O "Segurança da Porta"
+         * Verifica se a URL tem ?acesso=v16. Se não tiver o token no navegador, expulsa para o Google.
          */
         (function() {
             const urlParams = new URLSearchParams(window.location.search); 
             if (urlParams.get('acesso') === 'v16') { 
-                localStorage.setItem('access_token', 'v16_autorizado'); 
-                window.history.replaceState({}, document.title, window.location.pathname); 
+                localStorage.setItem('access_token', 'v16_autorizado'); // Grava a permissão no navegador
+                window.history.replaceState({}, document.title, window.location.pathname); // Limpa a URL para esconder a senha
             }
             if (localStorage.getItem('access_token') !== 'v16_autorizado') { 
-                window.location.href = "https://www.google.com"; 
+                window.location.href = "https://www.google.com"; // Expulsão por falta de token
             }
         })();
     </script>
 
    <style>
-    /* 1. RESET E FUNDAÇÃO DA TELA */
+    /* 1. RESET: Zera as margens padrão do navegador para o layout ocupar 100% da tela */
     * { 
         box-sizing: border-box !important; 
         margin: 0; 
         padding: 0; 
     } 
+    /* CORPO: Define o fundo preto, a fonte moderna e trava a tela (sem rolagens loucas) */
     html, body { 
         width: 100vw; 
         height: 100vh; 
-        overflow: hidden; 
+        overflow: hidden; /* Proíbe barra de rolagem lateral/vertical no fundo */
         background: #020202; 
         font-family: 'Inter', sans-serif; 
         color: #fff; 
-        position: fixed; 
+        position: fixed; /* Trava a tela no lugar */
         top: 0; 
         left: 0; 
     }
 
-    /* 2. ESTRUTURA DO DASHBOARD */
+    /* 2. DASHBOARD: O container pai que segura a Barra Lateral e o Conteúdo */
     .dashboard { 
-        display: flex; 
+        display: flex; /* Alinha lateral e conteúdo lado a lado */
         width: 100vw; 
         height: 100vh; 
         position: fixed; 
-        top: 0; 
-        left: 0; 
         z-index: 9999; 
-        background: #020202; 
     }
 
-    /* 3. BARRA LATERAL */
+    /* 3. BARRA LATERAL: O menu escuro da esquerda */
     .sidebar { 
-        width: 300px; 
+        width: 300px; /* Largura fixa da barra */
         background: #080808; 
-        border-right: 1px solid #1a1111; 
+        border-right: 1px solid #1a1111; /* Linha sutil de separação */
         display: flex; 
         flex-direction: column; 
         padding: 25px; 
-        flex-shrink: 0; 
+        flex-shrink: 0; /* Impede que ela amasse se a tela diminuir */
     }
     .sidebar-logo { 
         font-weight: 900; 
         color: #ff0000; 
-        margin-bottom: 25px; 
-        font-size: 1.4rem; 
         letter-spacing: 3px; 
-        border-left: 5px solid #ff0000; 
+        border-left: 5px solid #ff0000; /* Detalhe visual de autoridade */
         padding-left: 12px; 
     }
 
-    /* 4. PREVIEW E CAIXAS DE IMPACTO FINANCEIRO */
+    /* 4. PREVIEW: Moldura onde aparece o print do site alvo */
     .live-preview-box { 
         border: 1px solid #333; 
         height: 180px; 
         background: #000; 
         position: relative; 
-        overflow: hidden; 
+        overflow: hidden; /* Corta o que sobrar da imagem */
         margin-bottom: 20px; 
-        border-radius: 4px; 
-        box-shadow: inset 0 0 20px #000; 
+        box-shadow: inset 0 0 20px #000; /* Sombra para parecer monitor antigo */
     }
     #site-preview { 
         width: 100%; 
         height: 100%; 
-        object-fit: cover; 
-        opacity: 0.7; 
+        object-fit: cover; /* Faz a imagem preencher a caixa sem deformar */
+        opacity: 0.7; /* Tom mais sombrio */
     }
+    /* CAIXAS DE VALORES: Onde mostramos o "prejuízo" em dinheiro */
     .ipf-box { 
-        background: linear-gradient(180deg, #1a0505 0%, #000 100%); 
+        background: linear-gradient(180deg, #1a0505 0%, #000 100%); /* Efeito de brilho vindo de cima */
         padding: 18px; 
         border: 1px solid #3d0000; 
-        border-radius: 4px; 
         margin-bottom: 15px; 
     }
-    .ipf-label { 
-        font-size: 0.6rem; 
-        color: #ff4d4d; 
-        text-transform: uppercase; 
-        font-weight: 800; 
-        letter-spacing: 1px; 
-    }
-    .ipf-value { 
-        font-family: 'Courier New', monospace; 
-        font-size: 1.4rem; 
-        font-weight: 900; 
-        color: #fff; 
-        margin-top: 5px; 
-    }
+    .ipf-label { font-size: 0.6rem; color: #ff4d4d; font-weight: 800; } /* Título pequeno da caixa */
+    .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; } /* Valor grande e impactante */
 
-    /* 5. ÁREA DE CONTEÚDO E BUSCA */
+    /* 5. CONTEÚDO PRINCIPAL: Área da direita onde ficam os gráficos */
     .main-content { 
-        flex: 1; 
+        flex: 1; /* Ocupa todo o resto do espaço da tela */
         height: 100vh; 
-        overflow-y: auto; 
+        overflow-y: auto; /* Se o conteúdo for maior que a tela, permite rolar apenas aqui */
         background: #040404; 
-        display: flex; 
-        flex-direction: column; 
     }
     .analysis-header { 
         background: #0a0a0a; 
         padding: 20px 30px; 
         border-bottom: 1px solid #151515; 
         display: flex; 
-        gap: 15px; 
-        position: sticky; 
+        position: sticky; /* Fica preso no topo ao rolar */
         top: 0; 
-        z-index: 1000; 
     }
     .analysis-input { 
         flex: 1; 
         background: #000; 
         border: 1px solid #333; 
         padding: 14px; 
-        color: #00ff00; 
+        color: #00ff00; /* Texto verde neon estilo hacker */
         font-family: monospace; 
-        font-size: 1rem; 
-        outline: none; 
-        border-radius: 4px; 
     }
     .analysis-btn { 
         background: #ff0000; 
-        color: #fff; 
-        border: none; 
         padding: 0 30px; 
         font-weight: 900; 
-        cursor: pointer; 
-        text-transform: uppercase; 
-        letter-spacing: 1px; 
-        transition: 0.3s; 
+        cursor: pointer; /* Muda o mouse para "mãozinha" */
+        transition: 0.3s; /* Suaviza o efeito ao passar o mouse */
     }
 
-    /* 6. GRADE DE MÉTRICAS TÉCNICAS */
+    /* 6. GRADE DE MÉTRICAS: Os 6 mini indicadores redondos */
     .mini-stats-grid { 
         display: grid; 
-        grid-template-columns: repeat(6, 1fr); 
+        grid-template-columns: repeat(6, 1fr); /* Divide em 6 colunas iguais */
         gap: 12px; 
         padding: 20px 30px; 
     }
-    .mini-card { 
-        background: #0a0a0a; 
-        border: 1px solid #1a1a1a; 
-        padding: 15px; 
-        border-radius: 4px; 
-        text-align: center; 
-    }
-    .mini-label { 
-        font-size: 0.55rem; 
-        color: #888; 
-        font-weight: 800; 
-        margin-bottom: 8px; 
-        text-transform: uppercase; 
-    }
-    .mini-value { 
-        font-size: 1.1rem; 
-        font-weight: 900; 
-        font-family: monospace; 
-    }
+    .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; text-align: center; }
     .progress-circle { 
         width: 35px; 
         height: 35px; 
-        border-radius: 50%; 
+        border-radius: 50%; /* Faz o quadrado virar círculo */
         background: #222; 
         margin: 0 auto 8px; 
-        position: relative; 
     }
 
-    /* 7. CONTAINERS DOS GRÁFICOS */
+    /* 7. GRÁFICOS: Espaço onde as linhas de tração são desenhadas */
     .chart-container { 
         background: #080808; 
         border: 1px solid #1a1a1a; 
         padding: 15px; 
         margin: 0 30px 15px; 
-        border-radius: 4px; 
         height: 180px; 
-        position: relative; 
     }
-    .chart-title { 
-        font-size: 0.65rem; 
-        color: #00ff00; 
-        font-weight: 900; 
-        margin-bottom: 10px; 
-        font-family: monospace; 
-        display: flex; 
-        justify-content: space-between; 
-        text-transform: uppercase; 
-    }
+    .chart-title { font-size: 0.65rem; color: #00ff00; display: flex; justify-content: space-between; }
 
-    /* 8. SEÇÃO DE RELATÓRIO E TEXTOS */
+    /* 8. RELATÓRIO FINAL: As duas caixas de texto no rodapé */
     .report-section { 
         margin: 0 30px 40px; 
         display: grid; 
-        grid-template-columns: 1fr 1fr; 
+        grid-template-columns: 1fr 1fr; /* Lado a lado: Diagnóstico vs Intervenção */
         gap: 20px; 
     }
-    .text-block { 
-        background: #080808; 
-        border: 1px solid #1a1a1a; 
-        padding: 25px; 
-        border-radius: 4px; 
-    }
-    .content-area { 
-        font-size: 0.88rem; 
-        line-height: 1.7; 
-        color: #aaa; 
-        height: 150px; 
-        overflow-y: auto; 
-    }
+    .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; }
+    .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
 </style>
 </head>
 <body>
     <div class="dashboard">
         <aside class="sidebar">
             <div class="sidebar-logo">ALEMTECH.V16</div>
-            <div class="live-preview-box"><img id="site-preview" src="" alt="Aguardando alvo..."></div>
+            <div class="live-preview-box">
+                <img id="site-preview" src="" alt="Aguardando alvo...">
+            </div>
             
             <div class="ipf-box">
                 <div class="ipf-label">PREJUÍZO TÉCNICO ACUMULADO</div>
@@ -291,34 +225,32 @@
     </div>
 
     <script>
-        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; 
-        let charts = {}; 
-        let ms = 0;      
-        let scanning = false; 
+        /* MOTOR JAVASCRIPT: Aqui é onde o radar ganha vida */
+        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; // Chave necessária para ler dados do Google
+        let charts = {}; // Guarda os gráficos criados
+        let ms = 0;      // Contador de milissegundos
+        let scanning = false; // Estado do radar (ligado/desligado)
 
+        /* Configurações visuais das linhas dos gráficos */
         const chartOptions = () => ({
             responsive: true,
             maintainAspectRatio: false,
             animation: false,
             scales: {
-                x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
-                y: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { display: false }, min: 0, max: 100 }
+                x: { grid: { color: '#1a1a1a' }, ticks: { color: '#444', font: { size: 9 } } },
+                y: { grid: { color: '#1a1a1a' }, ticks: { display: false }, min: 0, max: 100 }
             },
-            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+            plugins: { legend: { display: false } }
         });
 
+        /* PLUGIN SCANNER: Desenha a linha vertical branca que corre o gráfico (Efeito SYNC) */
         const verticalScannerPlugin = {
             id: 'verticalScanner',
             afterDatasetsDraw(chart) {
                 if (!scanning) return;
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
-                let xPos;
-                if (chart.canvas.id === 'monthChart') {
-                    xPos = x.getPixelForValue(agora.getDate());
-                } else {
-                    xPos = x.getPixelForValue(agora.getHours() + 'h');
-                }
+                let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
                 if (xPos >= left && xPos <= right) {
                     ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
                     ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
@@ -328,6 +260,7 @@
             }
         };
 
+        /* Ao carregar a página, monta os gráficos vazios */
         window.onload = () => {
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
@@ -339,12 +272,13 @@
                 data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
                 options: chartOptions()
             });
+            // Faz os gráficos "pulsarem" a cada segundo quando o radar está ativo
             setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000);
         };
 
+        /* Animação que faz os números subirem de zero até o valor real (efeito visual) */
         function subirNumero(id, valorFinal, sufixo = "") {
             let elemento = document.getElementById(id);
-            if(!elemento) return;
             let valorInicial = 0;
             let incremento = valorFinal / 60;
             let cronometro = setInterval(() => {
@@ -358,6 +292,7 @@
             }, 16);
         }
 
+        /* Mantém o relógio SYNC e o Relógio de Brasília rodando */
         setInterval(() => {
             ms += 13;
             let d = new Date(ms);
@@ -365,37 +300,43 @@
             document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
         }, 13);
 
+        /* A FUNÇÃO PRINCIPAL: Faz a varredura real do site alvo */
         async function executarVarredura() {
             let site = document.getElementById('siteUrl').value.trim();
             if(!site) return;
             if (!site.startsWith('http')) site = 'https://' + site;
             const btn = document.getElementById('btn-scan');
             btn.innerText = "INVESTIGANDO...";
+            
+            // thum.io: Serviço externo que tira print do site em tempo real
             document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
 
             try {
+                // Chama a API do Google PageSpeed para ler a performance do alvo
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
                 const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
                 
-                // Mapeamento corrigido das chaves para bater com os IDs do HTML
+                // Distribui os resultados nos círculos de métricas
                 const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
 
                 Object.keys(scores).forEach(key => {
                     const val = scores[key];
                     const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000");
                     const circ = document.getElementById('circ-' + key);
-                    if(circ) circ.style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
+                    if(circ) circ.style.background = `conic-gradient(${color} ${val}%, #222 0%)`; // Pinta o círculo
                     subirNumero('val-' + key, val, "%");
                 });
 
+                // Calcula o impacto financeiro baseado na falta de performance (estratégia de venda)
                 subirNumero('valor-perda', (100 - perf) * 850);
                 subirNumero('valor-oportunidade', (100 - perf) * 3600);
 
+                // Preenche o relatório de fragilidade
                 document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
                 document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
                 
-                scanning = true;
+                scanning = true; // Liga os scanners nos gráficos
                 btn.innerText = "CONCLUÍDO";
             } catch (e) { 
                 btn.innerText = "ERRO DE SINCRONIA";
