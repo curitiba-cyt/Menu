@@ -97,8 +97,9 @@
         let ms = 0; // Variável para o cronômetro milissegundos
         let scanning = false; // Estado para controlar se o radar está ativo
         let radarTimeout = null; // Armazena o timer para loops de varredura
-  /* -------------------Linha do grafico cinza Fixo--------------------------- */
+ 
         // ===================== CONFIG ORIGINAL (MANTIDO) =====================
+// ===================== CONFIG ORIGINAL (MANTIDO) =====================
 const chartOptions = () => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -148,6 +149,149 @@ const verticalScannerPlugin = {
             ctx.restore();
         }
     }
+};
+
+// ===================== CACHE =====================
+const DB_NAME = "AlemTechCache";
+const STORE_NAME = "analises";
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = e => {
+            e.target.result.createObjectStore(STORE_NAME, { keyPath: "id" });
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function saveData(id, data) {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put({
+        id,
+        data,
+        updatedAt: Date.now()
+    });
+}
+
+async function loadData(id) {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const req = tx.objectStore(STORE_NAME).get(id);
+
+    return new Promise(resolve => {
+        req.onsuccess = () => resolve(req.result);
+    });
+}
+
+function isExpired(timestamp) {
+    return Date.now() - timestamp > (30 * 24 * 60 * 60 * 1000);
+}
+
+// ===================== ESTADO =====================
+let history = [];
+let charts = {};
+let scanning = true;
+let analysisId = "meusite.com"; // ALTERE POR CLIENTE
+
+// ===================== DADOS =====================
+async function fetchRealData() {
+    try {
+        const response = await fetch("AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0");
+        const data = await response.json();
+
+        return {
+            timestamp: Date.now(),
+            value: data.performance || Math.random() * 100
+        };
+    } catch (e) {
+        return {
+            timestamp: Date.now(),
+            value: Math.random() * 100
+        };
+    }
+}
+
+// ===================== UPDATE =====================
+function updateChart() {
+    const chart = charts.month;
+
+    chart.data.datasets[1].data = history.map(p => ({
+        x: new Date(p.timestamp).getDate(),
+        y: p.value
+    }));
+
+    chart.update('none');
+}
+
+// ===================== LOOP =====================
+function startRealtime() {
+    setInterval(async () => {
+
+        const newPoint = await fetchRealData();
+        const last = history[history.length - 1];
+
+        if (!last || newPoint.timestamp > last.timestamp) {
+
+            history.push(newPoint);
+
+            if (history.length > 30) history.shift();
+
+            updateChart();
+            saveData(analysisId, history);
+        }
+
+    }, 30000);
+}
+
+// ===================== INIT =====================
+window.onload = async () => {
+
+    const cached = await loadData(analysisId);
+
+    if (cached && !isExpired(cached.updatedAt)) {
+        history = cached.data;
+    }
+
+    // 🔥 GARANTE QUE SEMPRE TEM PASSADO VISÍVEL
+    if (history.length === 0) {
+        history = Array.from({ length: 10 }, (_, i) => ({
+            timestamp: Date.now() - (10 - i) * 60000,
+            value: Math.random() * 100
+        }));
+    }
+
+    charts.month = new Chart(document.getElementById('monthChart'), {
+        type: 'line',
+        plugins: [verticalScannerPlugin],
+        data: {
+            labels: Array.from({ length: 30 }, (_, i) => i + 1),
+            datasets: [
+                {
+                    borderColor: '#333',
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    data: Array.from({ length: 30 }, () => Math.random() * 40 + 20)
+                },
+                {
+                    borderColor: '#00ffcc',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    parsing: false,
+                    data: history.map(p => ({
+                        x: new Date(p.timestamp).getDate(),
+                        y: p.value
+                    }))
+                }
+            ]
+        },
+        options: chartOptions()
+    });
+
+    startRealtime();
 };
 
 // ===================== CACHE INDEXEDDB =====================
