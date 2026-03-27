@@ -1,80 +1,75 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ALEMTECH.V16 - OMNI RADAR</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script>
-        (function() {
-            const urlParams = new URLSearchParams(window.location.search); 
-            if (urlParams.get('acesso') === 'v16') { 
-                localStorage.setItem('access_token', 'v16_autorizado'); 
-                window.history.replaceState({}, document.title, window.location.pathname); 
+<!DOCTYPE html> <html lang="pt-br"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ALEMTECH.V16 - OMNI RADAR</title> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <script>
+        (function() { // Função anônima autoexecutável para segurança e controle de acesso
+            const urlParams = new URLSearchParams(window.location.search); // Captura os parâmetros enviados via URL
+            if (urlParams.get('acesso') === 'v16') { // Verifica se a URL contém "?acesso=v16"
+                localStorage.setItem('access_token', 'v16_autorizado'); // Salva a permissão no navegador (localStorage)
+                window.history.replaceState({}, document.title, window.location.pathname); // Remove o parâmetro da URL para "limpar" o endereço
             }
-            if (localStorage.getItem('access_token') !== 'v16_autorizado') { 
-                window.location.href = "https://www.google.com"; 
+            if (localStorage.getItem('access_token') !== 'v16_autorizado') { // Verifica se o usuário tem o token de acesso
+                window.location.href = "https://www.google.com"; // Se não tiver acesso, redireciona para o Google
             }
         })();
     </script>
 
-   <style>
-    /* SUA ESTRUTURA ORIGINAL */
-    * { box-sizing: border-box !important; margin: 0; padding: 0; } 
-    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; }
-    .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; }
-    .sidebar { width: 300px; background: #080808; border-right: 1px solid #1a1111; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; }
-    .sidebar-logo { font-weight: 900; color: #ff0000; margin-bottom: 25px; font-size: 1.4rem; letter-spacing: 3px; border-left: 5px solid #ff0000; padding-left: 12px; }
-    .live-preview-box { border: 1px solid #333; height: 180px; background: #000; position: relative; overflow: hidden; margin-bottom: 20px; border-radius: 4px; box-shadow: inset 0 0 20px #000; }
-    #site-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-    .ipf-box { background: linear-gradient(180deg, #1a0505 0%, #000 100%); padding: 18px; border: 1px solid #3d0000; border-radius: 4px; margin-bottom: 15px; }
-    .ipf-label { font-size: 0.6rem; color: #ff4d4d; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-    .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; color: #fff; margin-top: 5px; }
-    .main-content { flex: 1; height: 100vh; overflow-y: auto; background: #040404; display: flex; flex-direction: column; }
-    .analysis-header { background: #0a0a0a; padding: 20px 30px; border-bottom: 1px solid #151515; display: flex; gap: 15px; position: sticky; top: 0; z-index: 1000; }
-    .analysis-input { flex: 1; background: #000; border: 1px solid #333; padding: 14px; color: #00ff00; font-family: monospace; font-size: 1rem; outline: none; border-radius: 4px; }
-    .analysis-btn { background: #ff0000; color: #fff; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-    .mini-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 20px 30px; }
-    .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 4px; text-align: center; }
-    .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-    .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; }
-    .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; }
-    .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; }
-    .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; }
-    .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; }
-    .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; }
-</style>
+    <style>
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 1: RESET E CONFIGURAÇÃO GLOBAL                                       */
+    /* -------------------------------------------------------------------------- */
+    * { box-sizing: border-box !important; margin: 0; padding: 0; } /* Define que bordas e preenchimento não aumentam o tamanho total dos elementos */
+    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #020202; font-family: 'Inter', sans-serif; color: #fff; position: fixed; top: 0; left: 0; } /* Trava a tela para evitar rolagem externa e define o fundo preto */
+
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 2: LAYOUT E DASHBOARD (ESTRUTURA)                                     */
+    /* -------------------------------------------------------------------------- */
+    .dashboard { display: flex; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 9999; background: #020202; } /* Container principal em Flexbox */
+    .sidebar { width: 300px; background: #080808; border-right: 1px solid #1a1111; display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; } /* Barra lateral esquerda fixa */
+    .main-content { flex: 1; height: 100vh; overflow-y: auto; background: #040404; display: flex; flex-direction: column; } /* Área de conteúdo que ocupa o resto da tela */
+
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 3: COMPONENTES DA BARRA LATERAL (IPF BOXES)                          */
+    /* -------------------------------------------------------------------------- */
+    .sidebar-logo { font-weight: 900; color: #ff0000; margin-bottom: 25px; font-size: 1.4rem; letter-spacing: 3px; border-left: 5px solid #ff0000; padding-left: 12px; } /* Estilo do logo AlemTech */
+    .live-preview-box { border: 1px solid #333; height: 180px; background: #000; position: relative; overflow: hidden; margin-bottom: 20px; border-radius: 4px; box-shadow: inset 0 0 20px #000; } /* Moldura da captura do site */
+    #site-preview { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; } /* Imagem do site alvo ajustada ao container */
+    .ipf-box { background: linear-gradient(180deg, #1a0505 0%, #000 100%); padding: 18px; border: 1px solid #3d0000; border-radius: 4px; margin-bottom: 15px; } /* Caixas de valores financeiros */
+    .ipf-label { font-size: 0.6rem; color: #ff4d4d; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; } /* Etiquetas das caixas laterais */
+    .ipf-value { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 900; color: #fff; margin-top: 5px; } /* Valores em destaque (R$) */
+
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 4: CABEÇALHO E INPUT DE VARREDURA                                    */
+    /* -------------------------------------------------------------------------- */
+    .analysis-header { background: #0a0a0a; padding: 20px 30px; border-bottom: 1px solid #151515; display: flex; gap: 15px; position: sticky; top: 0; z-index: 1000; } /* Barra superior de busca */
+    .analysis-input { flex: 1; background: #000; border: 1px solid #333; padding: 14px; color: #00ff00; font-family: monospace; font-size: 1rem; outline: none; border-radius: 4px; } /* Campo de digitação da URL */
+    .analysis-btn { background: #ff0000; color: #fff; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; } /* Botão de ação principal */
+
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 5: GRADE DE MÉTRICAS E GRÁFICOS                                      */
+    /* -------------------------------------------------------------------------- */
+    .mini-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 20px 30px; } /* Grid das 6 métricas core */
+    .mini-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 4px; text-align: center; } /* Card individual de métrica */
+    .mini-label { font-size: 0.55rem; color: #888; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; } /* Nome da métrica (LCP, SEO...) */
+    .mini-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; } /* Valor numérico da métrica */
+    .progress-circle { width: 35px; height: 35px; border-radius: 50%; background: #222; margin: 0 auto 8px; position: relative; } /* Elemento circular de progresso */
+    .chart-container { background: #080808; border: 1px solid #1a1a1a; padding: 15px; margin: 0 30px 15px; border-radius: 4px; height: 180px; position: relative; } /* Container para o Chart.js */
+    .chart-title { font-size: 0.65rem; color: #00ff00; font-weight: 900; margin-bottom: 10px; font-family: monospace; display: flex; justify-content: space-between; text-transform: uppercase; } /* Título técnico do gráfico */
+
+    /* -------------------------------------------------------------------------- */
+    /* BLOCO 6: SEÇÃO DE RELATÓRIO E TEXTOS                                       */
+    /* -------------------------------------------------------------------------- */
+    .report-section { margin: 0 30px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } /* Grid inferior para diagnóstico e solução */
+    .text-block { background: #080808; border: 1px solid #1a1a1a; padding: 25px; border-radius: 4px; } /* Blocos de texto de análise */
+    .content-area { font-size: 0.88rem; line-height: 1.7; color: #aaa; height: 150px; overflow-y: auto; } /* Área de texto com rolagem para o diagnóstico */
+    </style>
 </head>
 <body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            <div class="sidebar-logo">ALEMTECH.V16</div>
-            <div class="live-preview-box"><img id="site-preview" src="" alt="Aguardando alvo..."></div>
-            
-            <div class="ipf-box">
-                <div class="ipf-label">PREJUÍZO TÉCNICO ACUMULADO</div>
-                <div id="valor-perda" class="ipf-value">R$ 0,00</div>
-            </div>
-            <div class="ipf-box" style="border-color: #004d00; background: linear-gradient(180deg, #051a05 0%, #000 100%);">
-                <div class="ipf-label" style="color: #00ff00;">OURO RETIDO (CONVERSÃO)</div>
-                <div id="valor-oportunidade" class="ipf-value" style="color: #00ff00;">R$ 0,00</div>
-            </div>
-            <div class="ipf-box" style="border-color: #00ff00; background: #000;">
-                <div class="ipf-label">TEMPO DE CONEXÃO RADAR (SYNC)</div>
-                <div id="relogio-sync" class="ipf-value" style="color: #00ff00; font-size: 1rem;">00:00:00:00</div>
-            </div>
+    <div class="dashboard"> <aside class="sidebar"> <div class="sidebar-logo">ALEMTECH.V16</div> <div class="live-preview-box"><img id="site-preview" src="" alt="Aguardando alvo..."></div> <div class="ipf-box"> <div class="ipf-label">PREJUÍZO TÉCNICO ACUMULADO</div> <div id="valor-perda" class="ipf-value">R$ 0,00</div> </div>
+            <div class="ipf-box" style="border-color: #004d00; background: linear-gradient(180deg, #051a05 0%, #000 100%);"> <div class="ipf-label" style="color: #00ff00;">OURO RETIDO (CONVERSÃO)</div> <div id="valor-oportunidade" class="ipf-value" style="color: #00ff00;">R$ 0,00</div> </div>
+            <div class="ipf-box" style="border-color: #00ff00; background: #000;"> <div class="ipf-label">TEMPO DE CONEXÃO RADAR (SYNC)</div> <div id="relogio-sync" class="ipf-value" style="color: #00ff00; font-size: 1rem;">00:00:00:00</div> </div>
         </aside>
 
-        <main class="main-content">
-            <div class="analysis-header">
-                <input type="text" id="siteUrl" class="analysis-input" placeholder="DOMÍNIO DO ALVO PARA INVESTIGAÇÃO:">
-                <button class="analysis-btn" id="btn-scan" onclick="executarVarredura()">VARREDURA TOTAL</button>
-            </div>
+        <main class="main-content"> <div class="analysis-header"> <input type="text" id="siteUrl" class="analysis-input" placeholder="DOMÍNIO DO ALVO PARA INVESTIGAÇÃO:"> <button class="analysis-btn" id="btn-scan" onclick="executarVarredura()">VARREDURA TOTAL</button> </div>
 
-            <div class="mini-stats-grid">
-                <div class="mini-card"><div class="mini-label">LCP (CARGA)</div><div class="progress-circle" id="circ-perf"></div><div id="val-perf" class="mini-value">--</div></div>
+            <div class="mini-stats-grid"> <div class="mini-card"><div class="mini-label">LCP (CARGA)</div><div class="progress-circle" id="circ-perf"></div><div id="val-perf" class="mini-value">--</div></div>
                 <div class="mini-card"><div class="mini-label">SEO CORE</div><div class="progress-circle" id="circ-seo"></div><div id="val-seo" class="mini-value">--</div></div>
                 <div class="mini-card"><div class="mini-label">LOAD TIME</div><div class="progress-circle" id="circ-acc"></div><div id="val-acc" class="mini-value">--</div></div>
                 <div class="mini-card"><div class="mini-label">PERF. MOBILE</div><div class="progress-circle" id="circ-bp"></div><div id="val-bp" class="mini-value">--</div></div>
@@ -82,23 +77,14 @@
                 <div class="mini-card"><div class="mini-label">UX / FID</div><div class="progress-circle" id="circ-fid"></div><div id="val-fid" class="mini-value">--</div></div>
             </div>
 
-            <div class="chart-container">
-                <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div>
-                <canvas id="monthChart"></canvas>
-            </div>
+            <div class="chart-container"> <div class="chart-title"><span>TRAÇÃO MENSAL (30 DIAS)</span><span id="relogio-brasilia">00:00:00</span></div> <canvas id="monthChart"></canvas> </div>
 
-            <div class="chart-container">
-                <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div>
-                <canvas id="dayChart"></canvas>
-            </div>
+            <div class="chart-container"> <div class="chart-title"><span>VOLATILIDADE EM TEMPO REAL (24HRS)</span><span style="color: #ff0000;">STATUS: ATIVO</span></div> <canvas id="dayChart"></canvas> </div>
 
-            <div class="report-section">
-                <div class="text-block" style="border-left: 4px solid #ff0000;">
-                    <div class="box-label" style="color: #ff0000; font-weight: 900;">DIAGNÓSTICO DE FRAGILIDADE</div>
+            <div class="report-section"> <div class="text-block" style="border-left: 4px solid #ff0000;"> <div class="box-label" style="color: #ff0000; font-weight: 900;">DIAGNÓSTICO DE FRAGILIDADE</div>
                     <div id="text-diag" class="content-area">Aguardando varredura...</div>
                 </div>
-                <div class="text-block" style="border-left: 4px solid #00ff00;">
-                    <div class="box-label" style="color: #00ff00; font-weight: 900;">INTERVENÇÃO ALEMTECH</div>
+                <div class="text-block" style="border-left: 4px solid #00ff00;"> <div class="box-label" style="color: #00ff00; font-weight: 900;">INTERVENÇÃO ALEMTECH</div>
                     <div id="text-solu" class="content-area">Aguardando dados...</div>
                 </div>
             </div>
@@ -106,13 +92,13 @@
     </div>
 
     <script>
-        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; 
-        let charts = {}; 
-        let ms = 0;      
-        let scanning = false; 
-        let radarTimeout = null; // Controle do loop
+        const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; // Chave da API do Google PageSpeed
+        let charts = {}; // Objeto para armazenar as instâncias dos gráficos
+        let ms = 0; // Variável para o cronômetro milissegundos
+        let scanning = false; // Estado para controlar se o radar está ativo
+        let radarTimeout = null; // Armazena o timer para loops de varredura
 
-        const chartOptions = () => ({
+        const chartOptions = () => ({ // Configurações padrão visuais dos gráficos
             responsive: true, maintainAspectRatio: false, animation: false,
             scales: {
                 x: { grid: { color: '#1a1a1a', lineWidth: 1 }, ticks: { color: '#444', font: { size: 9 }, maxTicksLimit: 12 } },
@@ -121,7 +107,7 @@
             plugins: { legend: { display: false }, tooltip: { enabled: false } }
         });
 
-        const verticalScannerPlugin = {
+        const verticalScannerPlugin = { // Plugin customizado para criar a linha vertical de "SYNC" nos gráficos
             id: 'verticalScanner',
             afterDatasetsDraw(chart) {
                 if (!scanning) return;
@@ -137,7 +123,7 @@
             }
         };
 
-        window.onload = () => {
+        window.onload = () => { // Inicializa os gráficos assim que a página carrega
             charts.month = new Chart(document.getElementById('monthChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
                 data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
@@ -148,14 +134,14 @@
                 data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
                 options: chartOptions()
             });
-            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000);
+            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000); // Redesenha os gráficos a cada segundo se estiver varrendo
         };
 
-        function subirNumero(id, valorFinal, sufixo = "") {
+        function subirNumero(id, valorFinal, sufixo = "") { // Função para criar o efeito de contador subindo (R$ ou %)
             let elemento = document.getElementById(id);
             if(!elemento) return;
             let valorInicial = 0;
-            let incremento = valorFinal / 60;
+            let incremento = valorFinal / 60; // Define a velocidade da animação
             let cronometro = setInterval(() => {
                 valorInicial += incremento;
                 if (valorInicial >= valorFinal) {
@@ -167,55 +153,52 @@
             }, 16);
         }
 
-        setInterval(() => {
+        setInterval(() => { // Loop para atualizar os relógios de sincronia e horário de Brasília
             ms += 13;
             let d = new Date(ms);
             document.getElementById('relogio-sync').innerText = d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0') + ":" + d.getUTCSeconds().toString().padStart(2, '0') + ":" + Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
             document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
         }, 13);
 
-        async function executarVarredura() {
-            // Limpa qualquer repetição que já esteja agendada para evitar travamentos
-            if(radarTimeout) clearTimeout(radarTimeout);
+        async function executarVarredura() { // Função principal que consome a API e gera os resultados
+            if(radarTimeout) clearTimeout(radarTimeout); // Cancela timers anteriores
 
-            let site = document.getElementById('siteUrl').value.trim();
+            let site = document.getElementById('siteUrl').value.trim(); // Pega o site digitado
             if(!site) return;
-            if (!site.startsWith('http')) site = 'https://' + site;
+            if (!site.startsWith('http')) site = 'https://' + site; // Adiciona protocolo caso o usuário esqueça
             const btn = document.getElementById('btn-scan');
-            btn.innerText = "INVESTIGANDO...";
-            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+            btn.innerText = "INVESTIGANDO..."; // Atualiza status do botão
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`; // Carrega imagem do site via thum.io
 
             try {
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
-                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
-                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100); // Score de performance do Google
+                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 }; // Outros scores (valores simulados para exemplo)
 
-                Object.keys(scores).forEach(key => {
+                Object.keys(scores).forEach(key => { // Atualiza visualmente os círculos e números
                     const val = scores[key];
-                    const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000");
+                    const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000"); // Define cor conforme score
                     const circ = document.getElementById('circ-' + key);
                     if(circ) circ.style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
                     subirNumero('val-' + key, val, "%");
                 });
 
-                subirNumero('valor-perda', (100 - perf) * 850);
-                subirNumero('valor-oportunidade', (100 - perf) * 3600);
+                subirNumero('valor-perda', (100 - perf) * 850); // Calcula prejuízo fictício baseado na performance
+                subirNumero('valor-oportunidade', (100 - perf) * 3600); // Calcula oportunidade fictícia
 
-                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
-                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`; // Gera texto de diagnóstico
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`; // Gera texto de solução
                 
                 scanning = true;
-                btn.innerText = "RADAR ATIVO";
+                btn.innerText = "RADAR ATIVO"; // Finaliza o estado visual do botão
 
-                // AGENDA A PRÓXIMA VARREDURA PARA DAQUI A 10 SEGUNDOS
-                radarTimeout = setTimeout(executarVarredura, 10000);
+                radarTimeout = setTimeout(executarVarredura, 10000); // Auto-executa novamente em 10 segundos
 
             } catch (e) { 
                 btn.innerText = "ERRO DE SINCRONIA";
                 console.error(e);
-                // Tenta reconectar em 5s
-                radarTimeout = setTimeout(executarVarredura, 5000);
+                radarTimeout = setTimeout(executarVarredura, 5000); // Em caso de erro, tenta de novo em 5 segundos
             }
         }
     </script>
