@@ -91,7 +91,7 @@
         </main>
     </div>
 
-   <script>
+    <script>
         const API_KEY = "AIzaSyBQs2rBfgU_0JEJ8pFnNHnQ07l1NtPBOV0"; // Chave da API do Google PageSpeed
         let charts = {}; // Objeto para armazenar as instâncias dos gráficos
         let ms = 0; // Variável para o cronômetro milissegundos
@@ -114,50 +114,11 @@
                 const {ctx, chartArea: {top, bottom, left, right}, scales: {x}} = chart;
                 const agora = new Date();
                 let xPos = chart.canvas.id === 'monthChart' ? x.getPixelForValue(agora.getDate()) : x.getPixelForValue(agora.getHours() + 'h');
-                
                 if (xPos >= left && xPos <= right) {
-                    ctx.save();
-
-                    // --- 1. TRILHA DOURADA: PREVISÃO (FUTURO) ---
-                    ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)'; // Dourado transparente
-                    ctx.setLineDash([5, 5]); 
-                    ctx.lineWidth = 1;
-                    for (let i = left; i <= right; i += 10) {
-                        let osc = Math.sin(i * 0.1) * 8;
-                        let y = (top + bottom) / 2 + osc;
-                        if (i === left) ctx.moveTo(i, y); else ctx.lineTo(i, y);
-                    }
-                    ctx.stroke();
-
-                    // --- 2. TRILHA DOURADA: REALIDADE (PASSADO IMÓVEL) ---
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#FFD700'; // Dourado Sólido
-                    ctx.setLineDash([]); 
-                    ctx.lineWidth = 2;
-                    ctx.lineJoin = 'round';
-                    for (let i = left; i <= xPos; i += 5) {
-                        // Gera os picos de análise técnica
-                        let oscilacao = Math.sin(i * 0.2) * 12 + (Math.random() * 5); 
-                        let yPos = (top + bottom) / 2 + oscilacao;
-                        if (i === left) ctx.moveTo(i, yPos); else ctx.lineTo(i, yPos);
-                    }
-                    ctx.stroke();
-
-                    // --- 3. BARRA VERTICAL SYNC ---
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2;
-                    ctx.moveTo(xPos, top);
-                    ctx.lineTo(xPos, bottom);
-                    ctx.stroke();
-
-                    // --- 4. TEXTO SYNC ---
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 9px monospace';
-                    ctx.fillText('▼ SYNC', xPos - 15, top - 5);
-                    
-                    ctx.restore();
+                    ctx.save(); ctx.beginPath(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px monospace';
+                    ctx.fillText('▼ SYNC', xPos - 15, top - 5); ctx.restore();
                 }
             }
         };
@@ -168,19 +129,20 @@
                 data: { labels: Array.from({length: 30}, (_, i) => i + 1), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 30}, () => Math.random() * 40 + 20) }] },
                 options: chartOptions()
             });
+                /* -------------------Linha do grafico cinza Fixo--------------------------- */
             charts.day = new Chart(document.getElementById('dayChart'), {
                 type: 'line', plugins: [verticalScannerPlugin],
                 data: { labels: Array.from({length: 24}, (_, i) => i + 'h'), datasets: [{ borderColor: '#333', borderWidth: 1.5, pointRadius: 0, data: Array.from({length: 24}, () => Math.random() * 50 + 10) }] },
                 options: chartOptions()
             });
-            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000); 
+            setInterval(() => { if(scanning) { charts.month.draw(); charts.day.draw(); } }, 1000); // Redesenha os gráficos a cada segundo se estiver varrendo
         };
 
-        function subirNumero(id, valorFinal, sufixo = "") {
+        function subirNumero(id, valorFinal, sufixo = "") { // Função para criar o efeito de contador subindo (R$ ou %)
             let elemento = document.getElementById(id);
             if(!elemento) return;
             let valorInicial = 0;
-            let incremento = valorFinal / 60;
+            let incremento = valorFinal / 60; // Define a velocidade da animação
             let cronometro = setInterval(() => {
                 valorInicial += incremento;
                 if (valorInicial >= valorFinal) {
@@ -192,48 +154,52 @@
             }, 16);
         }
 
-        setInterval(() => {
+        setInterval(() => { // Loop para atualizar os relógios de sincronia e horário de Brasília
             ms += 13;
             let d = new Date(ms);
             document.getElementById('relogio-sync').innerText = d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0') + ":" + d.getUTCSeconds().toString().padStart(2, '0') + ":" + Math.floor(d.getUTCMilliseconds()/10).toString().padStart(2, '0');
             document.getElementById('relogio-brasilia').innerText = new Date().toLocaleTimeString('pt-BR');
         }, 13);
 
-        async function executarVarredura() {
-            if(radarTimeout) clearTimeout(radarTimeout);
-            let site = document.getElementById('siteUrl').value.trim();
+        async function executarVarredura() { // Função principal que consome a API e gera os resultados
+            if(radarTimeout) clearTimeout(radarTimeout); // Cancela timers anteriores
+
+            let site = document.getElementById('siteUrl').value.trim(); // Pega o site digitado
             if(!site) return;
-            if (!site.startsWith('http')) site = 'https://' + site;
+            if (!site.startsWith('http')) site = 'https://' + site; // Adiciona protocolo caso o usuário esqueça
             const btn = document.getElementById('btn-scan');
-            btn.innerText = "INVESTIGANDO...";
-            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`;
+            btn.innerText = "INVESTIGANDO..."; // Atualiza status do botão
+            document.getElementById('site-preview').src = `https://image.thum.io/get/width/400/crop/800/${site}`; // Carrega imagem do site via thum.io
 
             try {
                 const resp = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(site)}&key=${API_KEY}&strategy=mobile&category=performance`);
                 const data = await resp.json();
-                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100);
-                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 };
+                const perf = Math.round(data.lighthouseResult.categories.performance.score * 100); // Score de performance do Google
+                const scores = { perf: perf, seo: 92, acc: 88, bp: 90, cls: 82, fid: 94 }; // Outros scores (valores simulados para exemplo)
 
-                Object.keys(scores).forEach(key => {
+                Object.keys(scores).forEach(key => { // Atualiza visualmente os círculos e números
                     const val = scores[key];
-                    const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000");
+                    const color = val > 80 ? "#00ff00" : (val > 50 ? "#ffff00" : "#ff0000"); // Define cor conforme score
                     const circ = document.getElementById('circ-' + key);
                     if(circ) circ.style.background = `conic-gradient(${color} ${val}%, #222 0%)`;
                     subirNumero('val-' + key, val, "%");
                 });
 
-                subirNumero('valor-perda', (100 - perf) * 850);
-                subirNumero('valor-oportunidade', (100 - perf) * 3600);
+                subirNumero('valor-perda', (100 - perf) * 850); // Calcula prejuízo fictício baseado na performance
+                subirNumero('valor-oportunidade', (100 - perf) * 3600); // Calcula oportunidade fictícia
 
-                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`;
-                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`;
+                document.getElementById('text-diag').innerText = `O ATIVO ${site.toUpperCase()} APRESENTA FRAGILIDADE DE ${100-perf}%...`; // Gera texto de diagnóstico
+                document.getElementById('text-solu').innerText = `A INTERVENÇÃO ALEMTECH IRÁ RECUPERAR O OURO RETIDO...`; // Gera texto de solução
                 
                 scanning = true;
-                btn.innerText = "RADAR ATIVO";
-                radarTimeout = setTimeout(executarVarredura, 10000);
+                btn.innerText = "RADAR ATIVO"; // Finaliza o estado visual do botão
+
+                radarTimeout = setTimeout(executarVarredura, 10000); // Auto-executa novamente em 10 segundos
+
             } catch (e) { 
                 btn.innerText = "ERRO DE SINCRONIA";
-                radarTimeout = setTimeout(executarVarredura, 5000);
+                console.error(e);
+                radarTimeout = setTimeout(executarVarredura, 5000); // Em caso de erro, tenta de novo em 5 segundos
             }
         }
     </script>
