@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversor de MP4 para MP3 - Rápido e Grátis</title>
     
-    <!-- BANNER ADSTERRA 728x90 -->
+    <!-- BANNER ADSTERRA 728x90 ORIGINAL -->
     <script type="text/javascript">
         atOptions = {
             'key' : '03b7a5a82e987c26880bd5ccf3a14447',
@@ -99,13 +99,12 @@
             background-color: #218838;
         }
 
-        /* BANDEIRA NATIVA */
         .native-ad-box {
             margin: 20px 0;
             width: 100%;
         }
 
-        /* MODAL DE PROCESSAMENTO / ANÚNCIO (15s) */
+        /* MODAL DE ANÚNCIO / TIMING DE 15 SEGUNDOS */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -143,9 +142,6 @@
             border: 1px solid #ddd;
             margin-bottom: 15px;
             background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .ad-frame-wrapper iframe {
@@ -187,13 +183,13 @@
         <button id="convertBtn" class="convert-btn">Converter para MP3</button>
 
         <div class="native-ad-box">
-            <!-- BANDEIRA NATIVA ADSTERRA -->
+            <!-- BANDEIRA NATIVA ADSTERRA ORIGINAL -->
             <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/be80946bbd405391ff1a1005b682e70c/invoke.js"></script>
             <div id="container-be80946bbd405391ff1a1005b682e70c"></div>
         </div>
     </div>
 
-    <!-- MODAL DE PROCESSAMENTO / ANÚNCIO DE 15 SEGUNDOS -->
+    <!-- JANELA DE PROCESSAMENTO COM SMARTLINK (15 SEGUNDOS) -->
     <div class="modal-overlay" id="adModal">
         <div class="modal-content">
             <div class="timer-text" id="timerText">Processando áudio... Aguarde 15 segundos</div>
@@ -231,10 +227,8 @@
             adModal.style.display = 'flex';
             downloadBtn.style.display = 'none';
             
-            // Inicia conversão paralela via AudioContext
             const conversionPromise = processAudio(file);
 
-            // Temporizador obrigatório de 15 segundos
             let timeLeft = 15;
             timerText.textContent = `Processando áudio e gerando link... Aguarde ${timeLeft}s`;
 
@@ -249,7 +243,6 @@
                 }
             }, 1000);
 
-            // Aguarda o processamento real terminar
             audioBlobUrl = await conversionPromise;
             downloadBtn.href = audioBlobUrl;
         });
@@ -259,7 +252,6 @@
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
             
-            // Extração de canal WAV/MP3 simples via Blob
             const offlineCtx = new OfflineAudioContext(
                 audioBuffer.numberOfChannels,
                 audioBuffer.length,
