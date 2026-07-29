@@ -3,80 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversor de MP4 para MP3 - Grátis e Rápido</title>
-  <meta name="description" content="Converta seus vídeos MP4 em áudio MP3 diretamente no navegador com segurança e velocidade.">
-  <meta property="og:title" content="Conversor de MP4 para MP3">
-  <meta property="og:description" content="Extraia áudio de vídeos MP4 instantaneamente.">
+  <title>Conversor MP4 para MP3 Online e Grátis</title>
+  <meta name="description" content="Converta vídeos MP4 para áudio MP3 diretamente no navegador com velocidade e total privacidade.">
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; text-align: center; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h1 { font-size: 24px; margin-bottom: 8px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f4f7f6; color: #333; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: space-between; padding: 20px 10px; }
+    .container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); width: 100%; max-width: 500px; text-align: center; }
+    h1 { font-size: 22px; margin-bottom: 10px; color: #111; }
     p { font-size: 14px; color: #666; margin-bottom: 20px; }
-    .file-input-container { border: 2px dashed #0070f3; padding: 20px; border-radius: 8px; background: #f0f7ff; cursor: pointer; margin-bottom: 15px; }
+    .drop-zone { border: 2px dashed #0070f3; border-radius: 8px; padding: 25px 15px; cursor: pointer; background: #f0f7ff; transition: 0.2s; margin-bottom: 20px; }
+    .drop-zone:hover { background: #e1f0ff; }
+    .drop-zone p { margin: 0; color: #0070f3; font-weight: 600; }
     input[type="file"] { display: none; }
-    .btn { background: #0070f3; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+    .btn { background: #0070f3; color: #fff; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; width: 100%; cursor: pointer; transition: 0.2s; }
     .btn:disabled { background: #ccc; cursor: not-allowed; }
-    .ad-container { margin: 20px 0; text-align: center; }
-    footer { margin-top: 30px; font-size: 13px; color: #777; }
+    .status { margin-top: 15px; font-size: 14px; font-weight: 500; color: #444; }
+    .ad-banner { margin: 15px 0; text-align: center; width: 100%; overflow: hidden; }
+    footer { margin-top: auto; padding-top: 20px; font-size: 13px; color: #666; text-align: center; }
     footer a { color: #0070f3; text-decoration: none; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <div class="ad-container">
-    <!-- Adsterra 728x90 Banner -->
-    <script type="text/javascript">
-      atOptions = {
-        'key' : 'SEU_KEY_728X90_AQUI',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : 728,
-        'params' : {}
-      };
-    </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/SEU_KEY_728X90_AQUI/invoke.js"></script>
+  <!-- AdSterra Banner Topo (728x90) -->
+  <div class="ad-banner">
+    <!-- Insira aqui o Script da Adsterra 728x90 -->
   </div>
 
   <div class="container">
-    <h1>Conversor de MP4 para MP3</h1>
-    <p>Extraia o áudio dos seus vídeos com velocidade e total segurança</p>
+    <h1>Conversor MP4 para MP3</h1>
+    <p>Extraia o áudio dos seus vídeos de forma rápida e segura</p>
 
-    <div class="file-input-container" onclick="document.getElementById('fileInput').click()">
-      <span id="fileName">Clique aqui para selecionar seu vídeo MP4</span>
-      <input type="file" id="fileInput" accept="video/mp4" onchange="updateFileName()">
+    <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+      <p id="fileLabel">Clique para escolher o arquivo MP4</p>
+      <input type="file" id="fileInput" accept="video/mp4" onchange="handleFileSelect()">
     </div>
 
-    <button id="convertBtn" class="btn" onclick="convertVideo()" disabled>Converter para MP3</button>
+    <button id="convertBtn" class="btn" onclick="startConversion()" disabled>Converter para MP3</button>
+
+    <div id="status" class="status"></div>
   </div>
 
-  <div class="ad-container">
-    <!-- Adsterra Native Banner -->
-    <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/SEU_KEY_NATIVE/invoke.js"></script>
-    <div id="container-SEU_KEY_NATIVE"></div>
+  <!-- AdSterra Banner Nativo -->
+  <div class="ad-banner">
+    <!-- Insira aqui o Script Nativo da Adsterra -->
   </div>
 
   <footer>
     Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
-  <!-- Adsterra Popunder e Social Bar -->
-  <script type='text/javascript' src='//www.highperformanceformat.com/SEU_KEY_POPUNDER/invoke.js'></script>
-  <script type='text/javascript' src='//www.highperformanceformat.com/SEU_KEY_SOCIALBAR/invoke.js'></script>
-
+  <!-- Scripts de Conversao Local via Navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
   <script>
-    function updateFileName() {
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: false });
+    let selectedFile = null;
+
+    function handleFileSelect() {
       const input = document.getElementById('fileInput');
-      const label = document.getElementById('fileName');
-      const btn = document.getElementById('convertBtn');
       if (input.files.length > 0) {
-        label.innerText = input.files[0].name;
-        btn.disabled = false;
+        selectedFile = input.files[0];
+        document.getElementById('fileLabel').innerText = selectedFile.name;
+        document.getElementById('convertBtn').disabled = false;
       }
     }
 
-    function convertVideo() {
-      alert("Selecione os IDs válidos da AdSterra para ativá-lo totalmente.");
+    async function startConversion() {
+      if (!selectedFile) return;
+
+      const btn = document.getElementById('convertBtn');
+      const status = document.getElementById('status');
+
+      btn.disabled = true;
+      status.innerText = "Carregando motor de conversão...";
+
+      if (!ffmpeg.isLoaded()) {
+        await ffmpeg.load();
+      }
+
+      status.innerText = "Processando arquivo...";
+      ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
+
+      await ffmpeg.run('-i', 'input.mp4', 'output.mp3');
+
+      status.innerText = "Finalizando...";
+      const data = ffmpeg.FS('readFile', 'output.mp3');
+
+      const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      status.innerText = "Conversão concluída! O download iniciou.";
+      btn.disabled = false;
     }
   </script>
+
+  <!-- Scripts AdSterra (Popunder / Social Bar) -->
+  <!-- Cole seus scripts gerais da AdSterra diretamente aqui -->
+
 </body>
 </html>
