@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Conversor MP4 para MP3 - Grátis e Rápido</title>
+
+  <!-- META TAGS SEO E OPEN GRAPH -->
+  <meta name="description" content="Extraia o áudio dos seus vídeos MP4 para MP3 com alta velocidade e privacidade total. Ferramenta 100% gratuita.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Conversor MP4 para MP3 - Grátis e Rápido">
+  <meta property="og:description" content="Extraia o áudio dos seus vídeos MP4 com alta velocidade e privacidade total. Direto no navegador, sem instalar nada.">
+  <meta property="og:url" content="https://conversor-mp4-para-mp3.vercel.app">
+  <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVCU1hinT7WMV26XKXOUHUq_j3UdgPGFDtjaNES5ogajLcVJ45ypvxYmF6tSIxgVIGGkiUhyphenhyphenEPKC5yIZ-fMEocyiGVjQ7KvIX6ULylwN-TO6M7XVwgVO9ALq9ipKfgdd40u0z8JFgE_6Sp8GaPTlocHSNyupW4poyTiGYnRFLj5vVaOp0zQamku84gGlE/s1376/conversor-mp4-para-mp3-gratis-online-extrair-audio-de-video-rapido-ferramenta-transformar-sem-limites-seguro-baixar-som-navegador.jpeg">
+
+  <!-- META TAGS TWITTER CARD -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Conversor MP4 para MP3 - Grátis e Rápido">
+  <meta name="twitter:description" content="Extraia o áudio dos seus vídeos MP4 com alta velocidade e privacidade total.">
+  <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVCU1hinT7WMV26XKXOUHUq_j3UdgPGFDtjaNES5ogajLcVJ45ypvxYmF6tSIxgVIGGkiUhyphenhyphenEPKC5yIZ-fMEocyiGVjQ7KvIX6ULylwN-TO6M7XVwgVO9ALq9ipKfgdd40u0z8JFgE_6Sp8GaPTlocHSNyupW4poyTiGYnRFLj5vVaOp0zQamku84gGlE/s1376/conversor-mp4-para-mp3-gratis-online-extrair-audio-de-video-rapido-ferramenta-transformar-sem-limites-seguro-baixar-som-navegador.jpeg">
   
   <!-- ADSTERRA: POPUNDER -->
   <script src="https://pl30577899.effectivecpmnetwork.com/b6/f9/de/b6f9de0eb9d4fb94e409fcc1474f7f93.js"></script>
@@ -194,14 +208,12 @@
       btn.disabled = true;
       status.innerText = "Iniciando processamento...";
 
-      // Exibe a modal do anúncio com o iframe do Smartlink
       adModal.style.display = 'flex';
       downloadLinkBtn.style.display = 'none';
 
       let timeLeft = 15;
       timerText.innerText = `Processando áudio... Aguarde ${timeLeft}s`;
 
-      // Regressão do timer de 15 segundos
       const countdown = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
@@ -223,7 +235,6 @@
         downloadLinkBtn.href = url;
         downloadLinkBtn.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
 
-        // Ao clicar no botão verde de baixar, fecha a janela modal
         downloadLinkBtn.onclick = () => {
           setTimeout(() => {
             adModal.style.display = 'none';
