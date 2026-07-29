@@ -25,11 +25,6 @@
 </head>
 <body>
 
-  <!-- AdSterra Banner Topo (728x90) -->
-  <div class="ad-banner">
-    <!-- Insira aqui o Script da Adsterra 728x90 -->
-  </div>
-
   <div class="container">
     <h1>Conversor MP4 para MP3</h1>
     <p>Extraia o áudio dos seus vídeos de forma rápida e segura</p>
@@ -44,16 +39,10 @@
     <div id="status" class="status"></div>
   </div>
 
-  <!-- AdSterra Banner Nativo -->
-  <div class="ad-banner">
-    <!-- Insira aqui o Script Nativo da Adsterra -->
-  </div>
-
   <footer>
     Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
-  <!-- Scripts de Conversao Local via Navegador -->
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
   <script>
     const { createFFmpeg, fetchFile } = FFmpeg;
@@ -98,13 +87,9 @@
       a.click();
       document.body.removeChild(a);
 
-      status.innerText = "Conversão concluída! O download iniciou.";
+      status.innerText = "Conversão concluída!";
       btn.disabled = false;
     }
   </script>
-
-  <!-- Scripts AdSterra (Popunder / Social Bar) -->
-  <!-- Cole seus scripts gerais da AdSterra diretamente aqui -->
-
 </body>
 </html>
