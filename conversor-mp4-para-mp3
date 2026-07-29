@@ -11,10 +11,13 @@
     <meta property="og:description" content="Extraia o áudio dos seus vídeos MP4 diretamente pelo navegador com alta velocidade e total segurança.">
     <meta property="og:url" content="https://conversor-mp4-para-mp3.vercel.app/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://conversor-mp4-para-mp3.vercel.app/banner.png">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVCU1hinT7WMV26XKXOUHUq_j3UdgPGFDtjaNES5ogajLcVJ45ypvxYmF6tSIxgVIGGkiUhyphenhyphenEPKC5yIZ-fMEocyiGVjQ7KvIX6ULylwN-TO6M7XVwgVO9ALq9ipKfgdd40u0z8JFgE_6Sp8GaPTlocHSNyupW4poyTiGYnRFLj5vVaOp0zQamku84gGlE/s1376/conversor-mp4-para-mp3-gratis-online-extrair-audio-de-video-rapido-ferramenta-transformar-sem-limites-seguro-baixar-som-navegador.jpeg">
 
     <!-- Script Popunder AdSterra -->
     <script src="https://pl30577899.effectivecpmnetwork.com/b6/f9/de/b6f9de0eb9d4fb94e409fcc1474f7f93.js"></script>
+
+    <!-- Script Bar Social AdSterra -->
+    <script src="https://pl30594984.effectivecpmnetwork.com/f2/a1/da/f2a1da1660f3f63bb033d1be6f06d24f.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -23,7 +26,7 @@
         h1 { font-size: 1.8rem; color: #1a1a1a; margin-bottom: 8px; }
         p { color: #666; font-size: 0.95rem; }
         .container { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 600px; text-align: center; }
-        .ad-space { background: #f0f0f0; border: 1px dashed #ccc; min-height: 90px; margin: 15px 0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #888; }
+        .ad-space { width: 100%; display: flex; justify-content: center; align-items: center; margin: 20px 0; overflow: hidden; }
         .upload-area { border: 2px dashed #0070f3; padding: 30px; border-radius: 8px; background: #f8fafc; cursor: pointer; margin-bottom: 20px; }
         .upload-area input { display: none; }
         button { background: #0070f3; color: #fff; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; }
@@ -31,6 +34,10 @@
         #status { margin-top: 15px; font-size: 0.9rem; font-weight: 500; }
         .progress-bar { width: 100%; background: #eee; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; display: none; }
         .progress-fill { background: #0070f3; height: 100%; width: 0%; transition: width 0.2s; }
+        .share-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.85rem; color: #555; }
+        footer { margin-top: auto; padding-top: 30px; font-size: 0.75rem; color: #888; text-align: center; }
+        footer a { color: #666; text-decoration: none; font-weight: 600; }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -40,8 +47,18 @@
         <p>Extraia o áudio dos seus vídeos com velocidade e total segurança</p>
     </header>
 
+    <!-- Banner 728x90 (Topo) -->
     <div class="ad-space" id="ad-top">
-        <span>Espaço Reservado para Anúncio (Topo)</span>
+        <script>
+            atOptions = {
+                'key' : 'bc7139f803413bb51a7e0c19eb37a5d0',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+            };
+        </script>
+        <script src="https://www.highperformanceformat.com/bc7139f803413bb51a7e0c19eb37a5d0/invoke.js"></script>
     </div>
 
     <div class="container">
@@ -61,11 +78,21 @@
         <a id="downloadLink" style="display:none; margin-top: 15px; text-decoration: none;">
             <button style="background: #10b981;">Baixar Arquivo MP3</button>
         </a>
+
+        <div class="share-box">
+            <p>Gostou da praticidade e sem excesso de anúncios? Compartilhe esta ferramenta com seus amigos!</p>
+        </div>
     </div>
 
+    <!-- Bandeira Nativa (Rodapé da aplicação) -->
     <div class="ad-space" id="ad-bottom">
-        <span>Espaço Reservado para Anúncio (Rodapé)</span>
+        <script async="async" data-cfasync="false" src="https://pl30594990.effectivecpmnetwork.com/7d1c492b951b88735da3ebdd997b6f0d/invoke.js"></script>
+        <div id="container-7d1c492b951b88735da3ebdd997b6f0d"></div>
     </div>
+
+    <footer>
+        <p>Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">AlemTech</a> - Soluções Digitais</p>
+    </footer>
 
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
     <script>
