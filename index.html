@@ -3,44 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversor MP4 para MP3 Online e Grátis</title>
-  <meta name="description" content="Converta vídeos MP4 para áudio MP3 diretamente no navegador com velocidade e total privacidade.">
+  <title>Conversor MP4 para MP3 - Grátis e Rápido</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: #f4f7f6; color: #333; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: space-between; padding: 20px 10px; }
-    .container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); width: 100%; max-width: 500px; text-align: center; }
-    h1 { font-size: 22px; margin-bottom: 10px; color: #111; }
-    p { font-size: 14px; color: #666; margin-bottom: 20px; }
-    .drop-zone { border: 2px dashed #0070f3; border-radius: 8px; padding: 25px 15px; cursor: pointer; background: #f0f7ff; transition: 0.2s; margin-bottom: 20px; }
-    .drop-zone:hover { background: #e1f0ff; }
-    .drop-zone p { margin: 0; color: #0070f3; font-weight: 600; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f4f7f6; color: #333; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: space-between; padding: 15px 10px; }
+    
+    /* Blocos de Anúncios */
+    .ad-slot { background: #eaedf0; display: flex; align-items: center; justify-content: center; border: 1px dashed #cccccc; border-radius: 6px; font-size: 11px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px; overflow: hidden; }
+    .ad-top { width: 100%; max-width: 728px; height: 90px; margin-bottom: 15px; }
+    .ad-middle { width: 100%; max-width: 500px; height: 100px; margin: 15px 0; }
+    .ad-bottom-1 { width: 100%; max-width: 500px; height: 250px; margin-top: 15px; }
+    .ad-bottom-2 { width: 100%; max-width: 500px; height: 250px; margin-top: 15px; }
+
+    .container { background: #ffffff; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 500px; text-align: center; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #111111; }
+    p.subtitle { font-size: 13px; color: #666666; margin-bottom: 20px; }
+    .drop-zone { border: 2px dashed #0070f3; border-radius: 8px; padding: 20px 10px; cursor: pointer; background: #f0f7ff; margin-bottom: 15px; transition: background 0.2s ease; }
+    .drop-zone:hover { background: #e5f1ff; }
+    .drop-zone p { color: #0070f3; font-weight: 600; font-size: 14px; word-break: break-all; }
     input[type="file"] { display: none; }
-    .btn { background: #0070f3; color: #fff; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; width: 100%; cursor: pointer; transition: 0.2s; }
-    .btn:disabled { background: #ccc; cursor: not-allowed; }
-    .status { margin-top: 15px; font-size: 14px; font-weight: 500; color: #444; }
-    .ad-banner { margin: 15px 0; text-align: center; width: 100%; overflow: hidden; }
-    footer { margin-top: auto; padding-top: 20px; font-size: 13px; color: #666; text-align: center; }
+    .btn { background: #0070f3; color: #ffffff; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px; width: 100%; cursor: pointer; transition: background 0.2s ease; }
+    .btn:hover { background: #0051a8; }
+    .btn:disabled { background: #cccccc; cursor: not-allowed; }
+    .status { margin-top: 12px; font-size: 13px; font-weight: 600; color: #444444; }
+    
+    footer { margin-top: 25px; padding: 15px 0; font-size: 13px; color: #666666; text-align: center; line-height: 1.5; }
     footer a { color: #0070f3; text-decoration: none; font-weight: bold; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
+  <!-- PROPAGANDA 1: Topo (Banner Horizontal) -->
+  <div class="ad-slot ad-top">
+    <!-- Cole o código do Anúncio 1 aqui -->
+    <span>Espaço para Propaganda 1 (728x90)</span>
+  </div>
+
   <div class="container">
     <h1>Conversor MP4 para MP3</h1>
-    <p>Extraia o áudio dos seus vídeos de forma rápida e segura</p>
+    <p class="subtitle">Extraia o áudio dos seus vídeos com alta velocidade e privacidade total.</p>
 
     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-      <p id="fileLabel">Clique para escolher o arquivo MP4</p>
+      <p id="fileLabel">Clique para selecionar o vídeo MP4</p>
       <input type="file" id="fileInput" accept="video/mp4" onchange="handleFileSelect()">
     </div>
 
-    <button id="convertBtn" class="btn" onclick="startConversion()" disabled>Converter para MP3</button>
+    <!-- PROPAGANDA 2: Meio (Dentro do Card) -->
+    <div class="ad-slot ad-middle">
+      <!-- Cole o código do Anúncio 2 aqui -->
+      <span>Espaço para Propaganda 2 (Banner Interno)</span>
+    </div>
 
+    <button id="convertBtn" class="btn" onclick="startConversion()" disabled>Converter para MP3</button>
     <div id="status" class="status"></div>
   </div>
 
+  <!-- PROPAGANDA 3: Bloco Abaixo do Card -->
+  <div class="ad-slot ad-bottom-1">
+    <!-- Cole o código do Anúncio 3 aqui -->
+    <span>Espaço para Propaganda 3 (300x250)</span>
+  </div>
+
+  <!-- PROPAGANDA 4: Bloco Antes do Rodapé -->
+  <div class="ad-slot ad-bottom-2">
+    <!-- Cole o código do Anúncio 4 aqui -->
+    <span>Espaço para Propaganda 4 (300x250)</span>
+  </div>
+
   <footer>
-    Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
+    Ferramenta 100% gratuita desenvolvida para alta performance.<br>
+    Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
@@ -60,10 +93,8 @@
 
     async function startConversion() {
       if (!selectedFile) return;
-
       const btn = document.getElementById('convertBtn');
       const status = document.getElementById('status');
-
       btn.disabled = true;
       status.innerText = "Carregando motor de conversão...";
 
@@ -73,12 +104,10 @@
 
       status.innerText = "Processando arquivo...";
       ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
-
       await ffmpeg.run('-i', 'input.mp4', 'output.mp3');
 
       status.innerText = "Finalizando...";
       const data = ffmpeg.FS('readFile', 'output.mp3');
-
       const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
       const a = document.createElement('a');
       a.href = url;
