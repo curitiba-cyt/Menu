@@ -1,154 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversor de MP4 para MP3 - Grátis e Rápido</title>
-    <meta name="description" content="Converta seus vídeos MP4 para áudio MP3 diretamente no seu navegador, sem limites e com total privacidade.">
-
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="Conversor de MP4 para MP3 - Grátis e Ilimitado">
-    <meta property="og:description" content="Extraia o áudio dos seus vídeos MP4 diretamente pelo navegador com alta velocidade e total segurança.">
-    <meta property="og:url" content="https://conversor-mp4-para-mp3.vercel.app/">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVCU1hinT7WMV26XKXOUHUq_j3UdgPGFDtjaNES5ogajLcVJ45ypvxYmF6tSIxgVIGGkiUhyphenhyphenEPKC5yIZ-fMEocyiGVjQ7KvIX6ULylwN-TO6M7XVwgVO9ALq9ipKfgdd40u0z8JFgE_6Sp8GaPTlocHSNyupW4poyTiGYnRFLj5vVaOp0zQamku84gGlE/s1376/conversor-mp4-para-mp3-gratis-online-extrair-audio-de-video-rapido-ferramenta-transformar-sem-limites-seguro-baixar-som-navegador.jpeg">
-
-    <!-- Script Popunder AdSterra -->
-    <script src="https://pl30577899.effectivecpmnetwork.com/b6/f9/de/b6f9de0eb9d4fb94e409fcc1474f7f93.js"></script>
-
-    <!-- Script Bar Social AdSterra -->
-    <script src="https://pl30594984.effectivecpmnetwork.com/f2/a1/da/f2a1da1660f3f63bb033d1be6f06d24f.js"></script>
-
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 1.8rem; color: #1a1a1a; margin-bottom: 8px; }
-        p { color: #666; font-size: 0.95rem; }
-        .container { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 600px; text-align: center; }
-        .ad-space { width: 100%; display: flex; justify-content: center; align-items: center; margin: 20px 0; overflow: hidden; }
-        .upload-area { border: 2px dashed #0070f3; padding: 30px; border-radius: 8px; background: #f8fafc; cursor: pointer; margin-bottom: 20px; }
-        .upload-area input { display: none; }
-        button { background: #0070f3; color: #fff; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        #status { margin-top: 15px; font-size: 0.9rem; font-weight: 500; }
-        .progress-bar { width: 100%; background: #eee; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; display: none; }
-        .progress-fill { background: #0070f3; height: 100%; width: 0%; transition: width 0.2s; }
-        .share-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.85rem; color: #555; }
-        footer { margin-top: auto; padding-top: 30px; font-size: 0.75rem; color: #888; text-align: center; }
-        footer a { color: #666; text-decoration: none; font-weight: 600; }
-        footer a:hover { text-decoration: underline; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de MP4 para MP3 - Grátis e Rápido</title>
+  <meta name="description" content="Converta seus vídeos MP4 em áudio MP3 diretamente no navegador com segurança e velocidade.">
+  <meta property="og:title" content="Conversor de MP4 para MP3">
+  <meta property="og:description" content="Extraia áudio de vídeos MP4 instantaneamente.">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; text-align: center; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    p { font-size: 14px; color: #666; margin-bottom: 20px; }
+    .file-input-container { border: 2px dashed #0070f3; padding: 20px; border-radius: 8px; background: #f0f7ff; cursor: pointer; margin-bottom: 15px; }
+    input[type="file"] { display: none; }
+    .btn { background: #0070f3; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+    .btn:disabled { background: #ccc; cursor: not-allowed; }
+    .ad-container { margin: 20px 0; text-align: center; }
+    footer { margin-top: 30px; font-size: 13px; color: #777; }
+    footer a { color: #0070f3; text-decoration: none; font-weight: bold; }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>Conversor de MP4 para MP3</h1>
-        <p>Extraia o áudio dos seus vídeos com velocidade e total segurança</p>
-    </header>
-
-    <!-- Banner 728x90 (Topo) -->
-    <div class="ad-space" id="ad-top">
-        <script>
-            atOptions = {
-                'key' : 'bc7139f803413bb51a7e0c19eb37a5d0',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-            };
-        </script>
-        <script src="https://www.highperformanceformat.com/bc7139f803413bb51a7e0c19eb37a5d0/invoke.js"></script>
-    </div>
-
-    <div class="container">
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <p>Clique aqui para selecionar seu vídeo MP4</p>
-            <input type="file" id="fileInput" accept="video/mp4">
-        </div>
-
-        <button id="convertBtn" onclick="convertVideo()" disabled>Converter para MP3</button>
-
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-
-        <p id="status"></p>
-
-        <a id="downloadLink" style="display:none; margin-top: 15px; text-decoration: none;">
-            <button style="background: #10b981;">Baixar Arquivo MP3</button>
-        </a>
-
-        <div class="share-box">
-            <p>Gostou da praticidade e sem excesso de anúncios? Compartilhe esta ferramenta com seus amigos!</p>
-        </div>
-    </div>
-
-    <!-- Bandeira Nativa (Rodapé da aplicação) -->
-    <div class="ad-space" id="ad-bottom">
-        <script async="async" data-cfasync="false" src="https://pl30594990.effectivecpmnetwork.com/7d1c492b951b88735da3ebdd997b6f0d/invoke.js"></script>
-        <div id="container-7d1c492b951b88735da3ebdd997b6f0d"></div>
-    </div>
-
-    <footer>
-        <p>Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">AlemTech</a> - Soluções Digitais</p>
-    </footer>
-
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-    <script>
-        const { createFFmpeg, fetchFile } = FFmpeg;
-        const ffmpeg = createFFmpeg({ log: true });
-        const fileInput = document.getElementById('fileInput');
-        const convertBtn = document.getElementById('convertBtn');
-        const status = document.getElementById('status');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-        const downloadLink = document.getElementById('downloadLink');
-
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                convertBtn.disabled = false;
-                status.innerText = "Arquivo selecionado: " + fileInput.files[0].name;
-            }
-        });
-
-        async function convertVideo() {
-            if (!fileInput.files.length) return;
-
-            convertBtn.disabled = true;
-            status.innerText = "Carregando motor de conversão...";
-            progressBar.style.display = "block";
-
-            try {
-                if (!ffmpeg.isLoaded()) {
-                    await ffmpeg.load();
-                }
-
-                status.innerText = "Processando arquivo no seu dispositivo...";
-                const file = fileInput.files[0];
-                ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
-
-                ffmpeg.setProgress(({ ratio }) => {
-                    progressFill.style.width = `${Math.round(ratio * 100)}%`;
-                });
-
-                await ffmpeg.run('-i', 'input.mp4', '-q:a', '0', '-map', 'a', 'output.mp3');
-
-                const data = ffmpeg.FS('readFile', 'output.mp3');
-                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-                const url = URL.createObjectURL(audioBlob);
-
-                downloadLink.href = url;
-                downloadLink.download = file.name.replace('.mp4', '') + '.mp3';
-                downloadLink.style.display = "inline-block";
-                
-                status.innerText = "Conversão concluída com sucesso!";
-            } catch (error) {
-                console.error(error);
-                status.innerText = "Ocorreu um erro ao processar o arquivo.";
-                convertBtn.disabled = false;
-            }
-        }
+  <div class="ad-container">
+    <!-- Adsterra 728x90 Banner -->
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'SEU_KEY_728X90_AQUI',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
     </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/SEU_KEY_728X90_AQUI/invoke.js"></script>
+  </div>
+
+  <div class="container">
+    <h1>Conversor de MP4 para MP3</h1>
+    <p>Extraia o áudio dos seus vídeos com velocidade e total segurança</p>
+
+    <div class="file-input-container" onclick="document.getElementById('fileInput').click()">
+      <span id="fileName">Clique aqui para selecionar seu vídeo MP4</span>
+      <input type="file" id="fileInput" accept="video/mp4" onchange="updateFileName()">
+    </div>
+
+    <button id="convertBtn" class="btn" onclick="convertVideo()" disabled>Converter para MP3</button>
+  </div>
+
+  <div class="ad-container">
+    <!-- Adsterra Native Banner -->
+    <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/SEU_KEY_NATIVE/invoke.js"></script>
+    <div id="container-SEU_KEY_NATIVE"></div>
+  </div>
+
+  <footer>
+    Desenvolvido por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
+  </footer>
+
+  <!-- Adsterra Popunder e Social Bar -->
+  <script type='text/javascript' src='//www.highperformanceformat.com/SEU_KEY_POPUNDER/invoke.js'></script>
+  <script type='text/javascript' src='//www.highperformanceformat.com/SEU_KEY_SOCIALBAR/invoke.js'></script>
+
+  <script>
+    function updateFileName() {
+      const input = document.getElementById('fileInput');
+      const label = document.getElementById('fileName');
+      const btn = document.getElementById('convertBtn');
+      if (input.files.length > 0) {
+        label.innerText = input.files[0].name;
+        btn.disabled = false;
+      }
+    }
+
+    function convertVideo() {
+      alert("Selecione os IDs válidos da AdSterra para ativá-lo totalmente.");
+    }
+  </script>
 </body>
 </html>
