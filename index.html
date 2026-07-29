@@ -35,6 +35,72 @@
     footer { margin-top: 25px; padding: 15px 0; font-size: 13px; color: #666666; text-align: center; line-height: 1.5; }
     footer a { color: #0070f3; text-decoration: none; font-weight: bold; }
     footer a:hover { text-decoration: underline; }
+
+    /* ESTILOS DA MODAL DE PROCESSAMENTO COM O SMARTLINK (15 SEGUNDOS) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .timer-text {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #0070f3;
+    }
+
+    .ad-frame-container {
+      width: 100%;
+      height: 250px;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .ad-frame-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .download-link-btn {
+      display: none;
+      background: #28a745;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 6px;
+      width: 100%;
+      transition: background 0.2s ease;
+    }
+
+    .download-link-btn:hover {
+      background: #218838;
+    }
   </style>
 </head>
 <body>
@@ -86,6 +152,19 @@
     <script src="https://www.highperformanceformat.com/bc7139f803413bb51a7e0c19eb37a5d0/invoke.js"></script>
   </div>
 
+  <!-- MODAL DO VÍDEO DE ANÚNCIO (15 SEGUNDOS) -->
+  <div class="modal-overlay" id="adModal">
+    <div class="modal-content">
+      <div class="timer-text" id="timerText">Processando áudio... Aguarde 15s</div>
+      
+      <div class="ad-frame-container">
+        <iframe src="https://www.effectivecpmnetwork.com/jnidq9nc?key=060b9702da7e073f5bd421936a2d4a7a"></iframe>
+      </div>
+
+      <a id="downloadLinkBtn" class="download-link-btn" download>Baixar MP3 Convertido</a>
+    </div>
+  </div>
+
   <footer>
     Ferramenta 100% gratuita desenvolvida para alta performance.<br>
     Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
@@ -105,34 +184,58 @@
 
     async function startConversion() {
       if (!selectedFile) return;
+
       const btn = document.getElementById('convertBtn');
       const status = document.getElementById('status');
+      const adModal = document.getElementById('adModal');
+      const timerText = document.getElementById('timerText');
+      const downloadLinkBtn = document.getElementById('downloadLinkBtn');
+
       btn.disabled = true;
+      status.innerText = "Iniciando processamento...";
+
+      // Exibe a modal do anúncio com o iframe do Smartlink
+      adModal.style.display = 'flex';
+      downloadLinkBtn.style.display = 'none';
+
+      let timeLeft = 15;
+      timerText.innerText = `Processando áudio... Aguarde ${timeLeft}s`;
+
+      // Regressão do timer de 15 segundos
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          timerText.innerText = `Processando áudio... Aguarde ${timeLeft}s`;
+        } else {
+          clearInterval(countdown);
+          timerText.innerText = "Conversão concluída!";
+          downloadLinkBtn.style.display = 'block';
+        }
+      }, 1000);
 
       try {
-        status.innerText = "Lendo vídeo...";
         const arrayBuffer = await selectedFile.arrayBuffer();
-
-        status.innerText = "Extraindo faixa de áudio...";
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-        status.innerText = "Gerando áudio MP3...";
         const wavBlob = bufferToWavBlob(audioBuffer);
 
         const url = URL.createObjectURL(wavBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        downloadLinkBtn.href = url;
+        downloadLinkBtn.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
 
-        status.innerText = "Conversão concluída!";
+        // Ao clicar no botão verde de baixar, fecha a janela modal
+        downloadLinkBtn.onclick = () => {
+          setTimeout(() => {
+            adModal.style.display = 'none';
+            status.innerText = "Download iniciado!";
+          }, 500);
+        };
+
       } catch (err) {
         console.error(err);
+        clearInterval(countdown);
+        adModal.style.display = 'none';
         status.innerText = "Erro ao processar o vídeo. Tente outro arquivo MP4.";
-      } finally {
         btn.disabled = false;
       }
     }
