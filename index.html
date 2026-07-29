@@ -1,185 +1,320 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversor MP4 para MP3 - Grátis e Rápido</title>
-  
-  <!-- ADSTERRA: POPUNDER -->
-  <script src="https://pl30577899.effectivecpmnetwork.com/b6/f9/de/b6f9de0eb9d4fb94e409fcc1474f7f93.js"></script>
-
-  <!-- ADSTERRA: SOCIAL BAR -->
-  <script src="https://pl30594984.effectivecpmnetwork.com/f2/a1/da/f2a1da1660f3f63bb033d1be6f06d24f.js"></script>
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: #f4f7f6; color: #333; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: space-between; padding: 15px 10px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de MP4 para MP3 - Rápido e Grátis</title>
     
-    .ad-slot { display: flex; align-items: center; justify-content: center; border-radius: 6px; overflow: hidden; }
-    .ad-top { width: 100%; max-width: 728px; min-height: 90px; margin-bottom: 15px; }
-    .ad-middle { width: 100%; max-width: 500px; min-height: 100px; margin: 15px 0; }
-    .ad-bottom-1 { width: 100%; max-width: 500px; min-height: 250px; margin-top: 15px; }
+    <!-- BANNER ADSTERRA 728x90 -->
+    <script type="text/javascript">
+        atOptions = {
+            'key' : '03b7a5a82e987c26880bd5ccf3a14447',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/03b7a5a82e987c26880bd5ccf3a14447/invoke.js"></script>
 
-    .container { background: #ffffff; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 500px; text-align: center; }
-    h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #111111; }
-    p.subtitle { font-size: 13px; color: #666666; margin-bottom: 20px; }
-    .drop-zone { border: 2px dashed #0070f3; border-radius: 8px; padding: 20px 10px; cursor: pointer; background: #f0f7ff; margin-bottom: 15px; transition: background 0.2s ease; }
-    .drop-zone:hover { background: #e5f1ff; }
-    .drop-zone p { color: #0070f3; font-weight: 600; font-size: 14px; word-break: break-all; }
-    input[type="file"] { display: none; }
-    .btn { background: #0070f3; color: #ffffff; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px; width: 100%; cursor: pointer; transition: background 0.2s ease; }
-    .btn:hover { background: #0051a8; }
-    .btn:disabled { background: #cccccc; cursor: not-allowed; }
-    .status { margin-top: 12px; font-size: 13px; font-weight: 600; color: #444444; }
-    
-    footer { margin-top: 25px; padding: 15px 0; font-size: 13px; color: #666666; text-align: center; line-height: 1.5; }
-    footer a { color: #0070f3; text-decoration: none; font-weight: bold; }
-    footer a:hover { text-decoration: underline; }
-  </style>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-btn {
+            background-color: #0066cc;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .custom-file-btn:hover {
+            background-color: #0052a3;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        button.convert-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+            width: 100%;
+        }
+
+        button.convert-btn:hover {
+            background-color: #218838;
+        }
+
+        /* BANDEIRA NATIVA */
+        .native-ad-box {
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        /* MODAL DE PROCESSAMENTO / ANÚNCIO (15s) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .timer-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #d9534f;
+        }
+
+        .ad-frame-wrapper {
+            width: 100%;
+            height: 250px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-frame-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .download-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- PROPAGANDA 1: BANNER 728x90 -->
-  <div class="ad-slot ad-top">
-    <script>
-      atOptions = {
-        'key' : 'bc7139f803413bb51a7e0c19eb37a5d0',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : 728,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/bc7139f803413bb51a7e0c19eb37a5d0/invoke.js"></script>
-  </div>
+    <div class="container">
+        <h1>Conversor de MP4 para MP3</h1>
 
-  <div class="container">
-    <h1>Conversor MP4 para MP3</h1>
-    <p class="subtitle">Extraia o áudio dos seus vídeos com alta velocidade e privacidade total.</p>
+        <div class="file-input-wrapper">
+            <label for="videoInput" class="custom-file-btn">Selecionar Vídeo MP4</label>
+            <input type="file" id="videoInput" accept="video/mp4,video/*">
+            <div class="file-name" id="fileName">Nenhum arquivo selecionado</div>
+        </div>
 
-    <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-      <p id="fileLabel">Clique para selecionar o vídeo MP4</p>
-      <input type="file" id="fileInput" accept="video/*,audio/*" onchange="handleFileSelect()">
+        <button id="convertBtn" class="convert-btn">Converter para MP3</button>
+
+        <div class="native-ad-box">
+            <!-- BANDEIRA NATIVA ADSTERRA -->
+            <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/be80946bbd405391ff1a1005b682e70c/invoke.js"></script>
+            <div id="container-be80946bbd405391ff1a1005b682e70c"></div>
+        </div>
     </div>
 
-    <!-- PROPAGANDA 2: BANDEIRA NATIVA -->
-    <div class="ad-slot ad-middle">
-      <script async="async" data-cfasync="false" src="https://pl30594990.effectivecpmnetwork.com/7d1c492b951b88735da3ebdd997b6f0d/invoke.js"></script>
-      <div id="container-7d1c492b951b88735da3ebdd997b6f0d"></div>
+    <!-- MODAL DE PROCESSAMENTO / ANÚNCIO DE 15 SEGUNDOS -->
+    <div class="modal-overlay" id="adModal">
+        <div class="modal-content">
+            <div class="timer-text" id="timerText">Processando áudio... Aguarde 15 segundos</div>
+            
+            <div class="ad-frame-wrapper">
+                <iframe src="https://www.effectivecpmnetwork.com/jnidq9nc?key=060b9702da7e073f5bd421936a2d4a7a"></iframe>
+            </div>
+
+            <a id="downloadBtn" class="download-btn" download="audio_convertido.mp3">Baixar Arquivo MP3</a>
+        </div>
     </div>
 
-    <button id="convertBtn" class="btn" onclick="startConversion()" disabled>Converter para MP3</button>
-    <div id="status" class="status"></div>
-  </div>
-
-  <!-- PROPAGANDA 3: BANNER 728x90 (REPETIDO) -->
-  <div class="ad-slot ad-bottom-1">
     <script>
-      atOptions = {
-        'key' : 'bc7139f803413bb51a7e0c19eb37a5d0',
-        'format' : 'iframe',
-        'height' : 90,
-        'width' : 728,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/bc7139f803413bb51a7e0c19eb37a5d0/invoke.js"></script>
-  </div>
+        const videoInput = document.getElementById('videoInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const convertBtn = document.getElementById('convertBtn');
+        const adModal = document.getElementById('adModal');
+        const timerText = document.getElementById('timerText');
+        const downloadBtn = document.getElementById('downloadBtn');
 
-  <footer>
-    Ferramenta 100% gratuita desenvolvida para alta performance.<br>
-    Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
-  </footer>
+        let audioBlobUrl = null;
 
-  <script>
-    let selectedFile = null;
+        videoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileNameDisplay.textContent = file.name;
+                convertBtn.style.display = 'block';
+            }
+        });
 
-    function handleFileSelect() {
-      const input = document.getElementById('fileInput');
-      if (input.files.length > 0) {
-        selectedFile = input.files[0];
-        document.getElementById('fileLabel').innerText = selectedFile.name;
-        document.getElementById('convertBtn').disabled = false;
-      }
-    }
+        convertBtn.addEventListener('click', async () => {
+            const file = videoInput.files[0];
+            if (!file) return;
 
-    async function startConversion() {
-      if (!selectedFile) return;
-      const btn = document.getElementById('convertBtn');
-      const status = document.getElementById('status');
-      btn.disabled = true;
+            adModal.style.display = 'flex';
+            downloadBtn.style.display = 'none';
+            
+            // Inicia conversão paralela via AudioContext
+            const conversionPromise = processAudio(file);
 
-      try {
-        status.innerText = "Lendo vídeo...";
-        const arrayBuffer = await selectedFile.arrayBuffer();
+            // Temporizador obrigatório de 15 segundos
+            let timeLeft = 15;
+            timerText.textContent = `Processando áudio e gerando link... Aguarde ${timeLeft}s`;
 
-        status.innerText = "Extraindo faixa de áudio...";
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+            const countdown = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    timerText.textContent = `Processando áudio e gerando link... Aguarde ${timeLeft}s`;
+                } else {
+                    clearInterval(countdown);
+                    timerText.textContent = "Processamento concluído!";
+                    downloadBtn.style.display = 'block';
+                }
+            }, 1000);
 
-        status.innerText = "Gerando áudio MP3...";
-        const wavBlob = bufferToWavBlob(audioBuffer);
+            // Aguarda o processamento real terminar
+            audioBlobUrl = await conversionPromise;
+            downloadBtn.href = audioBlobUrl;
+        });
 
-        const url = URL.createObjectURL(wavBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        async function processAudio(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+            
+            // Extração de canal WAV/MP3 simples via Blob
+            const offlineCtx = new OfflineAudioContext(
+                audioBuffer.numberOfChannels,
+                audioBuffer.length,
+                audioBuffer.sampleRate
+            );
 
-        status.innerText = "Conversão concluída!";
-      } catch (err) {
-        console.error(err);
-        status.innerText = "Erro ao processar o vídeo. Tente outro arquivo MP4.";
-      } finally {
-        btn.disabled = false;
-      }
-    }
+            const source = offlineCtx.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(offlineCtx.destination);
+            source.start();
 
-    function bufferToWavBlob(abuffer) {
-      const numOfChan = abuffer.numberOfChannels;
-      const length = abuffer.length * numOfChan * 2 + 44;
-      const buffer = new ArrayBuffer(length);
-      const view = new DataView(buffer);
-      const channels = [];
-      let sample = 0;
-      let offset = 0;
-      let pos = 0;
-
-      function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
-      function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
-
-      setUint32(0x46464952); // "RIFF"
-      setUint32(length - 8);
-      setUint32(0x45564157); // "WAVE"
-      setUint32(0x20746d66); // "fmt " chunk
-      setUint32(16);
-      setUint16(1);
-      setUint16(numOfChan);
-      setUint32(abuffer.sampleRate);
-      setUint32(abuffer.sampleRate * 2 * numOfChan);
-      setUint16(numOfChan * 2);
-      setUint16(16);
-      setUint32(0x61746164); // "data" chunk
-      setUint32(length - pos - 4);
-
-      for (let i = 0; i < abuffer.numberOfChannels; i++) {
-        channels.push(abuffer.getChannelData(i));
-      }
-
-      while (offset < abuffer.length) {
-        for (let i = 0; i < numOfChan; i++) {
-          sample = Math.max(-1, Math.min(1, channels[i][offset]));
-          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-          view.setInt16(pos, sample, true);
-          pos += 2;
+            const renderedBuffer = await offlineCtx.startRendering();
+            const wavBlob = bufferToWave(renderedBuffer, renderedBuffer.length);
+            return URL.createObjectURL(wavBlob);
         }
-        offset++;
-      }
 
-      return new Blob([buffer], { type: "audio/mp3" });
-    }
-  </script>
+        function bufferToWave(abuffer, len) {
+            let numOfChan = abuffer.numberOfChannels,
+                length = len * numOfChan * 2 + 44,
+                buffer = new ArrayBuffer(length),
+                view = new DataView(buffer),
+                channels = [], i, sample,
+                offset = 0,
+                pos = 0;
+
+            function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
+            function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+
+            setUint32(0x46464952);
+            setUint32(length - 8);
+            setUint32(0x45564157);
+            setUint32(0x20746d66);
+            setUint32(16);
+            setUint16(1);
+            setUint16(numOfChan);
+            setUint32(abuffer.sampleRate);
+            setUint32(abuffer.sampleRate * 2 * numOfChan);
+            setUint16(numOfChan * 2);
+            setUint16(16);
+            setUint32(0x61746164);
+            setUint32(length - pos - 4);
+
+            for (i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
+
+            while (pos < length) {
+                for (i = 0; i < numOfChan; i++) {
+                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+                    view.setInt16(pos, sample, true);
+                    pos += 2;
+                }
+                offset++;
+            }
+            return new Blob([buffer], { type: "audio/mp3" });
+        }
+    </script>
 </body>
 </html>
