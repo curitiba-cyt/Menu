@@ -71,8 +71,10 @@
     Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
   <script>
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: false });
     let selectedFile = null;
 
     function handleFileSelect() {
@@ -91,18 +93,22 @@
       btn.disabled = true;
 
       try {
-        status.innerText = "Lendo arquivo de vídeo...";
-        const arrayBuffer = await selectedFile.arrayBuffer();
-        
-        status.innerText = "Extraindo áudio...";
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        
-        status.innerText = "Convertendo para MP3...";
-        const mp3Blob = audioBufferToMp3(audioBuffer);
-        
-        status.innerText = "Gerando download...";
-        const url = URL.createObjectURL(mp3Blob);
+        if (!ffmpeg.isLoaded()) {
+          status.innerText = "Carregando motor (apenas na 1ª vez)...";
+          await ffmpeg.load();
+        }
+
+        status.innerText = "Processando vídeo...";
+        ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
+
+        status.innerText = "Extraindo áudio para MP3...";
+        await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-q:a', '2', 'output.mp3');
+
+        status.innerText = "Gerando arquivo de download...";
+        const data = ffmpeg.FS('readFile', 'output.mp3');
+        const blob = new Blob([data.buffer], { type: 'audio/mp3' });
+        const url = URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.href = url;
         a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
@@ -110,53 +116,17 @@
         a.click();
         document.body.removeChild(a);
 
+        // Limpeza de memória
+        ffmpeg.FS('unlink', 'input.mp4');
+        ffmpeg.FS('unlink', 'output.mp3');
+
         status.innerText = "Conversão concluída!";
       } catch (err) {
         console.error(err);
-        status.innerText = "Erro ao converter. Verifique se o arquivo é um MP4 válido.";
+        status.innerText = "Erro no processamento. Tente novamente.";
       } finally {
         btn.disabled = false;
       }
-    }
-
-    function audioBufferToMp3(audioBuffer) {
-      const channels = audioBuffer.numberOfChannels;
-      const sampleRate = audioBuffer.sampleRate;
-      const mp3encoder = new lamejs.Mp3Encoder(channels >= 2 ? 2 : 1, sampleRate, 128);
-      const mp3Data = [];
-      const sampleBlockSize = 1152;
-
-      if (channels >= 2) {
-        const left = floatTo16BitPCM(audioBuffer.getChannelData(0));
-        const right = floatTo16BitPCM(audioBuffer.getChannelData(1));
-        for (let i = 0; i < left.length; i += sampleBlockSize) {
-          const leftChunk = left.subarray(i, i + sampleBlockSize);
-          const rightChunk = right.subarray(i, i + sampleBlockSize);
-          const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
-          if (mp3buf.length > 0) mp3Data.push(mp3buf);
-        }
-      } else {
-        const mono = floatTo16BitPCM(audioBuffer.getChannelData(0));
-        for (let i = 0; i < mono.length; i += sampleBlockSize) {
-          const monoChunk = mono.subarray(i, i + sampleBlockSize);
-          const mp3buf = mp3encoder.encodeBuffer(monoChunk);
-          if (mp3buf.length > 0) mp3Data.push(mp3buf);
-        }
-      }
-
-      const end = mp3encoder.flush();
-      if (end.length > 0) mp3Data.push(end);
-
-      return new Blob(mp3Data, { type: 'audio/mp3' });
-    }
-
-    function floatTo16BitPCM(input) {
-      const output = new Int16Array(input.length);
-      for (let i = 0; i < input.length; i++) {
-        const s = Math.max(-1, Math.min(1, input[i]));
-        output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-      }
-      return output;
     }
   </script>
 </body>
