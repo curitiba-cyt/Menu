@@ -8,7 +8,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #f4f7f6; color: #333; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: space-between; padding: 15px 10px; }
     
-    /* Blocos de Anúncios */
     .ad-slot { background: #eaedf0; display: flex; align-items: center; justify-content: center; border: 1px dashed #cccccc; border-radius: 6px; font-size: 11px; color: #888888; text-transform: uppercase; letter-spacing: 0.5px; overflow: hidden; }
     .ad-top { width: 100%; max-width: 728px; height: 90px; margin-bottom: 15px; }
     .ad-middle { width: 100%; max-width: 500px; height: 100px; margin: 15px 0; }
@@ -34,9 +33,8 @@
 </head>
 <body>
 
-  <!-- PROPAGANDA 1: Topo (Banner Horizontal) -->
+  <!-- PROPAGANDA 1 -->
   <div class="ad-slot ad-top">
-    <!-- Cole o código do Anúncio 1 aqui -->
     <span>Espaço para Propaganda 1 (728x90)</span>
   </div>
 
@@ -46,12 +44,11 @@
 
     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
       <p id="fileLabel">Clique para selecionar o vídeo MP4</p>
-      <input type="file" id="fileInput" accept="video/mp4" onchange="handleFileSelect()">
+      <input type="file" id="fileInput" accept="video/mp4,video/*" onchange="handleFileSelect()">
     </div>
 
-    <!-- PROPAGANDA 2: Meio (Dentro do Card) -->
+    <!-- PROPAGANDA 2 -->
     <div class="ad-slot ad-middle">
-      <!-- Cole o código do Anúncio 2 aqui -->
       <span>Espaço para Propaganda 2 (Banner Interno)</span>
     </div>
 
@@ -59,15 +56,13 @@
     <div id="status" class="status"></div>
   </div>
 
-  <!-- PROPAGANDA 3: Bloco Abaixo do Card -->
+  <!-- PROPAGANDA 3 -->
   <div class="ad-slot ad-bottom-1">
-    <!-- Cole o código do Anúncio 3 aqui -->
     <span>Espaço para Propaganda 3 (300x250)</span>
   </div>
 
-  <!-- PROPAGANDA 4: Bloco Antes do Rodapé -->
+  <!-- PROPAGANDA 4 -->
   <div class="ad-slot ad-bottom-2">
-    <!-- Cole o código do Anúncio 4 aqui -->
     <span>Espaço para Propaganda 4 (300x250)</span>
   </div>
 
@@ -76,10 +71,8 @@
     Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   <script>
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: false });
     let selectedFile = null;
 
     function handleFileSelect() {
@@ -96,28 +89,74 @@
       const btn = document.getElementById('convertBtn');
       const status = document.getElementById('status');
       btn.disabled = true;
-      status.innerText = "Carregando motor de conversão...";
 
-      if (!ffmpeg.isLoaded()) {
-        await ffmpeg.load();
+      try {
+        status.innerText = "Lendo arquivo de vídeo...";
+        const arrayBuffer = await selectedFile.arrayBuffer();
+        
+        status.innerText = "Extraindo áudio...";
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        
+        status.innerText = "Convertendo para MP3...";
+        const mp3Blob = audioBufferToMp3(audioBuffer);
+        
+        status.innerText = "Gerando download...";
+        const url = URL.createObjectURL(mp3Blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        status.innerText = "Conversão concluída!";
+      } catch (err) {
+        console.error(err);
+        status.innerText = "Erro ao converter. Verifique se o arquivo é um MP4 válido.";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function audioBufferToMp3(audioBuffer) {
+      const channels = audioBuffer.numberOfChannels;
+      const sampleRate = audioBuffer.sampleRate;
+      const mp3encoder = new lamejs.Mp3Encoder(channels >= 2 ? 2 : 1, sampleRate, 128);
+      const mp3Data = [];
+      const sampleBlockSize = 1152;
+
+      if (channels >= 2) {
+        const left = floatTo16BitPCM(audioBuffer.getChannelData(0));
+        const right = floatTo16BitPCM(audioBuffer.getChannelData(1));
+        for (let i = 0; i < left.length; i += sampleBlockSize) {
+          const leftChunk = left.subarray(i, i + sampleBlockSize);
+          const rightChunk = right.subarray(i, i + sampleBlockSize);
+          const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+          if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        }
+      } else {
+        const mono = floatTo16BitPCM(audioBuffer.getChannelData(0));
+        for (let i = 0; i < mono.length; i += sampleBlockSize) {
+          const monoChunk = mono.subarray(i, i + sampleBlockSize);
+          const mp3buf = mp3encoder.encodeBuffer(monoChunk);
+          if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        }
       }
 
-      status.innerText = "Processando arquivo...";
-      ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
-      await ffmpeg.run('-i', 'input.mp4', 'output.mp3');
+      const end = mp3encoder.flush();
+      if (end.length > 0) mp3Data.push(end);
 
-      status.innerText = "Finalizando...";
-      const data = ffmpeg.FS('readFile', 'output.mp3');
-      const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      return new Blob(mp3Data, { type: 'audio/mp3' });
+    }
 
-      status.innerText = "Conversão concluída!";
-      btn.disabled = false;
+    function floatTo16BitPCM(input) {
+      const output = new Int16Array(input.length);
+      for (let i = 0; i < input.length; i++) {
+        const s = Math.max(-1, Math.min(1, input[i]));
+        output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      return output;
     }
   </script>
 </body>
