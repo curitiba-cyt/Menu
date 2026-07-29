@@ -44,7 +44,7 @@
 
     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
       <p id="fileLabel">Clique para selecionar o vídeo MP4</p>
-      <input type="file" id="fileInput" accept="video/mp4,video/*" onchange="handleFileSelect()">
+      <input type="file" id="fileInput" accept="video/*,audio/*" onchange="handleFileSelect()">
     </div>
 
     <!-- PROPAGANDA 2 -->
@@ -71,10 +71,7 @@
     Tecnologia e Soluções por <a href="https://alemtech.com.br" target="_blank" rel="noopener">alemtech.com.br</a>
   </footer>
 
-  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
   <script>
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: false });
     let selectedFile = null;
 
     function handleFileSelect() {
@@ -93,22 +90,17 @@
       btn.disabled = true;
 
       try {
-        if (!ffmpeg.isLoaded()) {
-          status.innerText = "Carregando motor (apenas na 1ª vez)...";
-          await ffmpeg.load();
-        }
+        status.innerText = "Lendo vídeo...";
+        const arrayBuffer = await selectedFile.arrayBuffer();
 
-        status.innerText = "Processando vídeo...";
-        ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
+        status.innerText = "Extraindo faixa de áudio...";
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-        status.innerText = "Extraindo áudio para MP3...";
-        await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-q:a', '2', 'output.mp3');
+        status.innerText = "Gerando áudio MP3...";
+        const wavBlob = bufferToWavBlob(audioBuffer);
 
-        status.innerText = "Gerando arquivo de download...";
-        const data = ffmpeg.FS('readFile', 'output.mp3');
-        const blob = new Blob([data.buffer], { type: 'audio/mp3' });
-        const url = URL.createObjectURL(blob);
-
+        const url = URL.createObjectURL(wavBlob);
         const a = document.createElement('a');
         a.href = url;
         a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + ".mp3";
@@ -116,17 +108,57 @@
         a.click();
         document.body.removeChild(a);
 
-        // Limpeza de memória
-        ffmpeg.FS('unlink', 'input.mp4');
-        ffmpeg.FS('unlink', 'output.mp3');
-
         status.innerText = "Conversão concluída!";
       } catch (err) {
         console.error(err);
-        status.innerText = "Erro no processamento. Tente novamente.";
+        status.innerText = "Erro ao processar o vídeo. Tente outro arquivo MP4.";
       } finally {
         btn.disabled = false;
       }
+    }
+
+    function bufferToWavBlob(abuffer) {
+      const numOfChan = abuffer.numberOfChannels;
+      const length = abuffer.length * numOfChan * 2 + 44;
+      const buffer = new ArrayBuffer(length);
+      const view = new DataView(buffer);
+      const channels = [];
+      let sample = 0;
+      let offset = 0;
+      let pos = 0;
+
+      function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
+      function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+
+      setUint32(0x46464952); // "RIFF"
+      setUint32(length - 8);
+      setUint32(0x45564157); // "WAVE"
+      setUint32(0x20746d66); // "fmt " chunk
+      setUint32(16);
+      setUint16(1);
+      setUint16(numOfChan);
+      setUint32(abuffer.sampleRate);
+      setUint32(abuffer.sampleRate * 2 * numOfChan);
+      setUint16(numOfChan * 2);
+      setUint16(16);
+      setUint32(0x61746164); // "data" chunk
+      setUint32(length - pos - 4);
+
+      for (let i = 0; i < abuffer.numberOfChannels; i++) {
+        channels.push(abuffer.getChannelData(i));
+      }
+
+      while (offset < abuffer.length) {
+        for (let i = 0; i < numOfChan; i++) {
+          sample = Math.max(-1, Math.min(1, channels[i][offset]));
+          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+          view.setInt16(pos, sample, true);
+          pos += 2;
+        }
+        offset++;
+      }
+
+      return new Blob([buffer], { type: "audio/mp3" });
     }
   </script>
 </body>
